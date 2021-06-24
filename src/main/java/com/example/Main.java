@@ -26,6 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.*; 
+import org.springframework.http.MediaType;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -84,5 +87,132 @@ public class Main {
       return new HikariDataSource(config);
     }
   }
+
+//************************************
+// TEE-RIFIC CODE STARTS HERE
+//************************************
+
+
+//**********************
+// LOGIN
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/login"
+)
+public String getLoginPage(Map<String, Object> model){
+  return "login";
+}//getLoginPage()
+
+
+@PostMapping(
+  path = "/tee-rific/login",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String checkLoginInfo(Map<String, Object> model){
+  boolean loginGood = true;
+  if(loginGood){
+    System.out.println("Login Successful\n");
+    return "home";
+  }
+  System.out.println("Login not valid\n");
+  return "login";
+}//checkLoginInfo()
+
+
+//**********************
+// HOME PAGE
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/home"
+)
+public String getHomePage(Map<String, Object> model){
+  return "home";
+}//getHomePage()
+
+
+//**********************
+// BOOKING
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/booking"
+)
+public String getBookingPage(){
+  return "booking";
+}//getBookingPage()
+
+
+@PostMapping(
+  path = "/tee-rific/booking",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String updateSchedule(){
+  boolean validApppointment = true;
+  if(validApppointment){
+    return "redirect:/tee-rific/bookingSuccessful";
+  }
+  return "booking";
+}//updateSchedule()
+
+
+@GetMapping(
+  path = "/tee-rific/bookingSuccessful"
+)
+public String bookingSuccessful(){
+  return "bookingSuccessful";
+}//bookingSuccessful()
+
+
+//**********************
+// SCORECARD
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/scorecard"
+)
+public String getScorecard(){
+  return "scorecard";
+}//getScorecard()
+
+
+@PostMapping(
+  path = "/tee-rific/scorecard",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String updateScorecard(){
+  return "scorecard";
+}//updateScorecard()
+
+
+@GetMapping(
+  path = "/tee-rific/scoresHistory"
+)
+public String getAllScores(){
+  return "scoresHistory";
+}//getAllScores()
+
+
+@GetMapping(
+  path = "/tee-rific/scoreHistory/{course}"
+)
+public String getScoresFromCourse(@PathVariable("course") String course){
+  return "scoresHistory";
+}//getScoresFromCourse()
+
+
+//**********************
+// ABOUT-US
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/aboutUs"
+)
+public String aboutDevelopers(Map<String, Object> model){
+  //this is optional, if you guys feel comfortable doing so, we can upload 'selfies' of our team and maybe talk about our development process
+  return "aboutUs";
+}//aboutDevelopers()
+
 
 }

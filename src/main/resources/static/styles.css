@@ -1,0 +1,38 @@
+/* all CSS styles here */ 
+
+
+
+.possibleColorScheme {
+    color: #558776;
+    color: #A3A847;
+    color: #7F8B52;
+    color: #EAE2B6;
+}
+
+.spacer {
+    margin: 50px;
+}
+
+/* delete after discussing */
+
+
+.layer_5 {
+    background-color: #558776;
+    padding: 30px;
+}
+
+.layer_6 {
+    background-color: #A3A847;
+    padding: 30px;
+}
+
+.layer_7 {
+    background-color: #7F8B52;
+    padding: 30px;
+}
+
+.layer_8 {
+    background-color: #EAE2B6;
+    padding: 30px;
+    text-align: center;
+}
