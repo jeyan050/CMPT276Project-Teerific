@@ -1,40 +1,12 @@
-# java-getting-started
+Name Of Application: TEE-RIFIC 
 
-A barebones Java app, which can easily be deployed to Heroku.
+Tee-rific is an online web application allowing golfers to methodically connect with their neighbourhood golf courses. The features of the customer-end application will include the ability to login to a user account, book tee times and rent equipment, view existing user tee times, cancel existing tee times, see current weather at the golf course, sign up for tournaments and view results, view and give reviews for different golf courses, and use a scorecard to track their own and scores and view their old scores. Future implementations include the ability to add friends and compete with friends scores, which would appear on the scorecard page. The administrator-end features contain the ability to login to an administrator account, view the tee sheet database, edit existing tee times (number of players/cancel), create tournaments and add results, and switch between days on the tee sheet.
+ 
+The most common system for tracking tee times is using pen and paper, a highly unorganized method. Golf courses would have a paper layout of the tee sheet, and changes to this table would require erasing and rewriting data. Customers would be required to call the golf course with no knowledge of the availability and book a tee time. This system relies heavily on phone calls, the method’s only form of communication. A software named Chronogolf is becoming more popular in the golf industry for its convenience to book tee times and manage tee sheets. Chronogolf provides an efficient booking system that includes tee sheet management. Upon checking in at the golf course, Chronogolf provides no further service and is no longer functional. Therefore, our goal is to allow technological integration to track users’ data and create a system for both golf course staff and customers. 
+ 
+Tee-rific provides a clear improvement upon the pen and paper system. The communication within the pen and paper method is one-dimensional, with users only contacting the golf course by calling them. Changes are difficult to process and are inconvenient for the employees and customers. Tee-rific’s service expands beyond the booking, unlike Chronogolf. Tee-rific offers a scorecard feature for the user to complete while they play their round with mobile compatibility while also viewing previous scores input by the user. Tee-rific will also allow users to leave reviews for golf courses, a feature that Chronogolf does not have. Golf course owners will appreciate these implementations since it reduces the amount of scorecards they are required to purchase and reflects the quality of their course.
+ 
+ 
+The API’s we plan to use are the Weather API and the Golf-Course Database REST API
 
-This application supports the [Getting Started with Java on Heroku](https://devcenter.heroku.com/articles/getting-started-with-java) article - check it out.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-## Running Locally
-
-Make sure you have Java and Maven installed.  Also, install the [Heroku CLI](https://cli.heroku.com/).
-
-```sh
-$ git clone https://github.com/heroku/java-getting-started.git
-$ cd java-getting-started
-$ mvn install
-$ heroku local:start
-```
-
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-If you're going to use a database, ensure you have a local `.env` file that reads something like this:
-
-```
-JDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/java_database_name
-```
-
-## Deploying to Heroku
-
-```sh
-$ heroku create
-$ git push heroku main
-$ heroku open
-```
-
-## Documentation
-
-For more information about using Java on Heroku, see these Dev Center articles:
-
-- [Java on Heroku](https://devcenter.heroku.com/categories/java)
