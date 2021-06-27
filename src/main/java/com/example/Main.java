@@ -119,6 +119,48 @@ public String checkLoginInfo(Map<String, Object> model){
   return "login";
 }//checkLoginInfo()
 
+  //**********************
+// SIGN-UP
+//**********************
+
+@GetMapping(
+        path = "/tee-rific/signup"
+)
+public String getSignupPage(Map<String, Object> model) {
+    User user = new User();
+    model.put("newUser", user);
+    return "signup";
+}
+@PostMapping(
+        path = "/tee-rific/signup"
+)
+
+//im thinking maybe not using a serial id since we are only allowing one unique username for each user (meaning a unique id specifier likely isn't required) - Kyle
+
+public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) throws Exception {
+    try(Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (username varchar(30), password varchar(30), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+      stmt.executeUpdate("INSERT INTO users (username, password, fname, lname, email, gender) VALUES ('" + user.getUsername() + "','" + user.getPassword() + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+      ArrayList<User> output = new ArrayList<User>();
+      while (rs.next()) {
+        User user1 = new User();
+        user1.setUsername(rs.getString("username"));
+        user1.setPassword(rs.getString("password"));
+        user1.setFname(rs.getString("fname"));
+        user1.setLname(rs.getString("lname"));
+        user1.setEmail(rs.getString("email"));
+        user1.setGender(rs.getString("gender"));
+        output.add(user1);
+      }
+      model.put("users", output);
+      return "success";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+}
 
 //**********************
 // HOME PAGE
