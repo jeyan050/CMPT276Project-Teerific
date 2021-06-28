@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
 import javax.sql.DataSource;
+import javax.swing.JOptionPane;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -142,24 +144,46 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
       Statement stmt = connection.createStatement();
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (username varchar(30), password varchar(30), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
       stmt.executeUpdate("INSERT INTO users (username, password, fname, lname, email, gender) VALUES ('" + user.getUsername() + "','" + user.getPassword() + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
-      ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-      ArrayList<User> output = new ArrayList<User>();
-      while (rs.next()) {
-        User user1 = new User();
-        user1.setUsername(rs.getString("username"));
-        user1.setPassword(rs.getString("password"));
-        user1.setFname(rs.getString("fname"));
-        user1.setLname(rs.getString("lname"));
-        user1.setEmail(rs.getString("email"));
-        user1.setGender(rs.getString("gender"));
-        output.add(user1);
+      
+      String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
+      ResultSet rs = stmt.executeQuery(sql);
+      int checkCount = 0;
+      while (rs.next()){
+        checkCount++;
       }
-      model.put("users", output);
-      return "success";
+
+      if (checkCount > 1){
+        System.out.println("test");
+        stmt.executeUpdate("DELETE FROM users WHERE username='"+user.getUsername() + "' and password='"+user.getPassword() + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+        return "errorSignup";
+      } else {
+        return "success";
+      }
+
+      // I dont think we need this, this is just for storing the users if we want to use them in the following html - Justin
+      // ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+      // ArrayList<User> output = new ArrayList<User>();
+      // while (rs.next()) {
+      //   User user1 = new User();
+      //   user1.setUsername(rs.getString("username"));
+      //   user1.setPassword(rs.getString("password"));
+      //   user1.setFname(rs.getString("fname"));
+      //   user1.setLname(rs.getString("lname"));
+      //   user1.setEmail(rs.getString("email"));
+      //   user1.setGender(rs.getString("gender"));
+      //   output.add(user1);
+      // }
+      // model.put("users", output);
+      // return "success";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
     }
+}
+
+@GetMapping("errorSignup")
+public String redirectToErrorPage(){
+  return "errorSignup";
 }
 
 //**********************
