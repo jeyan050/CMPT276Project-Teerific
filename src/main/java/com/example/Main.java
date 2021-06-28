@@ -256,5 +256,12 @@ public String aboutDevelopers(Map<String, Object> model){
   return "aboutUs";
 }//aboutDevelopers()
 
+@GetMapping(
+  path = "/tee-rific/logout"
+)
+public String Logout(){
+  //log the user out
+  return "logout";
+}
 
 }
