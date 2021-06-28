@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,14 +8,20 @@
     <title>Scorecard</title>
 </head>
 <body>
-    Scorecard page
-    <form method="get" action="/tee-rific/scoresHistory">
-        <button type="submit">Scores History</button>
-    </form>
+    <div class="layer_6">
+        <div class="layer_7">
+            <div class="layer_8">
+                Scorecard page
+                <form method="get" action="/tee-rific/scoresHistory">
+                    <button type="submit" class = "button">Scores History</button>
+                </form>
 
-    <form method="get" action="/tee-rific/home">
-        <button type="submit">Go Back</button>
-    </form>
+                <form method="get" action="/tee-rific/home">
+                    <button type="submit" class = "button">Go Back</button>
+                </form>
+            </div>
+        </div>
+     </div>
 
 </body>
 </html>

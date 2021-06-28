@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,13 +8,18 @@
     <title>Login</title>
 </head>
 <body>
-    <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
-    <form method="get" action="/tee-rific/home">
-        <button type="submit">Login</button>
-    </form>
-
-    <a th:href="@{/tee-rific/signup}">Create an Account</a>
-
+        <div class="layer_6">
+            <div class="layer_7">
+                <div class="layer_8">
+                    <h2>Enter your credentials to login</h2>
+                    <input type="text" placeholder="Username">
+                    <input type="password" placeholder="Password">
+                    <form method="get" action="/tee-rific/home">
+                        <button type="submit" class = "button">Login</button>
+                    </form>
+                    <h2>Or <a th:href="@{/tee-rific/signup}">Create an Account</a> if you don't have one yet </h2>
+                </div>
+            </div>
+         </div>
 </body>
 </html>

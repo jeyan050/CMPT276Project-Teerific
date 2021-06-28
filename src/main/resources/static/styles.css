@@ -16,23 +16,35 @@
 /* delete after discussing */
 
 
-.layer_5 {
+/* .layer_5 {
     background-color: #558776;
     padding: 30px;
+} */
+
+body
+{
+    background-color: #558776;
 }
 
 .layer_6 {
     background-color: #A3A847;
-    padding: 30px;
+    padding: 2%;
 }
 
 .layer_7 {
     background-color: #7F8B52;
-    padding: 30px;
+    padding: 2%;
 }
 
 .layer_8 {
     background-color: #EAE2B6;
-    padding: 30px;
+    padding: 2%;
     text-align: center;
+}
+
+.button
+{
+    background-color: white;   
+    font-weight: bold;
+    border-radius: 2px;
 }
