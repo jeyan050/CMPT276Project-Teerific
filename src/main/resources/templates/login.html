@@ -12,9 +12,9 @@
             <div class="layer_7">
                 <div class="layer_8">
                     <h2>Enter your credentials to login</h2>
-                    <input type="text" placeholder="Username">
-                    <input type="password" placeholder="Password">
-                    <form method="get" action="/tee-rific/home">
+                    <form action="#" method="post" th:action="@{/tee-rific/home}" th:object="${loginUser}">
+                        <p>Username:</p><input type="text" th:field="*{username}" placeholder="Username"> <br>
+                        <p>Password:</p><input type="password" name = "password" th:field="*{password}" placeholder="Password"> <br>
                         <button type="submit" class = "button">Login</button>
                     </form>
                     <h2>Or <a th:href="@{/tee-rific/signup}">Create an Account</a> if you don't have one yet </h2>

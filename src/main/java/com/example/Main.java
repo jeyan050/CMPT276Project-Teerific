@@ -103,6 +103,8 @@ public class Main {
   path = "/tee-rific/login"
 )
 public String getLoginPage(Map<String, Object> model){
+  User user = new User();
+  model.put("loginUser", user);
   return "login";
 }//getLoginPage()
 
@@ -111,16 +113,14 @@ public String getLoginPage(Map<String, Object> model){
   path = "/tee-rific/login",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String checkLoginInfo(Map<String, Object> model){
-  boolean loginGood = true;
-  if(loginGood){
-    System.out.println("Login Successful\n");
-    return "home";
-  }
-  System.out.println("Login not valid\n");
-  return "login";
-}//checkLoginInfo()
+public String checkLoginInfo(Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+ //   int exist = stmt.executeUpdate("SELECT CASE WHEN EXISTS (SELECT * FROM users WHERE "
 
+  }
+  return "login";
+}
   //**********************
 // SIGN-UP
 //**********************
