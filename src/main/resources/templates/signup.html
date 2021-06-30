@@ -12,6 +12,7 @@
             <div class="layer_8">
                 <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
                 <h1>Sign Up</h1>
+                <h2>Represent A Golf Course?  <a th:href="@{/tee-rific/adminSignUp}">Create an Admin account</a></h2>
                 <p>Please fill in this form to create an account.</p>
                 <form onkeydown="checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
                     <p>Username:</p><input type="text" th:field="*{username}" placeholder="Username"> <br>

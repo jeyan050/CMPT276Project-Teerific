@@ -121,7 +121,7 @@ public String checkLoginInfo(Map<String, Object> model) throws Exception {
   }
   return "home";
 }
-  //**********************
+//**********************
 // SIGN-UP
 //**********************
 
@@ -184,6 +184,16 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 @GetMapping("errorSignup")
 public String redirectToErrorPage(){
   return "errorSignup";
+}
+
+//**********************
+// ADMIN SIGN-UP
+//**********************
+@GetMapping(
+  path = "/tee-rific/adminSignUp"
+)
+public String getAdminSignUpPage(){
+  return "adminSignUp";
 }
 
 //**********************
