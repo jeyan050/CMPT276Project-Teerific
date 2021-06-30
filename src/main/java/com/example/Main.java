@@ -31,6 +31,8 @@ import org.springframework.http.MediaType;
 
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -55,7 +57,7 @@ public class Main {
 
   @RequestMapping("/")
   String index() {
-    return "login";
+    return "redirect:/tee-rific/login";
   }
 
   @RequestMapping("/db")
@@ -110,14 +112,13 @@ public String getLoginPage(Map<String, Object> model){
 
 
 @PostMapping(
-  path = "/tee-rific/home",
+  path = "/tee-rific/login",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String checkLoginInfo(Map<String, Object> model) throws Exception {
+public String checkLoginInfo(Map<String, Object> model, User user) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
- //   int exist = stmt.executeUpdate("SELECT CASE WHEN EXISTS (SELECT * FROM users WHERE "
-
+    stmt.executeQuery("SELECT * FROM users WHERE username = '" + user.getUsername() + "'");
   }
   return "home";
 }
@@ -142,8 +143,14 @@ public String getSignupPage(Map<String, Object> model) {
 public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) throws Exception {
     try(Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (username varchar(30), password varchar(30), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
-      stmt.executeUpdate("INSERT INTO users (username, password, fname, lname, email, gender) VALUES ('" + user.getUsername() + "','" + user.getPassword() + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
+
+      String preEncrypt = user.getPassword();
+      byte[] bytesOfPassword = preEncrypt.getBytes(StandardCharsets.UTF_8);
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] encryptedPassword = md.digest(bytesOfPassword);
+
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+      stmt.executeUpdate("INSERT INTO users (username, password, fname, lname, email, gender) VALUES ('" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
       
       String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
       ResultSet rs = stmt.executeQuery(sql);
@@ -154,27 +161,11 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 
       if (checkCount > 1){
         System.out.println("test");
-        stmt.executeUpdate("DELETE FROM users WHERE username='"+user.getUsername() + "' and password='"+user.getPassword() + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+        stmt.executeUpdate("DELETE FROM users WHERE username='"+user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
         return "errorSignup";
       } else {
         return "success";
       }
-
-      // I dont think we need this, this is just for storing the users if we want to use them in the following html - Justin
-      // ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-      // ArrayList<User> output = new ArrayList<User>();
-      // while (rs.next()) {
-      //   User user1 = new User();
-      //   user1.setUsername(rs.getString("username"));
-      //   user1.setPassword(rs.getString("password"));
-      //   user1.setFname(rs.getString("fname"));
-      //   user1.setLname(rs.getString("lname"));
-      //   user1.setEmail(rs.getString("email"));
-      //   user1.setGender(rs.getString("gender"));
-      //   output.add(user1);
-      // }
-      // model.put("users", output);
-      // return "success";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";

@@ -13,9 +13,9 @@
                 <div class="layer_8">
                     <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
                     <h2>Enter your credentials to login</h2>
-                    <form action="#" method="post" th:action="@{/tee-rific/home}" th:object="${loginUser}">
-                        <p>Username:</p><input type="text"  name = "username" placeholder="Username"> <br>
-                        <p>Password:</p><input type="password" name = "password"  placeholder="Password"> <br>
+                    <form action="#" method="post" th:action="@{/tee-rific/login}" th:object="${loginUser}">
+                        <p>Username:</p><input type="text"  name = "username" th:field="*{username}" placeholder="Username"> <br>
+                        <p>Password:</p><input type="password" name = "password" th:field="*{password}" placeholder="Password"> <br>
                         <button type="submit" class = "button">Login</button>
                     </form>
                     <h2>Or <a th:href="@{/tee-rific/signup}">Create an Account</a> if you don't have one yet </h2>
