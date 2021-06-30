@@ -269,6 +269,18 @@ public String getScoresFromCourse(@PathVariable("course") String course){
 
 
 //**********************
+// TOURNAMENT
+//**************
+
+@GetMapping(
+  path = "/tee-rific/tournament"
+)
+public String tournament(){
+  //
+  return "tournament";
+}
+
+//**********************
 // ABOUT-US
 //**********************
 
@@ -279,6 +291,11 @@ public String aboutDevelopers(Map<String, Object> model){
   //this is optional, if you guys feel comfortable doing so, we can upload 'selfies' of our team and maybe talk about our development process
   return "aboutUs";
 }//aboutDevelopers()
+
+
+//**********************
+// LOGOUT
+//**********************
 
 @GetMapping(
   path = "/tee-rific/logout"
