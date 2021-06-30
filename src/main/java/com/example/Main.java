@@ -55,7 +55,7 @@ public class Main {
 
   @RequestMapping("/")
   String index() {
-    return "index";
+    return "login";
   }
 
   @RequestMapping("/db")
@@ -106,11 +106,11 @@ public String getLoginPage(Map<String, Object> model){
   User user = new User();
   model.put("loginUser", user);
   return "login";
-}//getLoginPage()
+}
 
 
 @PostMapping(
-  path = "/tee-rific/login",
+  path = "/tee-rific/home",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String checkLoginInfo(Map<String, Object> model) throws Exception {
@@ -119,7 +119,7 @@ public String checkLoginInfo(Map<String, Object> model) throws Exception {
  //   int exist = stmt.executeUpdate("SELECT CASE WHEN EXISTS (SELECT * FROM users WHERE "
 
   }
-  return "login";
+  return "home";
 }
   //**********************
 // SIGN-UP
