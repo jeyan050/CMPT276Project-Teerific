@@ -1,51 +1,146 @@
 /* all CSS styles here */ 
 
-
+/*******************/
+/*     COLORS      */
+/*******************/
 
 .possibleColorScheme {
-    color: #558776;
+    color: #338507;
     color: #A3A847;
     color: #7F8B52;
     color: #EAE2B6;
+}
+
+.deepGreen {
+    background-color: #338507;
+}
+
+.shrek {
+    background-color: #A3A847;
+}
+
+.army {
+    background-color: #7F8B52;
+}
+
+.sand {
+    background-color: #EAE2B6;
+}
+
+.darkGrey {
+    background-color: #333333
+}
+
+
+/********************/
+/* ATTRIBUTE STYLES */
+/********************/
+
+img {
+    width: 90%;
+}
+
+div {
+    padding: 2%;
+    text-align: center;
+}
+
+body {
+    position: relative;
+    min-height: 80vh;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 50px 0 20px;
+    color: #EAE2B6;
+    text-align: center;
+    height: 2.5rem;
+}
+
+/*******************/
+/* ID (SINGLE USE) */
+/*******************/
+
+#innerLogin {
+    margin: auto;
+    border-radius: 15px;
+}
+
+
+/**************************/
+/* CLASSES (MULTIPLE USE) */
+/**************************/
+
+.inputBox {
+    border-radius: 7px;
+    margin-bottom: 15px;
+    width: 50%;
 }
 
 .spacer {
     margin: 50px;
 }
 
-/* delete after discussing */
-
-
-/* .layer_5 {
-    background-color: #558776;
-    padding: 30px;
-    color was moved to body background
-} */
-
-body
-{
-    background-color: #558776;
-}
-
-.layer_6 {
-    background-color: #A3A847;
-    padding: 2%;
-}
-
-.layer_7 {
-    background-color: #7F8B52;
-    padding: 2%;
-}
-
-.layer_8 {
-    background-color: #EAE2B6;
-    padding: 2%;
-    text-align: center;
+.titleFont {
+    font-family: 'Akaya Kanadaka', cursive;
+    font-weight: bold;
+    background-color: #5e3e07;
+    background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
+    background-repeat: repeat;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px;
+    font-size: 5vw;
 }
 
 .button
-{
-    background-color: white;   
+{   
+    border-radius: 7px;
+    color: #EAE2B6;
+    font-family: 'Akaya Kanadaka', cursive;
     font-weight: bold;
-    border-radius: 2px;
+    font-size: 1.5rem;
+    background-color: #5e3e07;
+    background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
+    line-height: 2rem;
+    padding: 4px;
+    margin: 5px;
+    width: 40%;
 }
+
+.border{      
+    padding: 30px 8px;
+    width: 35%;
+    margin-left: auto ;
+    margin-top: 5vh;
+    margin-right: auto;
+    margin-bottom: auto;
+    border-radius: 15px;
+}
+
+.woodBackdrop {
+    background-color: #5e3e07;
+    background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
+}
+
+.grassBackdrop {
+    background-color: #3ed60b;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+}
+
+.sandBackdrop {
+    background-color: #eae2b6;
+    background-image: url("https://www.transparenttextures.com/patterns/grey-sandbag.png");
+}
+
+.socialIcon {
+    margin: 20px 10px;
+}
+
+
+
+
+
