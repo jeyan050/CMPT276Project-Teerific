@@ -234,6 +234,60 @@ public String bookingSuccessful(){
 
 
 //**********************
+// RENT EQUIPMENT
+//**********************
+@GetMapping(
+  path = "/tee-rific/rentEquipment"
+)
+public String rentEquipment(Map<String, Object> model) {
+  EquipmentCart cart = new EquipmentCart();
+  model.put("cart", cart);
+  return "rentEquipment";
+}
+
+@PostMapping(
+  path = "/tee-rific/rentEquipment",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String updateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+
+    // QUESTION: Is the app gonna handle payment as well? (Might be hard)
+    // Calculate updated values for stock
+    rs.next();                                                // Right now I have it so we have 2 columns: name(of item) varchar and stock integer 
+    int ballStock = rs.getInt("stock");                       // I assume we have 3 items: balls, carts, clubs SUBJECT TO CHANGE - Chino
+    int updatedBallStock = ballStock - cart.getNumBalls();
+    rs.next();
+    int golfCartStock = rs.getInt("stock");
+    int updatedGolfCartStock = golfCartStock - cart.getNumCarts();
+    rs.next();
+    int clubStock = rs.getInt("stock");
+    int updatedClubStock = clubStock - cart.getNumClubs();
+
+    // Update inventory table
+    stmt.executeQuery("UPDATE inventory SET stock ='"+ballStock+"' WHERE name = 'balls'");
+    stmt.executeQuery("UPDATE inventory SET stock ='"+golfCartStock+"' WHERE name = 'carts'");
+    stmt.executeQuery("UPDATE inventory SET stock ='"+clubStock+"' WHERE name = 'clubs'");
+
+    // SUGGESTION: Maybe tie the user to the 'reciept'? Like create another field in User class
+    // I'm not sure if the app is aware of who is "logged in" at this point, would appreciate clarification
+
+    // Redirect to checkout page
+    return "redirect:/tee-rific/rentEquipment/checkout";
+  }
+}
+
+@GetMapping(
+  path = "/tee-rific/rentEquipment/checkout"
+)
+public String handleCheckout() {
+  return "checkout";
+}
+
+
+//**********************
 // SCORECARD
 //**********************
 

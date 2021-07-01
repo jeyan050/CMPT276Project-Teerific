@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- badge icon for image in tab window -->
+    <link rel="icon" href="favicon.ico">                    
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Rent Equipment</title>
+</head>
+<body class="grassBackdrop">
+    <div class="woodBackdrop border">
+        <div class="sandBackdrop">
+            <div class="layer_8">
+                <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
+                Golf Course Equipment
+                <form action="#" method="post" th:action="@{/tee-rific/rentEquipment}" th:object="${cart}">
+                    <label for="num_balls">Choose quantity (balls):</label>
+                    <select name="num_balls" th:field="*{numBalls}">
+                        <option value=0>0</option>
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                    </select> <br>
+                
+                    <label for="num_carts">Choose quantity (carts):</label>
+                    <select name="num_carts" th:field="*{numCarts}">
+                        <option value=0>0</option>
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                    </select> <br>
+
+                    <label for="num_clubs">Choose quantity (clubs):</label>
+                    <select name="num_clubs" th:field="*{numClubs}">
+                        <option value=0>0</option>
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                    </select> <br>
+
+                    <button type="submit" class="button">Checkout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class= "woodBackdrop footer">
+          <i class="socialIcon fab fa-facebook-f"></i>
+          <i class="socialIcon fab fa-twitter"></i>
+          <i class="socialIcon fab fa-instagram"></i>
+          <i class="socialIcon fas fa-envelope"></i>
+          <p>© Copyright 2021 Tee-rific</p>
+        </div>
+      </footer>
+</body>
+</html>
