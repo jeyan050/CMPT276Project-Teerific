@@ -45,19 +45,13 @@ div {
     text-align: center;
 }
 
-body {
-    position: relative;
-    min-height: 80vh;
-}
-
 footer {
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    bottom: -30px;
     width: 100%;
     padding: 50px 0 20px;
     color: #EAE2B6;
     text-align: center;
-    height: 2.5rem;
 }
 
 /*******************/
@@ -77,7 +71,7 @@ footer {
 .inputBox {
     border-radius: 7px;
     margin-bottom: 15px;
-    width: 50%;
+    width: clamp(110px, 50%, 50%);
 }
 
 .spacer {
@@ -102,22 +96,22 @@ footer {
     color: #EAE2B6;
     font-family: 'Akaya Kanadaka', cursive;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 3vh;
     background-color: #5e3e07;
     background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
-    line-height: 2rem;
+    line-height: 5vh;
     padding: 4px;
     margin: 5px;
-    width: 40%;
+    width: clamp(110px, 50%, 50%);
 }
 
 .border{      
     padding: 30px 8px;
-    width: 35%;
+    width: clamp(250px, 50%, 75%);
     margin-left: auto ;
     margin-top: 5vh;
     margin-right: auto;
-    margin-bottom: auto;
+    margin-bottom: 5vh;
     border-radius: 15px;
 }
 
