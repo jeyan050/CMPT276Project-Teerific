@@ -182,7 +182,7 @@ public String redirectToErrorPage(){
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/adminSignUp"
+  path = "/tee-rific/signup/admin"
 )
 public String getAdminSignUpPage(){
   return "adminSignUp";
@@ -254,7 +254,7 @@ public String updateInventory(Map<String, Object> model, EquipmentCart cart) thr
     Statement stmt = connection.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
-    // QUESTION: Is the app gonna handle payment as well? (Might be hard)
+    // QUESTION: Is the app gonna handle payment as well? (Might be hard)    ******* NO, Bobby said not to with what we are designing -- Mike *****
     // Calculate updated values for stock
     rs.next();                                                // Right now I have it so we have 2 columns: name(of item) varchar and stock integer 
     int ballStock = rs.getInt("stock");                       // I assume we have 3 items: balls, carts, clubs SUBJECT TO CHANGE - Chino
