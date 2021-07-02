@@ -30,4 +30,5 @@ public class Hole {
     public void setHoleNumber(int f) {
         this.holeNumber = f;
     }
+
 }
