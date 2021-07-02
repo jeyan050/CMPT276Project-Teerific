@@ -23,45 +23,51 @@
 
 </head>
 <body class="grassBackdrop">
-        <div class="woodBackdrop border">
-            <div class="sandBackdrop innerContainer">
-                <div>
-                    <img th:src="@{/images/tee-rific.png}">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">New User</div>
+                    <form onkeydown="checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
+                        <input type="text"  class="inputBox" th:field="*{username}" placeholder="Username"> 
+                        <input type="password" class="inputBox" name = "password1" th:field="*{password}" placeholder="Password"> 
+                           <input type="password" class="inputBox" name = "password2" placeholder="Confirm Password"> 
+                        <input type="text" class="inputBox" th:field="*{fname}" placeholder="First Name"> 
+                        <input type="text" class="inputBox" th:field="*{lname}" placeholder="Last Name"> 
+                        <input type="text" class="inputBox" th:field="*{email}" placeholder="Email"> 
+                        <select class ="inputBox" th:field="*{gender}">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
+                        </select>
+                        <button type="submit" class="button">Create New Account</button>
+                    </form>
+                    <form method= "get" th:action="@{/tee-rific/signup/admin}">
+                        <button type="submit" class="button">Create Owner Account</button>
+                    </form>
+                    <form method= "get" th:action="@{/tee-rific/login}">
+                        <button type="submit" class="button">Sign In</button>
+                    </form>
                 </div>
-                <div class="titleFont dynamicSize">New User</div>
-                <form onkeydown="checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
-                    <input type="text"  class="inputBox" th:field="*{username}" placeholder="Username"> 
-                    <input type="password" class="inputBox" name = "password1" th:field="*{password}" placeholder="Password"> 
-                       <input type="password" class="inputBox" name = "password2" placeholder="Confirm Password"> 
-                    <input type="text" class="inputBox" th:field="*{fname}" placeholder="First Name"> 
-                    <input type="text" class="inputBox" th:field="*{lname}" placeholder="Last Name"> 
-                    <input type="text" class="inputBox" th:field="*{email}" placeholder="Email"> 
-                    <select class ="inputBox" th:field="*{gender}">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                        <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
-                    </select>
-                    <button type="submit" class="button">Create New Account</button>
-                </form>
-                <form method= "get" th:action="@{/tee-rific/signup/admin}">
-                    <button type="submit" class="button">Create Owner Account</button>
-                </form>
-                <form method= "get" th:action="@{/tee-rific/login}">
-                    <button type="submit" class="button">Sign In</button>
-                </form>
-            </div>
-         </div>
-    <!-- fixing dynamic screen size issue @MIKE -->
-         <!-- <footer> -->
-            <!-- <div class= "woodBackdrop footer">
+             </div>
+        </div>
+         <!-- fixing dynamic screen size issue @MIKE -->
+         <footer>
+            <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f"></i>
                 <i class="socialIcon fab fa-twitter"></i>
                 <i class="socialIcon fab fa-instagram"></i>
                 <i class="socialIcon fas fa-envelope"></i>
                 <p>© Copyright 2021 Tee-rific</p>
-              </div> -->
-            <!-- </footer> -->
+              </div>
+            </footer>
+    </div>
+        
+   
            
            <!-- cannot find the js file for some reason -- MIKE -->
            <!-- <script src="./static/js/signup.js"> </script> -->
