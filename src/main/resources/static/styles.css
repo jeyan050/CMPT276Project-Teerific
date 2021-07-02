@@ -71,12 +71,15 @@ div {
 /* source: https://dev.to/akshay_rajput/keep-footer-at-bottom-of-page-using-flexbox-4a6f */
 .content {
     flex-grow: 1;
+    padding: 0px;
 }
 
 .footer {
     bottom: 0px;
     width: 100%;
-    padding-top: 30px;
+    min-width: 250px;
+    padding-top: 10px;
+    padding-bottom: 5px;
     color: #EAE2B6;
     text-align: center;
 }
