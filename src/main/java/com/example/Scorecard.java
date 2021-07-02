@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.ArrayList;
+
 public class Scorecard {
     private String datePlayed;
     private String coursePlayed;
@@ -7,6 +9,7 @@ public class Scorecard {
     private String holesPlayed;
     private String formatPlayed;
     private String attestor;
+    private ArrayList groupMembers;
 
     public String getDatePlayed() {
         return this.datePlayed;
@@ -42,7 +45,11 @@ public class Scorecard {
     public String getAttestor() {
         return this.attestor;
     }
-    public void setAttestor(String f) {
-        this.attestor = f;
+    public void setAttestor(String f) { this.attestor = f; }
+
+    public ArrayList getGroupMembers() {
+        return this.groupMembers;
     }
+    public void setUsername(ArrayList f) { this.groupMembers = f; }
+
 }
