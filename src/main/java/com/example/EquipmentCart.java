@@ -1,6 +1,7 @@
 package com.example;
 
 public class EquipmentCart {
+
     private int numClubs;
     private int numCarts;
     private int numBalls;
