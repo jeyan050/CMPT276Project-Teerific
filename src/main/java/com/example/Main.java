@@ -274,9 +274,9 @@ public String updateInventory(Map<String, Object> model, EquipmentCart cart) thr
     int updatedClubStock = clubStock - cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeQuery("UPDATE inventory SET stock ='"+ballStock+"' WHERE name = 'balls'");
-    stmt.executeQuery("UPDATE inventory SET stock ='"+golfCartStock+"' WHERE name = 'carts'");
-    stmt.executeQuery("UPDATE inventory SET stock ='"+clubStock+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
 
     // SUGGESTION: Maybe tie the user to the 'reciept'? Like create another field in User class
     // I'm not sure if the app is aware of who is "logged in" at this point, would appreciate clarification
@@ -292,6 +292,58 @@ public String updateInventory(Map<String, Object> model, EquipmentCart cart) thr
 public String handleCheckout() {
   return "checkout";
 }
+
+
+
+// HELPER FUNCTIONS FOR OWNER PAGE
+public void ownerCreateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(20), stock integer DEFAULT 0)");
+    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
+    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
+    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
+
+    ownerUpdateInventory(model, cart);
+  }
+}
+
+public void ownerInsertNewItem(String nameOfItem) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('"+nameOfItem+"')");
+  }
+}
+
+public void ownerDeleteItem(String nameOfItem) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("DELETE FROM inventory WHERE name='"+nameOfItem+"'");
+  }
+}
+
+public void ownerUpdateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+
+    rs.next();                    
+    int ballStock = rs.getInt("stock");                       
+    int updatedBallStock = ballStock + cart.getNumBalls();
+    rs.next();
+    int golfCartStock = rs.getInt("stock");
+    int updatedGolfCartStock = golfCartStock + cart.getNumCarts();
+    rs.next();
+    int clubStock = rs.getInt("stock");
+    int updatedClubStock = clubStock + cart.getNumClubs();
+
+    // Update inventory table
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
+  }
+}
+
 
 
 //**********************
