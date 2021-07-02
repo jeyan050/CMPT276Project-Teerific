@@ -425,7 +425,7 @@ public String deleteUser(Map<String, Object> model, User user) throws Exception
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    // stmt.execute("DELETE FROM database containing user profiles WHERE username = " the profile the user clicked the button on)
+    // stmt.execute("DELETE FROM users WHERE username = " the profile the user clicked the button on)
     return "redirect:/tee-rific/accountDeleted";
   } catch (Exception e) {
     model.put("message", e.getMessage());
