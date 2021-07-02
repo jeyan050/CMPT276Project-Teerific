@@ -390,10 +390,50 @@ public String getScoresFromCourse(@PathVariable("course") String course){
 @GetMapping(
   path = "/tee-rific/tournament"
 )
-public String tournament(){
+public String tournament()
+{
   //
   return "tournament";
 }
+
+//**********************
+// USER ACCOUNT
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/userProfile"
+)
+public String userProfile()
+{
+  return "userProfile";
+}
+
+@GetMapping(
+  path = "/tee-rific/accountDeleted"
+)
+public String accountDeleted()
+{
+  return "accountDeleted";
+}
+
+@PostMapping( //HAS NOT BEEN TESTED
+  path = "/tee-rific/accountDeleted",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String deleteUser(Map<String, Object> model, User user) throws Exception
+{
+  try (Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    // stmt.execute("DELETE FROM database containing user profiles WHERE username = " the profile the user clicked the button on)
+    return "redirect:/tee-rific/accountDeleted";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+
 
 //**********************
 // ABOUT-US

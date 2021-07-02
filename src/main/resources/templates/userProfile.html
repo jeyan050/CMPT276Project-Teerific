@@ -12,15 +12,15 @@
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                Edit Profile
-                <form action="#" method="post" th:action="@{/editUser}" th:object="${user}">
+                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/> <br>
+                Does not work yet
+                <form action="#" method="post" th:action="@{/tee-rific/editUser}" th:object="${user}">
                     <input type="submit" class = "button"  value="Edit My Account"> <br>
-                </form>
-                <h2>Delete Account</h2>            
-                    <!-- display a pop up asking the user if they are sure -->
-                <form action="#" method="post" th:action="@{/deleteUser}" th:object="${user}">
+                </form>         
+                    
+                <form action="#" method="post" th:action="@{/tee-rific/accountDeleted}" th:object="${user}">
                     <input type="submit" class = "button"  value="Delete My Account"> <br>
+                    <!-- display a pop up asking the user if they are sure -->
                 </form>
                 <form method="get" action="/tee-rific/home">
                     <button type="submit" class = "button">Back to Home Page</button>
