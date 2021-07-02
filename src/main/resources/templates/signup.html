@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="UTF-8">
     <title>Sign-Up</title>
@@ -29,13 +28,16 @@
                     <img th:src="@{/images/tee-rific.png}">
                 </div>
                 <div class="titleFont dynamicSize">New User</div>
-                <form onkeydown="checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
-                    <input type="text"  class="inputBox" th:field="*{username}" placeholder="Username"> 
-                    <input type="password" class="inputBox" name = "password1" th:field="*{password}" placeholder="Password"> 
-                       <input type="password" class="inputBox" name = "password2" placeholder="Confirm Password"> 
-                    <input type="text" class="inputBox" th:field="*{fname}" placeholder="First Name"> 
-                    <input type="text" class="inputBox" th:field="*{lname}" placeholder="Last Name"> 
-                    <input type="text" class="inputBox" th:field="*{email}" placeholder="Email"> 
+                <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
+                    <input type="text" class="inputBox" id="username" th:field="*{username}" placeholder="Username">
+                        <div th:each="errorText : ${usernameError}">
+                            <p id="errorU" th:text="${errorText}"></p>
+                        </div>
+                    <input type="password" class="inputBox" id="passw1" name = "password1" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
+                    <input type="password" class="inputBox" id="passw2" name = "password2" placeholder="Confirm Password"><p id="errorP2"></p>
+                    <input type="text" class="inputBox" id="firstN" th:field="*{fname}" placeholder="First Name"><p id="errorF"></p>
+                    <input type="text" class="inputBox" id="lastN" th:field="*{lname}" placeholder="Last Name"><p id="errorL"></p>
+                    <input type="text" class="inputBox" id="email" th:field="*{email}" placeholder="Email"><p id="errorE"></p>
                     <select class ="inputBox" th:field="*{gender}">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -66,4 +68,5 @@
            <!-- cannot find the js file for some reason -- MIKE -->
            <!-- <script src="./static/js/signup.js"> </script> -->
 </body>
+<script src="/js/signup.js" type="text/javascript"> </script>
 </html>
