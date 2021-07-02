@@ -14,10 +14,25 @@
             <div class="layer_8">
                 <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
                 <h1>Create Tournament</h1>
-                <form action="#" method="post" th:action="@{/createTournament}" th:object="${tournament}">
-                    Tournament Name = <input type="text" th:field=*{name}> <br>
+                <!-- <form action="#" method="post" th:action="@{/tee-rific/createTournament}" th:object="${newTournament}">
+                    <input type="text" class="inputBox" th:field="*{name}" placeholder="Tournament Name"> <br>
+                    <input type="number" class="inputBox" th:field="*{participant_slots}" placeholder="Participant Slots"> <br>
+                    $<input type="text" class="inputBox" th:field="*{buyIn}" placeholder="Buy In Price"> (optional) <br>
+                    <input type="text" class="inputBox" th:field="*{first_prize}" placeholder="First Place Prize"> (optional)<br>
+                    <input type="text" class="inputBox" th:field="*{second_prize}" placeholder="Second Place Prize"> (optional)<br>
+                    <input type="text" class="inputBox" th:field="*{third_prize}" placeholder="Third Place Prize"> (optional)<br>
+                    <select class ="inputbox" th:field="*{game_mode}">
+                        <option value ="individual par points">Individual Par Points</option>
+                        <option value = "hidden partner par points">Hidden Partner Par Points</option>
+                        <option value = "individual best net">Individual Best Net</option>
+                        <option value = "hidden partner best net">Hidden Partner Best Net</option>
+                        <option value = "hidden partner odds and evens">Hidden Partner Odds and Evens</option>
+                        <option value = "scramble">Scramble</option>
+                        <option value = "skins">Skins</option>
+                        <option value = "best ball">Best Ball</option>
+                    </select> <br>
                     <input type="submit" class = "button" value="Create Tournament">
-                </form>
+                </form> -->
             </div>
         </div>
      </div>

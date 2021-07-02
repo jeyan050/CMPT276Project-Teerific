@@ -392,10 +392,42 @@ public String getScoresFromCourse(@PathVariable("course") String course){
 )
 public String tournament()
 {
-  //
   return "tournament";
 }
 
+@GetMapping(
+  path = "/tee-rific/avalableTournaments"
+)
+public String avalableTournaments()
+{
+  return "avalableTournaments";
+}
+
+@GetMapping(
+  path = "/tee-rific/createTournament"
+)
+public String createTournament(Map<String, Object> model)
+{
+  Tournament tournament = new Tournament();
+  model.put("newTournament", tournament);
+  return "createTournament";
+}
+
+@GetMapping(
+  path = "/tee-rific/tournamentDelete"
+)
+public String deleteTournament()
+{
+  return "tournamentDelete";
+}
+
+@GetMapping(
+  path = "/tee-rific/tournamentSignUp"
+)
+public String tournamentSignUp()
+{
+  return "tournamentSignUp";
+}
 //**********************
 // USER ACCOUNT
 //**********************
@@ -425,7 +457,7 @@ public String deleteUser(Map<String, Object> model, User user) throws Exception
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    // stmt.execute("DELETE FROM users WHERE username = " the profile the user clicked the button on)
+    // stmt.execute("DELETE FROM users WHERE username = " user)
     return "redirect:/tee-rific/accountDeleted";
   } catch (Exception e) {
     model.put("message", e.getMessage());

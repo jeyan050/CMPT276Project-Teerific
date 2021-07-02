@@ -5,9 +5,9 @@ public class Tournament {
     private String name;
     private Integer participant_slots;
     private Integer buyIn;
-    private Integer first_prize;
-    private Integer second_prize;
-    private Integer third_prize;
+    private String first_prize;
+    private String second_prize;
+    private String third_prize;
     private Integer age_requirement;
     private String game_mode;
     private String club_name; 
@@ -42,15 +42,15 @@ public class Tournament {
     {
         return this.buyIn;
     }
-    public Integer first_prize()
+    public String first_prize()
     {
         return this.first_prize;
     }
-    public Integer second_prize()
+    public String second_prize()
     {
         return this.second_prize;
     }
-    public Integer third_prize()
+    public String third_prize()
     {
         return this.third_prize;
     }
@@ -85,15 +85,15 @@ public class Tournament {
     {
         this.buyIn = buy;
     }
-    public void set_first_prize(Integer firstP)
+    public void set_first_prize(String firstP)
     {
         this.first_prize = firstP;
     }
-    public void set_second_prize(Integer secondP)
+    public void set_second_prize(String secondP)
     {
         this.second_prize = secondP;
     }
-    public void set_third_prize(Integer thirdP)
+    public void set_third_prize(String thirdP)
     {
         this.third_prize = thirdP;
     }
