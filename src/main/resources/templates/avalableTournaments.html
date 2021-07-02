@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avalable Tournaments</title>
+</head>
+<body>
+    <div class="layer_6">
+        <div class="layer_7">
+            <div class="layer_8">
+                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
+                <h1>Avalable Tournaments</h1>
+                <table>
+                    <thead>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <!-- other stuff -->
+                    </thead>
+                    <tr th:each="tournament : ${tournaments}">
+                        <td> <a th:text="${tournament.name}" th:href="@{/viewTournament/{tid}(tid=${tournament.id})}"> </a></td>
+                        <td th:text="${tournament.name}"></td>
+                        <!-- link to the tournament, not sure if it should be via button or clicking on the name -->
+                    </tr>
+                </table>
+                <form method="get" action="/tee-rific/home">
+                    <button type="submit" class = "button">Go to the Home Page</button>
+                </form>
+            </div>
+        </div>
+     </div>
+</body>
+</html>
