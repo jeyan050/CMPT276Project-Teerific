@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Tournament</title>
+</head>
+<body>
+    <div class="layer_6">
+        <div class="layer_7">
+            <div class="layer_8">
+                <h1><span th:text="${name}"></span></h1>
+                <!-- display date -->
+                <form method="get" action="/tee-rific/tournamentSignUp">
+                    <button type="submit" class = "button">Sign Up</button>
+                </form>
+                <!-- if admin AND created the tournament -->
+                <form method="get" action="/tee-rific/tournamentDelete">
+                    <button type="submit" class = "button">Delete Tournament</button>
+                </form>
+                <form method="get" action="/tee-rific/avalableTournaments">
+                    <button type="submit" class = "button">Go Back</button>
+                </form>
+            </div>
+        </div>
+     </div>
+</body>
+</html>
