@@ -13,7 +13,7 @@ public class CourseOwner {
     private String phoneNumber;
     private String website;
     private String numHoles;
-    private String courseYardage;
+    private String yardage;
     private String courseName;
     private Image courseLogo;
     private String directionsToCourse;
@@ -36,6 +36,7 @@ public class CourseOwner {
         this.password = f;
     }
 
+
     public String getFname() {
         return this.fname;
     }
@@ -43,12 +44,14 @@ public class CourseOwner {
         this.fname = f;
     }
 
+
     public String getLname() {
         return this.lname;
     }
     public void setLname(String f) {
         this.lname = f;
     }
+
 
     public String getEmail() {
         return this.email;
@@ -86,10 +89,10 @@ public class CourseOwner {
     }
 
     public String getYardage() {
-        return this.courseYardage;
+        return this.yardage;
     }
     public void setYardage(String f) {
-        this.courseYardage = f;
+        this.yardage = f;
     }
 
     public String getCourseName() {
@@ -133,5 +136,6 @@ public class CourseOwner {
     public void setWeekendRates(String f) {
         this.weekendRates = f;
     }
+
 
 }
