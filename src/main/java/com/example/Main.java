@@ -200,11 +200,6 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
     }
 }
 
-@GetMapping("errorSignup")
-public String redirectToErrorPage(){
-  return "errorSignup";
-}
-
 //**********************
 // ADMIN SIGN-UP
 //**********************

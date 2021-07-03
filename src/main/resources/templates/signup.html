@@ -38,8 +38,8 @@
                             <div th:each="errorText : ${usernameError}">
                                 <p id="errorU" th:text="${errorText}"></p>
                             </div>
-                        <input type="password" class="inputBox" id="passw1" name = "password1" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
-                        <input type="password" class="inputBox" id="passw2" name = "password2" placeholder="Confirm Password"><p id="errorP2"></p>
+                        <input type="password" class="inputBox" id="passw1" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
+                        <input type="password" class="inputBox" id="passw2" placeholder="Confirm Password"><p id="errorP2"></p>
                         <input type="text" class="inputBox" id="firstN" th:field="*{fname}" placeholder="First Name"><p id="errorF"></p>
                         <input type="text" class="inputBox" id="lastN" th:field="*{lname}" placeholder="Last Name"><p id="errorL"></p>
                         <input type="text" class="inputBox" id="email" th:field="*{email}" placeholder="Email"><p id="errorE"></p>
