@@ -3,26 +3,15 @@ package com.example;
 public class Tournament {
     private Integer id;
     private String name;
-    private Integer participant_slots;
+    private Integer participantSlots;
     private Integer buyIn;
-    private String first_prize;
-    private String second_prize;
-    private String third_prize;
-    private Integer age_requirement;
-    private String game_mode;
-    private String club_name; 
+    private String firstPrize;
+    private String secondPrize;
+    private String thirdPrize;
+    private Integer ageRequirement;
+    private String gameMode;
+    private String clubName; 
     // date, I think I can import a date package
-    
-
-// individual par points
-// hidden partner par points
-// individual best net
-// hidden partner best net
-// hidden partner odds and evens
-// scramble
-// skins
-// best ball
-
 
 //getters
 
@@ -34,37 +23,37 @@ public class Tournament {
     {
         return this.name;
     }
-    public Integer participant_slots()
+    public Integer getParticipantSlots()
     {
-        return this.participant_slots;
+        return this.participantSlots;
     }
-    public Integer buyIn()
+    public Integer getBuyIn()
     {
         return this.buyIn;
     }
-    public String first_prize()
+    public String getFirstPrize()
     {
-        return this.first_prize;
+        return this.firstPrize;
     }
-    public String second_prize()
+    public String getSecondPrize()
     {
-        return this.second_prize;
+        return this.secondPrize;
     }
-    public String third_prize()
+    public String getThirdPrize()
     {
-        return this.third_prize;
+        return this.thirdPrize;
     }
-    public Integer age_requirement()
+    public Integer getAgeRequirement()
     {
-        return this.age_requirement;
+        return this.ageRequirement;
     }
-    public String game_mode()
+    public String getGameMode()
     {
-        return this.game_mode;
+        return this.gameMode;
     }
-    public String club_name()
+    public String getClubName()
     {
-        return this.club_name;
+        return this.clubName;
     }
 
 //setters
@@ -77,36 +66,36 @@ public class Tournament {
     {
         this.name = n;
     }
-    public void set_participant_slots(Integer num_participant)
+    public void setParticipantSlots(Integer num_participant)
     {
-        this.participant_slots = num_participant;
+        this.participantSlots = num_participant;
     }
-    public void set_buyIn(Integer buy)
+    public void setBuyIn(Integer buy)
     {
         this.buyIn = buy;
     }
-    public void set_first_prize(String firstP)
+    public void setFirstPrize(String firstP)
     {
-        this.first_prize = firstP;
+        this.firstPrize = firstP;
     }
-    public void set_second_prize(String secondP)
+    public void setSecondPrize(String secondP)
     {
-        this.second_prize = secondP;
+        this.secondPrize = secondP;
     }
-    public void set_third_prize(String thirdP)
+    public void setThirdPrize(String thirdP)
     {
-        this.third_prize = thirdP;
+        this.thirdPrize = thirdP;
     }
-    public void set_age_requirement(Integer reqAge)
+    public void setAgeRequirement(Integer reqAge)
     {
-        this.age_requirement = reqAge;
+        this.ageRequirement = reqAge;
     }
-    public void set_game_mode(String mode)
+    public void setGameMode(String mode)
     {
-        this.game_mode = mode;
+        this.gameMode = mode;
     }
-    public void set_club_name(String clubName)
+    public void setClubName(String clubName)
     {
-        this.club_name = clubName;
+        this.clubName = clubName;
     }
 }

@@ -434,6 +434,26 @@ public String createTournament(Map<String, Object> model)
   return "createTournament";
 }
 
+@PostMapping(
+  path = "/tee-rific/createTournament",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String handleTournamentCreation(Map<String, Object> model, Tournament tournament) throws Exception
+{
+  try (Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    // stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(50), participant_slots varchar(10), buy_in varchar(10), first_prize varchar(30), second_prize varchar(30), third_prize varchar(30), age_requirement varchar(3), game_mode varchar(30), club_name varchar(50))");
+    // String sql = "INSERT INTO tournaments (name, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')";
+    // stmt.executeUpdate(sql);
+    return "redirect:/tee-rific/avalableTournaments";
+  } catch (Exception e) 
+  {
+    model.put("message", e.getMessage());
+    return "error"; 
+  }
+}
+
 @GetMapping(
   path = "/tee-rific/tournamentDelete"
 )
