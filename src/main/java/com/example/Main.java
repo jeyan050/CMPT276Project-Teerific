@@ -96,10 +96,11 @@ public class Main {
 // TEE-RIFIC CODE STARTS HERE
 //************************************
 
-
 //**********************
 // LOGIN
 //**********************
+
+boolean failedLogin = false;
 
 @GetMapping(
   path = "/tee-rific/login"
@@ -107,6 +108,11 @@ public class Main {
 public String getLoginPage(Map<String, Object> model){
   User user = new User();
   model.put("loginUser", user);
+  if (failedLogin == true){
+    String error = "Error: Username/Password Doesn't match/exist";
+    model.put("failedLogin", error); 
+    failedLogin = false;
+  }
   return "login";
 }
 
@@ -118,9 +124,24 @@ public String getLoginPage(Map<String, Object> model){
 public String checkLoginInfo(Map<String, Object> model, User user) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
-    stmt.executeQuery("SELECT * FROM users WHERE username = '" + user.getUsername() + "'");
+    String sql = "SELECT * FROM users WHERE username = '" + user.getUsername() + "'";
+    ResultSet rs = stmt.executeQuery(sql);
+
+    int checkIfUserExists = 0;
+    String checkPassword = "";
+    while (rs.next()){
+      checkIfUserExists++;
+      checkPassword = rs.getString("password");
+    }
+    if (checkIfUserExists > 0 && (user.getPassword().equals(checkPassword))){
+      return "home";
+    }
+    failedLogin = true;
+    return "redirect:/tee-rific/login";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
   }
-  return "home";
 }
 //**********************
 // SIGN-UP

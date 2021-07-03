@@ -34,6 +34,9 @@
                     <form action="#" method="post" th:action="@{/tee-rific/login}" th:object="${loginUser}">
                         <input class="inputBox" type="text"  name="username" th:field="*{username}" placeholder="Username"> 
                         <input class="inputBox" type="password" name="password" th:field="*{password}" placeholder="Password">
+                        <div th:each="errorText : ${failedLogin}">
+                            <p id="errorU" th:text="${errorText}"></p>
+                        </div>
                         <button type="submit" class="button">Login</button>
                     </form>
                     <form method= "get" action="/tee-rific/signup">
