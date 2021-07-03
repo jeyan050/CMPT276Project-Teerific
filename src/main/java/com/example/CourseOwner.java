@@ -1,6 +1,7 @@
 package com.example;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CourseOwner {
 
@@ -13,6 +14,7 @@ public class CourseOwner {
     private String phoneNumber;
     private String website;
     private String numHoles;
+    private ArrayList<Hole> holes;
     private String yardage;
     private String courseName;
     private Image courseLogo;
@@ -35,7 +37,6 @@ public class CourseOwner {
     public void setPassword(String f) {
         this.password = f;
     }
-
 
     public String getFname() {
         return this.fname;
@@ -86,6 +87,14 @@ public class CourseOwner {
     }
     public void setNumHoles(String f) {
         this.numHoles = f;
+    }
+
+    public ArrayList<Hole> getHoles() {
+        return this.holes;
+    }
+
+    public void setHoles(ArrayList<Hole> listOfUpdatedHoles){
+        this.holes = listOfUpdatedHoles;
     }
 
     public String getYardage() {

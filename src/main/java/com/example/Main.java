@@ -96,6 +96,8 @@ public class Main {
 // TEE-RIFIC CODE STARTS HERE
 //************************************
 
+String[] priorities = {"GOLFER", "OWNER", "ADMIN"};
+
 //**********************
 // LOGIN
 //**********************
@@ -133,7 +135,7 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
       checkIfUserExists++;
       checkPassword = rs.getString("password");
     }
-    if (checkIfUserExists > 0 && (user.getPassword().equals(checkPassword))){
+    if (checkIfUserExists > 0 && (user.getPassword().equals(checkPassword))){     // I do not think this will ever be true, I think its comparing our encrypted password with the input which are not the same -Mike
       return "home";
     }
     failedLogin = true;
@@ -177,8 +179,10 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
       MessageDigest md = MessageDigest.getInstance("MD5");
       byte[] encryptedPassword = md.digest(bytesOfPassword);
 
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
-      stmt.executeUpdate("INSERT INTO users (username, password, fname, lname, email, gender) VALUES ('" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
+      user.setPriority(priorities[0]);      //sets the priority of the user to 'GOLFER'
+
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+      stmt.executeUpdate("INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
       
       String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
       ResultSet rs = stmt.executeQuery(sql);
@@ -188,7 +192,7 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
       }
 
       if (checkCount > 1){
-        stmt.executeUpdate("DELETE FROM users WHERE username='"+user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
         usernameError = true;
         return "redirect:/tee-rific/signup";
       } else {
@@ -201,14 +205,14 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 }
 
 //**********************
-// ADMIN SIGN-UP
+// OWNER SIGN-UP
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/signup/admin"
+  path = "/tee-rific/signup/Owner"
 )
 public String getAdminSignUpPage(){
-  return "adminSignUp";
+  return "ownerSignUp";
 }
 
 //**********************

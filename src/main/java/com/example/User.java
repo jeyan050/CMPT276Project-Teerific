@@ -1,7 +1,8 @@
 package com.example;
 
 public class User {
-
+    
+    private String priorityLevel;
     private String username;
     private String password;
     private String fname;
@@ -9,6 +10,13 @@ public class User {
     private String email;
     private String gender;
 
+    public String getPriority(){
+        return this.priorityLevel;
+    }
+
+    public void setPriority(String priorityLevel){
+        this.priorityLevel = priorityLevel;
+    }
 
     public String getUsername() {
         return this.username;
