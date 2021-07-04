@@ -196,7 +196,7 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
         usernameError = true;
         return "redirect:/tee-rific/signup";
       } else {
-        return "success";
+        return "success";     
       }
     } catch (Exception e) {
       model.put("message", e.getMessage());
@@ -211,9 +211,162 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 @GetMapping(
   path = "/tee-rific/signup/Owner"
 )
-public String getAdminSignUpPage(){
+public String getOwnerSignUpPage(Map<String, Object> model){
+  CourseOwner owner = new CourseOwner();
+  model.put("newOwner", owner);
+
+  //TODO: username error handling here
+
   return "ownerSignUp";
 }
+
+@PostMapping(
+  path = "/tee-rific/signup/Owner",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner owner){
+  //create a new user, owner, golfcourse, then add to database
+
+  try(Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+
+    String preEncrypt = owner.getPassword();
+    byte[] bytesOfPassword = preEncrypt.getBytes(StandardCharsets.UTF_8);
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    byte[] encryptedPW = md.digest(bytesOfPassword);
+
+
+    //TODO: will need to figure out way to store image into sql later - Mike
+
+    owner.setNumHoles(18);
+    String ownerInfo = getSQLNewTableOwner();
+    String insertOwners = getSQLInsertOwner(owner, encryptedPW);
+
+
+    //add user to database
+    stmt.executeUpdate(ownerInfo);
+    stmt.executeUpdate(insertOwners);
+    
+    
+    //snake case the course name 
+    /* 'THIS IS BETTER THAN CAMAL CASE' for this situation:  
+        - cannot have spaces in name or else it breaks the SQL query
+        - snake case works best as it makes for easy conversion back to orginal formate
+        - camel case is disregarded by the SQL, implying no way of knowing where to split the words to convert back to original format */
+    String updatedCourseName = convertToSnakeCase(owner.getCourseName());
+    String courseInfo = "CREATE TABLE IF NOT EXISTS " + updatedCourseName + "(holeNumber integer, yardage integer, par integer, handicap integer)";
+    stmt.executeUpdate(courseInfo);
+
+
+    //initializes a table to keep track of the course hole details
+    for(int i = 0; i < owner.getNumHoles(); i++){
+      String insertHole = "INSERT INTO " + updatedCourseName + "(" + "holeNumber, yardage, par, handicap) VALUES (' " + (i + 1) + "', '0', '0', '0')";
+      stmt.executeUpdate(insertHole);
+    }
+
+    //add to user table
+    String userInfo = getSQLNewTableUsers();
+              
+    
+    //create a user based on owner fields
+    User user = new User();
+    user.setPriority(priorities[1]);
+    user.setUsername(owner.getUsername());
+    user.setPassword(owner.getPassword());
+    user.setFname(owner.getFname());
+    user.setLname(owner.getLname());
+    user.setEmail(owner.getEmail());
+    user.setGender(owner.getGender());
+
+    String insertUser = getSQLInsertUser(user, encryptedPW);
+       
+    stmt.executeUpdate(userInfo);
+    stmt.executeUpdate(insertUser);
+
+    // String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
+    // ResultSet rs = stmt.executeQuery(sql);
+    // int checkCount = 0;
+    // while (rs.next()){
+    //   checkCount++;
+    // }
+
+    // if (checkCount > 1){
+    //   stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+    //   usernameError = true;
+    //   return "redirect:/tee-rific/signup/Owner";
+    // } else {
+      return "ownerCreated";     
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+}
+
+
+//helper
+String getSQLNewTableOwner() {
+  return  "CREATE TABLE IF NOT EXISTS owners (" +
+          "courseName varchar(100), address varchar(50), city varchar(30), country varchar(40), website varchar(150), phoneNumber varchar(15), " + 
+          "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
+          "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(10), weekendRates varchar(10), numHoles integer, " + 
+          "userName varchar(50), password varchar(100),firstName varchar(50),lastName varchar(50),email varchar(75),yardage varchar(20),gender varchar(20))";
+}
+
+
+//helper 
+String getSQLInsertOwner(CourseOwner owner, byte[] secretPW){
+
+  return "INSERT INTO owners ( " + 
+          "courseName, address, city, country, website, phoneNumber, courseLogo, " +
+          "directionsToCourse, description, weekdayRates, weekendRates, numHoles, " +
+          "userName, password, firstName, lastName, email, yardage, gender) VALUES ('" +
+          owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" + 
+          owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +  
+          owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" + 
+          owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + 
+          owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" + 
+          owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "')";
+}
+
+
+//helper
+String getSQLNewTableUsers(){
+  return "CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))";
+}
+
+
+//helper
+String getSQLInsertUser(User user, byte[] secretPW){
+
+  return "INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + secretPW + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')";
+}
+
+
+String convertToSnakeCase(String toConvert){
+  String updated = "";
+  for(int i = 0; i < toConvert.length(); i++){
+    if(toConvert.charAt(i) == ' '){
+      updated += '_';
+    }else{
+      updated += toConvert.charAt(i);
+    }
+  }
+  return updated;
+}
+
+
+String convertFromSnakeCase(String toConvert){
+  String updated = "";
+  for(int i = 0; i < toConvert.length(); i++){
+    if(toConvert.charAt(i) == '_'){
+      updated += ' ';
+    }else{
+      updated += toConvert.charAt(i);
+    }
+  }
+  return updated;
+}
+
 
 //**********************
 // HOME PAGE
@@ -225,6 +378,39 @@ public String getAdminSignUpPage(){
 public String getHomePage(Map<String, Object> model){
   return "home";
 }//getHomePage()
+
+@GetMapping(
+  path = "/tee-rific/ownerHome"
+)
+public String getOwnerHomePage(Map<String, Object> model){
+  return "ownerHome";
+}
+
+//**********************
+// MODIFY ACCOUNT
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/editOwnerAccount"
+)
+public String getEditOwnerAccountPage(){
+  return "editAccountOwner";
+}
+
+//TODO: add a method to update the desired information
+
+//**********************
+// MODIFY COURSE DETAILS
+//**********************
+
+@GetMapping(
+  path = "/tee-rific/golfCourseDetails"
+)
+public String getCourseDetails(){
+  return "golfCourseDetails";
+}
+
+//TODO: add a method to modify the golf course details
 
 
 //**********************

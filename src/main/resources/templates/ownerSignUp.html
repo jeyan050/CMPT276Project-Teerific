@@ -27,9 +27,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Sign-Up</title>
-
-    <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+    <title>Owner Sign-Up</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 
@@ -55,43 +53,31 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">New Owner User</div>
-                    <!-- <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/admin}" th:object="${newUser}"> -->
-                        <h3>Business/Company Details</h3>
-                        <input type="text" class="inputBox" placeholder="Business/Company Name">
-                        <input type="number" class="inputBox" placeholder="Company Phone Number">
-                        <input type="text" class="inputBox" placeholder="Company Email">
-                        <input type="number" class="inputBox" placeholder="# of Golf Courses">
-                       
-                        <h3>User Details</h3>
-                        <input type="text" class="inputBox" placeholder="Username">
-                        <input type="password" class="inputBox" placeholder="Password">
+                    <!-- <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/owner}" th:object="${newOwner}"></form> -->
+                    <form action="#" method="post" th:action="@{/tee-rific/signup/Owner}" th:object="${newOwner}">
+                    
+                        <h3>Course Details</h3>
+                        <input type="text" class="inputBox" th:field="*{courseName}" placeholder="Course Name">
+                        <input type="text" class="inputBox" th:field="*{address}" placeholder="Address">
+                        <input type="text" class="inputBox" th:field="*{city}" placeholder="City">
+                        <input type="text" class="inputBox" th:field="*{country}" placeholder="Country">
+                         
+                        <h3>Account Details</h3>
+                        <input type="text" class="inputBox" th:field="*{username}" placeholder="Username">
+                        <input type="password" class="inputBox" th:field="*{password}" placeholder="Password">
                         <input type="password" class="inputBox" placeholder="Confirm Password">
-                        <input type="text" class="inputBox" placeholder="First Name">
-                        <input type="text" class="inputBox" placeholder="Last Name">
-                        <input type="text" class="inputBox" placeholder="Owner/Manager Email">
-                        <select class ="inputBox">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                            <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
-                        </select><br> 
-                        <!-- <input type="text" class="inputBox" id="username" th:field="*{username}" placeholder="Username">
-                            <div th:each="errorText : ${usernameError}">
-                                <p id="errorU" th:text="${errorText}"></p>
-                            </div>                        
-                        <input type="password" class="inputBox" id="passw1" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
-                        <input type="password" class="inputBox" id="passw2" placeholder="Confirm Password"><p id="errorP2"></p>
-                        <input type="text" class="inputBox" id="firstN" th:field="*{fname}" placeholder="First Name"><p id="errorF"></p>
-                        <input type="text" class="inputBox" id="lastN" th:field="*{lname}" placeholder="Last Name"><p id="errorL"></p>
-                        <input type="text" class="inputBox" id="email" th:field="*{email}" placeholder="Owner/Manager Email"><p id="errorE"></p>
+                        <input type="text" class="inputBox" th:field="*{fname}" placeholder="First Name">
+                        <input type="text" class="inputBox" th:field="*{lname}" placeholder="Last Name">
+                        <input type="text" class="inputBox" th:field="*{email}" placeholder="Email">
                         <select class ="inputBox" th:field="*{gender}">
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                             <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
-                        </select><br>                         -->
-                        <button type="submit" class="button">Create New Account</button>
-                    <!-- </form> -->
+                        </select>
+
+                        <button type="submit" class="button">Create New Owner</button>
+                    </form>
                     <form method= "get" th:action="@{/tee-rific/login}">
                         <button type="submit" class="button">Sign In</button>
                     </form>

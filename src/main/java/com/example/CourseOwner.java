@@ -11,17 +11,20 @@ public class CourseOwner {
     private String lname;
     private String email;
     private String address;
+    private String city;
+    private String country;
     private String phoneNumber;
     private String website;
-    private String numHoles;
+    private int numHoles;
     private ArrayList<Hole> holes;
     private String yardage;
     private String courseName;
-    private Image courseLogo;
+    private String courseLogo;          //need to figure this out later
     private String directionsToCourse;
     private String description;
     private String weekdayRates;
     private String weekendRates;
+    private String gender;
 
 
     public String getUsername() {
@@ -68,6 +71,22 @@ public class CourseOwner {
         this.address = f;
     }
 
+    public String getCity(){
+        return this.city;
+    }
+
+    public void setCity(String city){
+        this.city = city;
+    }
+
+    public String getCountry(){
+        return this.country;
+    }
+
+    public void setCountry(String country){
+        this.country = country;
+    }
+
     public String getPhoneNumber() {
         return this.phoneNumber;
     }
@@ -82,10 +101,10 @@ public class CourseOwner {
         this.website = f;
     }
 
-    public String getNumHoles() {
+    public int getNumHoles() {
         return this.numHoles;
     }
-    public void setNumHoles(String f) {
+    public void setNumHoles(int f) {
         this.numHoles = f;
     }
 
@@ -111,10 +130,10 @@ public class CourseOwner {
         this.courseName = f;
     }
 
-    public Image getCourseLogo() {
+    public String getCourseLogo() {                 //Will need to figure out how to store an image in SQL, then this can be changed to an image
         return this.courseLogo;
     }
-    public void setCourseLogo(Image f) {
+    public void setCourseLogo(String f) {           //Will need to figure out how to store an image in SQL, then this can be changed to an image
         this.courseLogo = f;
     }
 
@@ -146,5 +165,12 @@ public class CourseOwner {
         this.weekendRates = f;
     }
 
+    public String getGender(){
+        return this.gender;
+    }
+
+    public void setGender(String gender){
+        this.gender = gender;
+    }
 
 }
