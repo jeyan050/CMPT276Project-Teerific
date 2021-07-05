@@ -126,6 +126,7 @@ public String getLoginPage(Map<String, Object> model){
 public String checkLoginInfo(Map<String, Object> model, User user) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
     String sql = "SELECT * FROM users WHERE username = '" + user.getUsername() + "'";
     ResultSet rs = stmt.executeQuery(sql);
 
