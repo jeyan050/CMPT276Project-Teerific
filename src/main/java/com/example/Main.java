@@ -126,6 +126,7 @@ public String getLoginPage(Map<String, Object> model){
 public String checkLoginInfo(Map<String, Object> model, User user) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
     String sql = "SELECT * FROM users WHERE username = '" + user.getUsername() + "'";
     ResultSet rs = stmt.executeQuery(sql);
 
@@ -134,8 +135,13 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
     while (rs.next()){
       checkIfUserExists++;
       checkPassword = rs.getString("password");
+
+      String encryptedPassword = BCrypt.hashpw(checkPassword, BCrypt.gensalt());
+
     }
-    if (checkIfUserExists > 0 && (user.getPassword().equals(checkPassword))){     // I do not think this will ever be true, I think its comparing our encrypted password with the input which are not the same -Mike
+    System.out.println(checkPassword);
+    System.out.println(user.getPassword());
+    if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))){
       return "home";
     }
     failedLogin = true;
@@ -174,10 +180,7 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
     try(Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
 
-      String preEncrypt = user.getPassword();
-      byte[] bytesOfPassword = preEncrypt.getBytes(StandardCharsets.UTF_8);
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      byte[] encryptedPassword = md.digest(bytesOfPassword);
+      String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
       user.setPriority(priorities[0]);      //sets the priority of the user to 'GOLFER'
 
@@ -430,8 +433,8 @@ public String getBookingPage(){
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String updateSchedule(){
-  boolean validApppointment = true;
-  if(validApppointment){
+  boolean validAppointment = true;
+  if(validAppointment){
     return "redirect:/tee-rific/bookingSuccessful";
   }
   return "booking";
