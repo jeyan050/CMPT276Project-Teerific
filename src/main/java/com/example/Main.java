@@ -132,17 +132,26 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
 
     int checkIfUserExists = 0;
     String checkPassword = "";
+    String priority = "";
     while (rs.next()){
       checkIfUserExists++;
       checkPassword = rs.getString("password");
+      priority = rs.getString("priority");
 
       String encryptedPassword = BCrypt.hashpw(checkPassword, BCrypt.gensalt());
 
     }
     System.out.println(checkPassword);
     System.out.println(user.getPassword());
+    
     if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))){
-      return "home";
+      if(priority.equals(priorities[0])){           //golferAccount
+        return "home";
+      }else if(priority.equals(priorities[1])){     //ownerAccount
+        return "ownerHome";
+      }else{                                        //adminAccount
+        return "adminHome";
+      } 
     }
     failedLogin = true;
     return "redirect:/tee-rific/login";
@@ -233,17 +242,16 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
   try(Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
 
-    String preEncrypt = owner.getPassword();
-    byte[] bytesOfPassword = preEncrypt.getBytes(StandardCharsets.UTF_8);
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    byte[] encryptedPW = md.digest(bytesOfPassword);
+    //TODO: fix password encrypt
+
+    String encryptedPassword = BCrypt.hashpw(owner.getPassword(), BCrypt.gensalt());
 
 
     //TODO: will need to figure out way to store image into sql later - Mike
 
     owner.setNumHoles(18);
     String ownerInfo = getSQLNewTableOwner();
-    String insertOwners = getSQLInsertOwner(owner, encryptedPW);
+    String insertOwners = getSQLInsertOwner(owner, encryptedPassword);
 
 
     //add user to database
@@ -281,7 +289,7 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     user.setEmail(owner.getEmail());
     user.setGender(owner.getGender());
 
-    String insertUser = getSQLInsertUser(user, encryptedPW);
+    String insertUser = getSQLInsertUser(user, encryptedPassword);
        
     stmt.executeUpdate(userInfo);
     stmt.executeUpdate(insertUser);
@@ -317,7 +325,7 @@ String getSQLNewTableOwner() {
 
 
 //helper 
-String getSQLInsertOwner(CourseOwner owner, byte[] secretPW){
+String getSQLInsertOwner(CourseOwner owner, String secretPW){
 
   return "INSERT INTO owners ( " + 
           "courseName, address, city, country, website, phoneNumber, courseLogo, " +
@@ -339,7 +347,7 @@ String getSQLNewTableUsers(){
 
 
 //helper
-String getSQLInsertUser(User user, byte[] secretPW){
+String getSQLInsertUser(User user, String secretPW){
 
   return "INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + secretPW + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')";
 }
