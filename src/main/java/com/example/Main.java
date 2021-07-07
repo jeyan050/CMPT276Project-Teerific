@@ -220,6 +220,8 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 // OWNER SIGN-UP
 //**********************
 
+boolean courseNameError = false;
+
 @GetMapping(
   path = "/tee-rific/signup/Owner"
 )
@@ -227,7 +229,15 @@ public String getOwnerSignUpPage(Map<String, Object> model){
   CourseOwner owner = new CourseOwner();
   model.put("newOwner", owner);
 
-  //TODO: username error handling here
+  if (usernameError == true){
+    String error = "Error: Username already Exists.";
+    model.put("usernameError", error); 
+    usernameError = false;
+  } else if (courseNameError == true){
+    String error = "Error: Course Name already Exists.";
+    model.put("courseNameError", error); 
+    courseNameError = false;
+  }
 
   return "ownerSignUp";
 }
@@ -276,8 +286,7 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     }
 
     //add to user table
-    String userInfo = getSQLNewTableUsers();
-              
+    String userInfo = getSQLNewTableUsers();              
     
     //create a user based on owner fields
     User user = new User();
@@ -297,20 +306,40 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     // Initialize rental inventory of golf course - Chino
     ownerCreateInventory(connection);
 
-    // String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
-    // ResultSet rs = stmt.executeQuery(sql);
-    // int checkCount = 0;
-    // while (rs.next()){
-    //   checkCount++;
-    // }
+    // check if username or course name exists for already existing user
+    String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
+    ResultSet rs = stmt.executeQuery(sql);
+    int checkUserCount = 0;
+    while (rs.next()){
+      checkUserCount++;
+    }
 
-    // if (checkCount > 1){
-    //   stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
-    //   usernameError = true;
-    //   return "redirect:/tee-rific/signup/Owner";
-    // } else {
+    String sqlCH = "SELECT courseName FROM owners WHERE courseName ='"+updatedCourseName+"'";
+    ResultSet rsCH = stmt.executeQuery(sqlCH);
+    int checkCNCount = 0;
+    while (rsCH.next()){
+      checkCNCount++;
+    }
+
+
+    if (checkUserCount > 1){
+      // delete from user and owner database
+      stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+      String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
+      stmt.executeUpdate(deleteOwner);
+
+      usernameError = true;
+      return "redirect:/tee-rific/signup/Owner";
+    } else if (checkCNCount > 1){
+      stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+      String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
+      stmt.executeUpdate(deleteOwner);
+
+      courseNameError = true;
+      return "redirect:/tee-rific/signup/Owner";
+    } else 
       return "ownerCreated";     
-  }catch (Exception e) {
+  } catch (Exception e) {
     model.put("message", e.getMessage());
     return "error";
   }
@@ -341,6 +370,20 @@ String getSQLInsertOwner(CourseOwner owner, String secretPW){
           owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" + 
           owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "')";
 }
+
+//helper 
+String getSQLDeleteOwner(CourseOwner owner, String secretPW){
+
+  return "DELETE FROM owners WHERE courseName='" + owner.getCourseName() + "' and address='" + owner.getAddress() + 
+          "' and city='" + owner.getCity() +  "' and country='" + owner.getCountry() + "' and website='"  +
+          owner.getWebsite() + "' and phoneNumber='" + owner.getPhoneNumber() + "' and courseLogo='" +
+          owner.getCourseLogo() + "' and directionsToCourse='" + owner.getDirectionsToCourse() + "' and description='" +
+          owner.getDescription() + "' and weekdayRates='" + owner.getWeekdayRates() + "' and weekendRates='" +
+          owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() + 
+          "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
+          "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() + "'";
+}
+
 
 
 //helper
