@@ -28,9 +28,25 @@
             <div>
                 <img th:src="@{/images/tee-rific.png}">
             </div>
-            <p>We want to link the tee-time here?</p>
-            <p>Otherwise checkout complete!!!</p>
-            <form method="get" action="/tee-rific/home">
+
+            <h1>Rental Inventory</h1>
+            <table>
+                <tr>
+                    <td>Item Name</td><td>Stock</td>
+                </tr>
+                <tr th:each="item: ${eqsArray}">
+                    <td th:text="${item.itemName}"></td>
+                    <td th:text="${item.stock}"></td>
+                </tr>
+            </table>
+
+            <form method="get" action="/tee-rific/golfCourseDetails/inventory/update">
+                <button type="submit" class = "button">Update Stock</button>
+            </form>
+            <form method="get" action="/tee-rific/golfCourseDetails/inventory">
+                <button type="submit" class = "button">Back</button>
+            </form>
+            <form method="get" action="/tee-rific/ownerHome">
                 <button type="submit" class = "button">Go to the Home Page</button>
             </form>
         </div>

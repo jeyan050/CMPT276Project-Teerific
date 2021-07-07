@@ -29,4 +29,10 @@ public class EquipmentCart {
     public void setNumBalls(int n) {
         this.numBalls = n;
     }
+
+    public void printfields() {
+        System.out.println(this.numBalls);
+        System.out.println(this.numCarts);
+        System.out.println(this.numClubs);
+    }
 }

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+
     <!-- badge icon for image in tab window -->
     <link rel="icon" href="favicon.ico">                    
 
@@ -16,33 +19,35 @@
 
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>Rent Equipment</title>
+
+    <title>Login</title>
 </head>
 <body class="grassBackdrop">
     <div class="woodBackdrop border">
-        <div class="sandBackdrop">
-            <div class="layer_8">
-                <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
-                Golf Course Equipment
-                <form action="#" method="post" th:action="@{/tee-rific/rentEquipment}" th:object="${cart}">
-                    <p>Choose quantity (Balls)</p>
-                    <input type="number" th:field=*{numBalls}>
+        <div class="sandBackdrop" id="innerLogin">
+            <div>
+                <img th:src="@{/images/tee-rific.png}">
+            </div>
+            <table>
+                <tr><td>Quantity Balls:</td><td th:text="${userCart.numBalls}"></td></tr>
+                <tr><td>Quantity Carts:</td><td th:text="${userCart.numCarts}"></td></tr>
+                <tr><td>Quantity Clubs:</td><td th:text="${userCart.numClubs}"></td></tr>
+            </table>
+            <form action="#" method="post" th:action="@{/tee-rific/rentEquipment/checkout}">
+                <button type="submit" class="button">Confirm Selection</button>
+            </form>   
 
-                    <p>Choose quantity (Carts)</p>
-                    <input type="number" th:field=*{numCarts}>
-
-                    <p>Choose quantity (Clubs)</p>
-                    <input type="number" th:field=*{numClubs}> <br>
-
-                    <button type="submit" class="button">Checkout</button>
+            <div>
+                <form method="get" action="/tee-rific/rentEquipment">
+                    <button type="submit" class = "button">Back</button>
                 </form>
                 <form method="get" action="/tee-rific/home">
                     <button type="submit" class = "button">Go to the Home Page</button>
-                </form>
+            </form>
             </div>
         </div>
     </div>
-    <footer>
+      <footer>
         <div class= "woodBackdrop footer">
             <i class="socialIcon fab fa-facebook-f"></i>
             <i class="socialIcon fab fa-twitter"></i>
