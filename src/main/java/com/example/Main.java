@@ -220,6 +220,8 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 // OWNER SIGN-UP
 //**********************
 
+boolean courseNameError = false;
+
 @GetMapping(
   path = "/tee-rific/signup/Owner"
 )
@@ -231,6 +233,10 @@ public String getOwnerSignUpPage(Map<String, Object> model){
     String error = "Error: Username already Exists.";
     model.put("usernameError", error); 
     usernameError = false;
+  } else if (courseNameError == true){
+    String error = "Error: Course Name already Exists.";
+    model.put("courseNameError", error); 
+    courseNameError = false;
   }
 
   return "ownerSignUp";
@@ -297,21 +303,36 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     stmt.executeUpdate(userInfo);
     stmt.executeUpdate(insertUser);
 
-    // check if username exists for already existing user
+    // check if username or course name exists for already existing user
     String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
     ResultSet rs = stmt.executeQuery(sql);
-    int checkCount = 0;
+    int checkUserCount = 0;
     while (rs.next()){
-      checkCount++;
+      checkUserCount++;
     }
 
-    if (checkCount > 1){
+    String sqlCH = "SELECT courseName FROM owners WHERE courseName ='"+updatedCourseName+"'";
+    ResultSet rsCH = stmt.executeQuery(sqlCH);
+    int checkCNCount = 0;
+    while (rsCH.next()){
+      checkCNCount++;
+    }
+
+
+    if (checkUserCount > 1){
       // delete from user and owner database
       stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
       String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
       stmt.executeUpdate(deleteOwner);
 
       usernameError = true;
+      return "redirect:/tee-rific/signup/Owner";
+    } else if (checkCNCount > 1){
+      stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+      String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
+      stmt.executeUpdate(deleteOwner);
+
+      courseNameError = true;
       return "redirect:/tee-rific/signup/Owner";
     } else 
       return "ownerCreated";     

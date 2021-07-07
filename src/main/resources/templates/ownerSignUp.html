@@ -57,15 +57,18 @@
                     <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/Owner}" th:object="${newOwner}">
                     
                         <h3>Course Details</h3>
-                        <input type="text" id="courseName" class="inputBox" th:field="*{courseName}" placeholder="Course Name"><p id="errorCN"></p>
+                        <input type="text" id="courseName" class="inputBox" th:field="*{courseName}" placeholder="Course Name">
+                            <div th:each="errorText1 : ${courseNameError}">
+                                <p id="errorCN" th:text="${errorText1}"></p>
+                            </div>
                         <input type="text" id="address" class="inputBox" th:field="*{address}" placeholder="Address"><p id="errorA"></p>
                         <input type="text" id="city" class="inputBox" th:field="*{city}" placeholder="City"><p id="errorCi"></p>
                         <input type="text" id="country" class="inputBox" th:field="*{country}" placeholder="Country"><p id="errorCo"></p>
                          
                         <h3>Account Details</h3>
                         <input type="text" id="username" class="inputBox" th:field="*{username}" placeholder="Username">
-                            <div th:each="errorText : ${usernameError}">
-                                <p id="errorU" th:text="${errorText}"></p>
+                            <div th:each="errorText2 : ${usernameError}">
+                                <p id="errorU" th:text="${errorText2}"></p>
                             </div>
                         <input type="password" id="passw1" class="inputBox" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
                         <input type="password" id="passw2" class="inputBox" placeholder="Confirm Password"><p id="errorP2"></p>
