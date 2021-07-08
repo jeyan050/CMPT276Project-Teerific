@@ -41,16 +41,20 @@
                             <th>Second Prize</th>
                             <th>Third Prize</th>
                             <th>Age Requirement</th>
+                            <th>Game Mode</th>
+                            <th>Club Name</th>
                         </tr>
-                        <tr th:each="user : ${userList}">
-                            <td th:text="${user.priority}"></td>
-                            <td th:text="${user.username}"></td>
-                            <td th:text="${user.password}"></td>
-                            <td th:text="${user.fname}"></td>
-                            <td th:text="${user.lname}"></td>
-                            <td th:text="${user.email}"></td>
-                            <td th:text="${user.gender}"></td>
-                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/users/'+user.username}">
+                        <tr th:each="tournament : ${tournamentList}">
+                            <td th:text="${tournament.name}"></td>
+                            <td th:text="${tournament.participantSlots}"></td>
+                            <td th:text="${tournament.buyIn}"></td>
+                            <td th:text="${tournament.firstPrize}"></td>
+                            <td th:text="${tournament.secondPrize}"></td>
+                            <td th:text="${tournament.thirdPrize}"></td>
+                            <td th:text="${tournament.ageRequirement}"></td>
+                            <td th:text="${tournament.gameMode}"></td>
+                            <td th:text="${tournament.clubName}"></td>
+                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/tournaments/'+tournament.id}">
                                 <td class="deleteButton">
                                     <input type="submit" value="Delete">
                                 </td>
