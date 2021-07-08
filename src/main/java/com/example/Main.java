@@ -447,6 +447,12 @@ public String getOwnerHomePage(Map<String, Object> model){
 // MODIFY ACCOUNT
 //**********************
 
+//TODO: get all the courses, display ratings, allow user to rate courses
+
+//**********************
+// MODIFY ACCOUNT
+//**********************
+
 @GetMapping(
   path = "/tee-rific/editOwnerAccount"
 )
