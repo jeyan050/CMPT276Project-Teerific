@@ -12,7 +12,8 @@
         <div class="layer_7">
             <div class="layer_8">
                 <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <h1>Deleting <span th:text="${tournament.name}"></span></h1>
+                <h1>Deleting </h1>
+                <!-- <span th:text="${tournament.name}"></span> -->
                 <!-- display some information regarding the ramifications of deleting the tournament, stating pepole who signed up maybe? -->
                 Are you sure you want to delete this tournament?
                 <form action="#" method="post" th:action="@{/delete}" th:object="${tournament}">
