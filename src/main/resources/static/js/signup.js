@@ -7,6 +7,7 @@ function checkInput(event) {
     var checkFname = document.getElementById("firstN").value;
     var checkLname = document.getElementById("lastN").value;
     var checkEmail = document.getElementById("email").value;
+
     if (checkUsername == ""){
         document.getElementById("errorU").innerHTML = "Username is empty: Please enter a Username";
         return false;
@@ -50,9 +51,14 @@ var timeoutLength = 350; // in milliseconds (perfect timing for above mp3)
     
 
 function submitForm(target){
-    checkInput();
-    if(submit == true || target.id != "submitUser") //does check if its for submit button
+    if(target.id == "submitUser"){ //does check if its for submit button
+        checkInput();
+        if(submit){
+            target.parentElement.submit();
+        }
+    } else {
         target.parentElement.submit();
+    }
 }
 
 var numberOfButtons = document.querySelectorAll("button").length;
@@ -62,7 +68,7 @@ for(var i = 0; i < numberOfButtons; i++) {
         
         event.preventDefault();
         golfSwingSound.play();
-        
+    
         setTimeout(submitForm, timeoutLength, event.target);
     });
 }

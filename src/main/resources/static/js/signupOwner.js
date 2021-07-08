@@ -69,9 +69,14 @@ var numButtons = document.querySelectorAll("button").length;
 var timeoutLength = 350; // in milliseconds (perfect timing for above mp3)
     
 function submitForm(target){
-    checkInput();
-    if(submit == true || target.id != "submitOwner") //does check if its for submit button
+    if(target.id == "submitOwner"){ //does check if its for submit button
+        checkInput();
+        if(submit){
+            target.parentElement.submit();
+        }
+    } else {
         target.parentElement.submit();
+    }
 }
 
 var numberOfButtons = document.querySelectorAll("button").length;
