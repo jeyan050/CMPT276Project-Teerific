@@ -21,6 +21,7 @@
                     <input type="text" class="inputBox" th:field="*{firstPrize}" placeholder="First Place Prize"> (optional)<br>
                     <input type="text" class="inputBox" th:field="*{secondPrize}" placeholder="Second Place Prize"> (optional)<br>
                     <input type="text" class="inputBox" th:field="*{thirdPrize}" placeholder="Third Place Prize"> (optional)<br>
+                    <input type="number" class="inputBox" th:field="*{ageRequirement}" placeholder="Age Requirement"> <br>
                     <select class ="inputbox" th:field="*{gameMode}">
                         <option value ="individual par points">Individual Par Points</option>
                         <option value = "hidden partner par points">Hidden Partner Par Points</option>
@@ -31,6 +32,8 @@
                         <option value = "skins">Skins</option>
                         <option value = "best ball">Best Ball</option>
                     </select> <br>
+                    <!-- take out and have it be filled in automaticly by reading the club name associated with the owner account -->
+                    <input type="text" class="inputBox" th:field="*{clubName}" placeholder="Club Name"> <br> 
                     <input type="submit" class = "button" value="Create Tournament">
                 </form>
             </div>

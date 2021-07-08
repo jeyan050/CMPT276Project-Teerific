@@ -17,15 +17,15 @@
                 <table>
                     <thead>
                         <th>Name</th>
-                        <th>Date</th>
+                        <!-- <th>Date</th> -->
                         <th>Club</th>
                         <th>Game Mode</th>
                         <th>Buy In</th>
                     </thead>
                     <tr th:each="tournament : ${tournaments}">
                         <!-- link to the tournament by clicking on name-->
-                        <td> <a th:text="${tournament.name}" th:href="@{/viewTournament/{tid}(tid=${tournament.id})}"> </a></td>
-                        <td th:text="${tournament.date}"></td>
+                        <td> <a th:text="${tournament.name}" th:href="@{/tee-rific/viewTournament/{tid}(tid=${tournament.id})}"> </a></td>
+                        <!-- <td th:text="${tournament.date}"></td> -->
                         <td th:text="${tournament.clubName}"></td>
                         <td th:text="${tournament.gameMode}"></td>
                         <td th:text="${tournament.buyIn}"></td>                        
