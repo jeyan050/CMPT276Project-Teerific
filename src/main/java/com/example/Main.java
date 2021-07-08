@@ -838,7 +838,7 @@ public String deleteTournament(Map<String, Object> model, Tournament tournament)
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
+    stmt.execute("DELETE FROM tournaments WHERE id = '"+tournament.getId()+"'");
     return "redirect:/tee-rific/avalableTournaments";
   } catch (Exception e)
   {
