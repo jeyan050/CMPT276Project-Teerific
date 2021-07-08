@@ -1,11 +1,3 @@
-.border {
-    width: clamp(800px, 90%, 1200px);
-}
-
-img {
-    width: 45%;
-}
-
 table, th, td {
     border: 1px solid black;
 
@@ -18,8 +10,4 @@ table {
 
     margin-left: auto;
     margin-right: auto;
-}
-
-.owners {
-    font-size: 13px;
 }

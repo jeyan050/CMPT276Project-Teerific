@@ -1025,39 +1025,91 @@ public String deleteTournament(Map<String, Object> model, @PathVariable("id") lo
   } 
 }
 
-// LIST OF USERS
+// LIST OF OWNERS AND GOLF COURSES
 //--------------------------------
-// @GetMapping(
-//   path = "/tee-rific/adminHome/users"
-// )
-// public String listUsers(Map<String, Object> model)
-// {
-//   try (Connection connection = dataSource.getConnection()){
-//     Statement stmt = connection.createStatement();
-//     ResultSet listU = stmt.executeQuery("SELECT * FROM users");
-//     ArrayList<User> output = new ArrayList<User>();
-//     while (listU.next()) {
-//       User temp = new User();
+@GetMapping(
+  path = "/tee-rific/adminHome/owners"
+)
+public String listOwners(Map<String, Object> model)
+{
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    ResultSet listO = stmt.executeQuery("SELECT * FROM owners");
+    ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
+    while (listO.next()) {
+      CourseOwner temp = new CourseOwner();
 
-//       temp.setPriority(listU.getString("priority"));
-//       temp.setUsername(listU.getString("username"));
-//       temp.setPassword(listU.getString("password"));
-//       temp.setFname(listU.getString("fname"));
-//       temp.setLname(listU.getString("lname"));
-//       temp.setEmail(listU.getString("email"));
-//       temp.setGender(listU.getString("gender"));
+      temp.setCourseName(listO.getString("coursename"));
+      temp.setAddress(listO.getString("address"));
+      temp.setCity(listO.getString("city"));
+      temp.setCountry(listO.getString("country"));
+      
+      temp.setUsername(listO.getString("username"));
+      temp.setPassword(listO.getString("password"));
+      temp.setFname(listO.getString("firstname"));
+      temp.setLname(listO.getString("lastname"));
+      temp.setEmail(listO.getString("email"));
+      temp.setGender(listO.getString("gender"));
 
-//       output.add(temp);
-//     }
+      output.add(temp);
+    }
 
-//     model.put("userList",output);
-//     return "listOfUsers";
-//   } catch (Exception e) {
-//     model.put("message", e.getMessage());
-//     return "error";
-//   } 
-// }
+    model.put("ownerList",output);
+    return "listOfOwners";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
 
+@PostMapping(
+  path = "/tee-rific/adminHome/owner/{username}",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String deleteOwner(Map<String, Object> model, @PathVariable("username") String name){
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    String sql = "DELETE FROM owners WHERE username='"+name+"'";
+    stmt.executeUpdate(sql);
+
+    return "deleteSuccess";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+@GetMapping(
+  path = "/tee-rific/adminHome/owners/golfCourse/{courseName}"
+)
+public String viewGolfCourse(Map<String, Object> model, @PathVariable("courseName") String course){
+  try (Connection connection = dataSource.getConnection()){
+    String searchCourse = convertToSnakeCase(course);
+
+    Statement stmt = connection.createStatement();
+    String sql = "SELECT * FROM "+searchCourse;
+    ResultSet courseDetails = stmt.executeQuery(sql);
+
+    ArrayList<Hole> output = new ArrayList<Hole>();
+    while (courseDetails.next()) {
+      Hole temp = new Hole();
+
+      //(holeNumber integer, yardage integer, par integer, handicap integer)
+      temp.setHoleNumber(courseDetails.getInt("holeNumber"));
+      temp.setYardage(courseDetails.getInt("yardage"));
+      temp.setPar(courseDetails.getInt("par"));
+      temp.setHandicap(courseDetails.getInt("handicap"));
+      
+      output.add(temp);
+    }
+
+    model.put("details",output);
+    return "courseDetails";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+}
 
 //**********************
 // ABOUT-US
