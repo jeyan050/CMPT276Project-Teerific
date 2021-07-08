@@ -303,6 +303,9 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     stmt.executeUpdate(userInfo);
     stmt.executeUpdate(insertUser);
 
+    // Initialize rental inventory of golf course - Chino
+    ownerCreateInventory(connection);
+
     // check if username or course name exists for already existing user
     String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
     ResultSet rs = stmt.executeQuery(sql);
@@ -503,6 +506,8 @@ public String bookingSuccessful(){
 //**********************
 // RENT EQUIPMENT
 //**********************
+//TODO: Add extra style 
+// TODO: Corner cases (out of stock case, quant in cart > stock case, negative number case)
 @GetMapping(
   path = "/tee-rific/rentEquipment"
 )
@@ -516,92 +521,172 @@ public String rentEquipment(Map<String, Object> model) {
   path = "/tee-rific/rentEquipment",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String updateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
+public String handleShop(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    // Create a table with our cart data inside to display on checkout
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS cart (numBalls integer, numCarts integer, numClubs integer)");
+    stmt.executeUpdate("INSERT INTO cart VALUES ('"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+  }
+    
+    // Redirect to checkout page
+    return "redirect:/tee-rific/rentEquipment/checkout";
+}
+
+@GetMapping(
+  path="/tee-rific/rentEquipment/checkout"
+)
+public String handleViewCart(Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    // Create a table with our cart data inside to display on checkout
+    EquipmentCart toView = getUserCartContentsFromDB(connection);
+    toView.printfields();
+    model.put("userCart", toView);
+    return "rentEquipmentCheckout";
+  }
+}
+
+@PostMapping(
+  path = "/tee-rific/rentEquipment/checkout",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String handleCheckout() throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    EquipmentCart cart = getUserCartContentsFromDB(connection);
+    updateInventory(connection, cart);
+    stmt.executeUpdate("DROP TABLE cart");
+
+    // Create table of rentals so employees can keep track
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS LiveRentals (id serial, username varchar(50), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+    //TODO: Link user to rental
+    stmt.executeUpdate("INSERT INTO LiveRentals (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+  }
+  return "redirect:/tee-rific/rentEquipment/checkout/success";
+}
+
+@GetMapping(
+  path="/tee-rific/rentEquipment/checkout/success"
+)
+public String rentSuccessPage() {
+  return "rentEquipmentSuccess";
+}
+
+
+// ------ OWNER'S PAGE ------ //
+// TODO: Add style to table in viewInventory page
+@GetMapping(
+  path="/tee-rific/golfCourseDetails/inventory"
+)
+public String viewInventory(Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
-    // QUESTION: Is the app gonna handle payment as well? (Might be hard)    ******* NO, Bobby said not to with what we are designing -- Mike *****
-    // Calculate updated values for stock
-    rs.next();                                                // Right now I have it so we have 2 columns: name(of item) varchar and stock integer 
-    int ballStock = rs.getInt("stock");                       // I assume we have 3 items: balls, carts, clubs SUBJECT TO CHANGE - Chino
-    int updatedBallStock = ballStock - cart.getNumBalls();
-    rs.next();
-    int golfCartStock = rs.getInt("stock");
-    int updatedGolfCartStock = golfCartStock - cart.getNumCarts();
-    rs.next();
-    int clubStock = rs.getInt("stock");
-    int updatedClubStock = clubStock - cart.getNumClubs();
+    ArrayList<Equipment> eqs = new ArrayList<Equipment>();
+    while (rs.next()) {
+      Equipment eq = new Equipment();
+      eq.setItemName(rs.getString("name"));
+      eq.setStock(rs.getInt("stock"));
 
-    // Update inventory table
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
-
-    // SUGGESTION: Maybe tie the user to the 'reciept'? Like create another field in User class
-    // I'm not sure if the app is aware of who is "logged in" at this point, would appreciate clarification
-
-    // Redirect to checkout page
-    return "redirect:/tee-rific/rentEquipment/checkout";
+      eqs.add(eq);
+    }
+    model.put("eqsArray", eqs);
+    return "inventory";
   }
 }
 
 @GetMapping(
-  path = "/tee-rific/rentEquipment/checkout"
+  path="/tee-rific/golfCourseDetails/inventory/update"
 )
-public String handleCheckout() {
-  return "checkout";
+public String invUpdate(Map<String, Object> model) {
+  EquipmentCart cart = new EquipmentCart();
+  model.put("ownerCart", cart);
+  return "inventoryUpdate";
+}
+@PostMapping(
+  path="/tee-rific/golfCourseDetails/inventory/update",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String handleInvUpdate(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    ownerUpdateInventory(connection, cart);
+  }
+  return "redirect:/tee-rific/golfCourseDetails/inventory";
 }
 
+// HELPER FUNCTIONS
+public void updateInventory(Connection connection, EquipmentCart cart) throws Exception {
+  Statement stmt = connection.createStatement();
+  ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
+  // Calculate updated values for stock
+  rs.next();
+  int ballStock = rs.getInt("stock");
+  int updatedBallStock = ballStock - cart.getNumBalls();
+  rs.next();
+  int golfCartStock = rs.getInt("stock");
+  int updatedGolfCartStock = golfCartStock - cart.getNumCarts();
+  rs.next();
+  int clubStock = rs.getInt("stock");
+  int updatedClubStock = clubStock - cart.getNumClubs();
 
-// HELPER FUNCTIONS FOR OWNER PAGE
-public void ownerCreateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
-  try (Connection connection = dataSource.getConnection()) {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(20), stock integer DEFAULT 0)");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
-
-    ownerUpdateInventory(model, cart);
-  }
+  // Update inventory table
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
 }
 
-public void ownerInsertNewItem(String nameOfItem) throws Exception {
-  try (Connection connection = dataSource.getConnection()) {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('"+nameOfItem+"')");
-  }
+public EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exception {
+  Statement stmt = connection.createStatement();
+  ResultSet rs = stmt.executeQuery("SELECT * FROM cart");
+  rs.next();
+
+  EquipmentCart ret = new EquipmentCart();
+  ret.setNumBalls(rs.getInt("numballs"));
+  ret.setNumCarts(rs.getInt("numcarts"));
+  ret.setNumClubs(rs.getInt("numclubs"));
+
+  return ret;
 }
 
-public void ownerDeleteItem(String nameOfItem) throws Exception {
-  try (Connection connection = dataSource.getConnection()) {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("DELETE FROM inventory WHERE name='"+nameOfItem+"'");
-  }
+public void ownerCreateInventory(Connection connection) throws Exception {
+  Statement stmt = connection.createStatement();
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(20), stock integer DEFAULT 0)");
+  stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
+  stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
+  stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
+  
 }
 
-public void ownerUpdateInventory(Map<String, Object> model, EquipmentCart cart) throws Exception {
-  try (Connection connection = dataSource.getConnection()) {
-    Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+public void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
+  Statement stmt = connection.createStatement();
+  stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('"+nameOfItem+"')");
+}
 
-    rs.next();                    
-    int ballStock = rs.getInt("stock");                       
-    int updatedBallStock = ballStock + cart.getNumBalls();
-    rs.next();
-    int golfCartStock = rs.getInt("stock");
-    int updatedGolfCartStock = golfCartStock + cart.getNumCarts();
-    rs.next();
-    int clubStock = rs.getInt("stock");
-    int updatedClubStock = clubStock + cart.getNumClubs();
+public void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
+  Statement stmt = connection.createStatement();
+  stmt.executeUpdate("DELETE FROM inventory WHERE name='"+nameOfItem+"'");
+}
 
-    // Update inventory table
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
-  }
+public void ownerUpdateInventory(Connection connection, EquipmentCart cart) throws Exception {
+  Statement stmt = connection.createStatement();
+  // ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+
+  // rs.next();                    
+  // int ballStock = rs.getInt("stock");                       
+  // int updatedBallStock = ballStock + cart.getNumBalls();
+  // rs.next();
+  // int golfCartStock = rs.getInt("stock");
+  // int updatedGolfCartStock = golfCartStock + cart.getNumCarts();
+  // rs.next();
+  // int clubStock = rs.getInt("stock");
+  // int updatedClubStock = clubStock + cart.getNumClubs();
+
+  // Update inventory table
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
+  stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
 }
 
 

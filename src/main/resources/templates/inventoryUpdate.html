@@ -23,20 +23,15 @@
         <div class="sandBackdrop">
             <div class="layer_8">
                 <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
-                Golf Course Equipment
-                <form action="#" method="post" th:action="@{/tee-rific/rentEquipment}" th:object="${cart}">
-                    <p>Choose quantity (Balls)</p>
-                    <input type="number" th:field=*{numBalls}>
+                <h1>Update Inventory</h1>
+                <form action="#" method="post" th:action="@{/tee-rific/golfCourseDetails/inventory/update}" th:object="${ownerCart}">
+                    <input type="number" th:field="*{numBalls}" placeholder="Quantity Balls">
+                    <input type="number" th:field="*{numCarts}" placeholder="Quantity Carts">
+                    <input type="number" th:field="*{numClubs}" placeholder="Quantity Clubs">
 
-                    <p>Choose quantity (Carts)</p>
-                    <input type="number" th:field=*{numCarts}>
-
-                    <p>Choose quantity (Clubs)</p>
-                    <input type="number" th:field=*{numClubs}> <br>
-
-                    <button type="submit" class="button">Checkout</button>
+                    <button type="submit" class="button">OK</button>
                 </form>
-                <form method="get" action="/tee-rific/home">
+                <form method="get" action="/tee-rific/ownerHome">
                     <button type="submit" class = "button">Go to the Home Page</button>
                 </form>
             </div>
