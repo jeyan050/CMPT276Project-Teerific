@@ -443,6 +443,13 @@ public String getOwnerHomePage(Map<String, Object> model){
   return "ownerHome";
 }
 
+@GetMapping(
+  path = "/tee-rific/adminHome"
+)
+public String getAdminHomePage(Map<String, Object> model){
+  return "adminHome";
+}
+
 //**********************
 // MODIFY ACCOUNT
 //**********************
@@ -902,6 +909,131 @@ public String deleteUser(Map<String, Object> model, User user) throws Exception
     Statement stmt = connection.createStatement();
     // stmt.execute("DELETE FROM users WHERE username = " user)
     return "redirect:/tee-rific/accountDeleted";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+//**********************
+// ADMIN BUTTONS
+//**********************
+
+// LIST OF USERS
+//--------------------------------
+@GetMapping(
+  path = "/tee-rific/adminHome/users"
+)
+public String listUsers(Map<String, Object> model)
+{
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    ResultSet listU = stmt.executeQuery("SELECT * FROM users");
+    ArrayList<User> output = new ArrayList<User>();
+    while (listU.next()) {
+      User temp = new User();
+
+      temp.setPriority(listU.getString("priority"));
+      temp.setUsername(listU.getString("username"));
+      temp.setPassword(listU.getString("password"));
+      temp.setFname(listU.getString("fname"));
+      temp.setLname(listU.getString("lname"));
+      temp.setEmail(listU.getString("email"));
+      temp.setGender(listU.getString("gender"));
+
+      output.add(temp);
+    }
+
+    model.put("userList",output);
+    return "listOfUsers";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+// LIST OF TOURNAMENTS
+//--------------------------------
+@GetMapping(
+  path = "/tee-rific/adminHome/tournaments"
+)
+public String listTournaments(Map<String, Object> model)
+{
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    ResultSet listT = stmt.executeQuery("SELECT * FROM tournaments");
+    ArrayList<Tournament> output = new ArrayList<Tournament>();
+    while (listT.next()) {
+      Tournament temp = new Tournament();
+
+      // id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30),
+      // third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
+
+      temp.setName(listT.getString("name"));
+      temp.setParticipantSlots(listT.getInt("participant_slots"));
+      temp.setBuyIn(listT.getInt("buy_in"));
+      temp.setFirstPrize(listT.getString("first_prize"));
+      temp.setSecondPrize(listT.getString("second_prize"));
+      temp.setThirdPrize(listT.getString("third_prize"));
+      temp.setAgeRequirement(listT.getInt("age_requirement"));
+      temp.setGameMode(listT.getString("game_mode"));
+      temp.setClubName(listT.getString("club_name"));
+
+      output.add(temp);
+    }
+
+    model.put("userList",output);
+    return "listOfTournaments";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+// LIST OF USERS
+//--------------------------------
+@GetMapping(
+  path = "/tee-rific/adminHome/users"
+)
+public String listUsers(Map<String, Object> model)
+{
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    ResultSet listU = stmt.executeQuery("SELECT * FROM users");
+    ArrayList<User> output = new ArrayList<User>();
+    while (listU.next()) {
+      User temp = new User();
+
+      temp.setPriority(listU.getString("priority"));
+      temp.setUsername(listU.getString("username"));
+      temp.setPassword(listU.getString("password"));
+      temp.setFname(listU.getString("fname"));
+      temp.setLname(listU.getString("lname"));
+      temp.setEmail(listU.getString("email"));
+      temp.setGender(listU.getString("gender"));
+
+      output.add(temp);
+    }
+
+    model.put("userList",output);
+    return "listOfUsers";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+@PostMapping(
+  path = "/tee-rific/adminHome/users/{username}",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String deleteUser(Map<String, Object> model, @PathVariable("username") String name){
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    String sql = "DELETE FROM users WHERE username='"+name+"'";
+    stmt.executeUpdate(sql);
+
+    return "deleteSuccess";
   } catch (Exception e) {
     model.put("message", e.getMessage());
     return "error";

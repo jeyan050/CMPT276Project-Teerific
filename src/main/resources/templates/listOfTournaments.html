@@ -5,10 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Admin Home Page</title>
+    <title>List of Users</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
-
+    <link th:href="@{/listStyle.css}" type="text/css" rel="stylesheet">
+    
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
@@ -30,25 +31,35 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Admin Home Page</div>            
-                    <div>
-                        * Have some options for displaying and modifying data on developer/admin side * 
-                    </div>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/users}">
-                        <button type="submit" class="button">Users</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/owners}">
-                        <button type="submit" class="button">Owners & Golf Courses</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/tournaments}">
-                        <button type="submit" class="button">Tournaments</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/inventory}">
-                        <button type="submit" class="button">Inventory</button>
-                    </form>
+                    <div class="titleFont dynamicSize">List of Users</div>            
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Participation Slots</th>
+                            <th>Buy in</th>
+                            <th>First Prize</th>
+                            <th>Second Prize</th>
+                            <th>Third Prize</th>
+                            <th>Age Requirement</th>
+                        </tr>
+                        <tr th:each="user : ${userList}">
+                            <td th:text="${user.priority}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.password}"></td>
+                            <td th:text="${user.fname}"></td>
+                            <td th:text="${user.lname}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${user.gender}"></td>
+                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/users/'+user.username}">
+                                <td class="deleteButton">
+                                    <input type="submit" value="Delete">
+                                </td>
+                            </form>
+                        </tr>
+                    </table><br>
 
-                    <form method= "get" th:action="@{/tee-rific/login}">
-                        <button type="submit" class="button">Log Out</button>
+                    <form method= "get" th:action="@{/tee-rific/adminHome}">
+                        <button type="submit" class="button">Back to Home</button>
                     </form>
                 </div>
              </div>
