@@ -5,10 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Admin Home Page</title>
+    <title>Golf Course Details</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
-
+    <link th:href="@{/detailStyle.css}" type="text/css" rel="stylesheet">
+    
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
@@ -30,25 +31,24 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Admin Home Page</div>            
-                    <div>
-                        * Have some options for displaying and modifying data on developer/admin side * 
-                    </div>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/users}">
-                        <button type="submit" class="button">Users</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/owners}">
-                        <button type="submit" class="button">Owners & Golf Courses</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/adminHome/tournaments}">
-                        <button type="submit" class="button">Tournaments</button>
-                    </form>
-                    <!-- <form method= "get" th:action="@{/tee-rific/adminHome/inventory}">
-                        <button type="submit" class="button">Inventory</button>
-                    </form> -->
+                    <div class="titleFont dynamicSize">Golf Course Details</div>            
+                    <table>  
+                        <tr>
+                            <th>Hole Number</th>
+                            <th>Yardage</th>
+                            <th>Par</th>
+                            <th>Handicap</th>
+                        </tr>
+                        <tr th:each="course : ${details}">
+                            <td th:text="${course.holeNumber}"></td>
+                            <td th:text="${course.yardage}"></td>
+                            <td th:text="${course.par}"></td>
+                            <td th:text="${course.handicap}"></td>                            
+                        </tr>
+                    </table><br>
 
-                    <form method= "get" th:action="@{/tee-rific/login}">
-                        <button type="submit" class="button">Log Out</button>
+                    <form method= "get" th:action="@{/tee-rific/adminHome/owners}">
+                        <button type="submit" class="button">Back to Owners</button>
                     </form>
                 </div>
              </div>
