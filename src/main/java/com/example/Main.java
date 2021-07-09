@@ -1067,7 +1067,7 @@ public String listOwners(Map<String, Object> model)
   try (Connection connection = dataSource.getConnection()){
     Statement stmt = connection.createStatement();
     String checkIfOwnerTExists = getSQLNewTableOwner();
-    stmt.executeQuery(checkIfOwnerTExists);
+    stmt.executeUpdate(checkIfOwnerTExists);
     ResultSet listO = stmt.executeQuery("SELECT * FROM owners");
     ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
     while (listO.next()) {
