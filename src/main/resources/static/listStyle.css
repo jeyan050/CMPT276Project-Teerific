@@ -23,3 +23,17 @@ table {
 .owners {
     font-size: 13px;
 }
+
+.owners {
+    font-size: 13px;
+}
+
+.tableSizing {
+    table-layout: fixed;
+    width: 1080px;
+    word-wrap: break-word;
+}
+
+.password {
+    width: 300px;
+}
