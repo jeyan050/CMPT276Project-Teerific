@@ -124,6 +124,20 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
+    
+    // creates and check if admin account created
+    int checkIfAdminExists = 0;
+    ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
+    while (checkAdmin.next()){
+      checkIfAdminExists++;
+    }
+    if (checkIfAdminExists == 0){
+      String adminPassword = "cmpt276";
+      String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
+      String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+      stmt.executeUpdate(insert);
+    }
+    
     String sql = "SELECT * FROM users WHERE username = '" + user.getUsername() + "'";
     ResultSet rs = stmt.executeQuery(sql);
 
