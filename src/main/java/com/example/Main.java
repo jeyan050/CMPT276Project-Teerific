@@ -454,6 +454,12 @@ public String getAdminHomePage(Map<String, Object> model){
 // MODIFY ACCOUNT
 //**********************
 
+//TODO: get all the courses, display ratings, allow user to rate courses
+
+//**********************
+// MODIFY ACCOUNT
+//**********************
+
 @GetMapping(
   path = "/tee-rific/editOwnerAccount"
 )
@@ -750,10 +756,42 @@ public String tournament()
 @GetMapping(
   path = "/tee-rific/avalableTournaments"
 )
-public String avalableTournaments()
+public String avalableTournaments(Map<String, Object> model)
 {
-  return "avalableTournaments";
+  try(Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments");
+    ArrayList<Tournament> output = new ArrayList<Tournament>();
+    while (rs.next())
+    {
+      Tournament tournament = new Tournament();
+      tournament.setId(rs.getInt("id"));
+      tournament.setName(rs.getString("name"));
+      tournament.setParticipantSlots(rs.getInt("participant_slots"));
+      tournament.setBuyIn(rs.getInt("buy_in"));
+      tournament.setFirstPrize(rs.getString("first_prize"));
+      tournament.setSecondPrize(rs.getString("second_prize"));
+      tournament.setThirdPrize(rs.getString("third_prize"));
+      tournament.setAgeRequirement(rs.getInt("age_requirement"));
+      tournament.setGameMode(rs.getString("game_mode"));
+      tournament.setClubName(rs.getString("club_name"));
+
+      output.add(tournament);
+    }
+
+    model.put("tournaments", output); //
+    Tournament tournament = new Tournament();
+    model.put("tournament", tournament); //
+    return "avalableTournaments";
+
+  } catch (Exception e)
+  {
+    model.put("message", e.getMessage());
+    return "error";
+  }
 }
+
 
 @GetMapping(
   path = "/tee-rific/createTournament"
@@ -774,11 +812,8 @@ public String handleTournamentCreation(Map<String, Object> model, Tournament tou
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    //this part does not work correctly, idk why, keeps giving "ERROR: column "buy_in" of relation "tournaments" does not exist Position: 51" when you try to create the tournament
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30), third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
-    // System.out.println("test 1");
     stmt.executeUpdate("INSERT INTO tournaments (name, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-    // System.out.println("test 2");
     System.out.println(tournament.getBuyIn());
     return "redirect:/tee-rific/avalableTournaments";
   } catch (Exception e) 
@@ -819,6 +854,7 @@ public String viewSelectedTournament(Map<String, Object> model, @PathVariable St
     model.put("tournaments", output); //
     Tournament tournament = new Tournament();
     model.put("tournament", tournament); //
+    
     return "viewTournament";
 
   } catch (Exception e)
@@ -898,7 +934,7 @@ public String accountDeleted()
   return "accountDeleted";
 }
 
-@PostMapping( //HAS NOT BEEN TESTED
+@PostMapping( //TODO: User Aaccount Deletion Has Not Been Tested
   path = "/tee-rific/accountDeleted",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )

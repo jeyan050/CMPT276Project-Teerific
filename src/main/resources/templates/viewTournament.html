@@ -11,8 +11,33 @@
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
-                <h1><span th:text="${name}"></span></h1>
-                <!-- display date -->
+                <h1>Sign up for Tournament: <span th:text="${tournament.name}"></span> ?</h1>
+                <table>
+                <thead>
+                        <th>Name</th>
+                        <!-- <th>Date</th> -->
+                        <th>Club</th>
+                        <th>Game Mode</th>
+                        <th>Buy In</th>
+                        <th>First Prize</th>
+                        <th>Second Prize</th>
+                        <th>Third Prize</th>
+                        <th>Age Requirement</th>
+                    </thead>
+                    <tr th:each="tournament : ${tournaments}">
+                        <!-- link to the tournament by clicking on name-->
+                        <td th:text="${tournament.name}"></td>
+                        <!-- <td th:text="${tournament.date}"></td> -->
+                        <td th:text="${tournament.clubName}"></td>
+                        <td th:text="${tournament.gameMode}"></td>
+                        <td th:text="${tournament.buyIn}"></td>
+                        <td th:text="${tournament.firstPrize}"></td>
+                        <td th:text="${tournament.secondPrize}"></td>
+                        <td th:text="${tournament.thirdPrize}"></td>
+                        <td th:text="${tournament.ageRequirement}"></td>
+                        <!-- participant slots remaining:  -->
+                    </tr>
+                </table>
                 <form method="get" action="/tee-rific/tournamentSignUp">
                     <button type="submit" class = "button">Sign Up</button>
                 </form>

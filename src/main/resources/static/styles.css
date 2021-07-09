@@ -37,7 +37,7 @@
 /********************/
 
 body {
-    margin: 0px;
+    margin: 0 auto 0 auto;
 }
 
 img {
@@ -53,6 +53,47 @@ div {
 /* ID (SINGLE USE) */
 /*******************/
 
+#bookingButton {
+    background-image: url("https://media1.tenor.com/images/28e4763cc7ec7086b39811ad1498fbbe/tenor.gif?itemid=10431490");
+    background-size: cover;
+    
+}
+
+#coursesButton {
+    background-image: url("https://media4.giphy.com/media/oG7wbC1NIZG3GoNWDT/giphy.gif?cid=ecf05e47csj54q2nn9xl02xnkcfgd17hwnfxzeftq1zx27c0&rid=giphy.gif&ct=g");
+    background-size: cover;
+    
+}
+
+#scorecardButton {
+    background-image: url("https://media1.tenor.com/images/4850d3ffcf8395d86714b4a3da2220f1/tenor.gif?itemid=20197502");
+    background-size: cover;
+    
+}
+
+#tournamentsButton {
+    background-image: url("https://media2.giphy.com/media/jTets0vpDgw6571cM4/giphy.gif?cid=ecf05e47435ne4l2l6mjm8z4n2uxd6h7ovinxliisk9qgrec&rid=giphy.gif&ct=g");
+    background-size: cover;
+    
+}
+
+#accountButton {
+    background-image: url("https://media0.giphy.com/media/l3YSfhmQKPmGYiw6s/giphy.gif?cid=ecf05e47g0ssp4ql6sjx91qlsv2ikc4sz46s2pzm7x5mnx96&rid=giphy.gif&ct=g");
+    background-size: cover;
+    
+}
+
+#aboutUsButton {
+    background-image: url("https://media0.giphy.com/media/l7MYeAs3wxKgUVTFeV/giphy.gif?cid=790b76113b8573b07e5361f58dca6033ff491e3707f97f07&rid=giphy.gif&ct=g");
+    background-size: cover;
+    
+}
+
+#logOutButton {
+    background-image: url("https://media1.giphy.com/media/lkjgqBFSE7ees/giphy.gif?cid=ecf05e47id3tkn4u9rq41kgw6rl5mcvvv9h6rdihjb32qqkp&rid=giphy.gif&ct=g");
+    background-size: cover;
+    
+}
 
 
 /**************************/
@@ -82,6 +123,9 @@ div {
     padding-bottom: 5px;
     color: #EAE2B6;
     text-align: center;
+    font-family: "Ubuntu";
+    font-weight: bold;
+    border-top: 1px solid #EAE2B6;
 }
 
 .inputBox {
@@ -158,7 +202,71 @@ div {
     margin: 20px 10px;
 }
 
+.homePageContainer {
+    margin: auto;
+    text-align: center;
+    width: 80%;
+    padding: 0px;
+}
+
+.homePageButtonBorder {
+    display: inline-block;
+    width: clamp(180px, 75vw, 300px);
+    height: clamp(180px, 75vw, 300px);
+    border-radius: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: clamp(0px, 7px, 15px);
+    margin-right: clamp(0px, 7px, 15px);
+    border: 1px solid #EAE2B6;
+}
+
+.homePageButton {
+    width: 95%;
+    height: 95%;
+    border-radius: 15px;
+    margin: 2.5%;
+    /* font-family: 'Teko', sans-serif; */
+    font-family: 'Oswald', sans-serif;
+    font-size: 200%;
+    font-weight: bold;
+    color: #EAE2B6;
+    -webkit-text-stroke: 2px black;
+}
 
 
+.logo {
+    height: auto;
+    width: auto;
+    max-width: 180px;
+    max-height: 100px;
+}
 
+.logoContainer {
+    margin: auto;
+    height: auto;
+    width: auto;
+    max-width: 750px;
+    max-height: 750px;
+}
 
+ 
+  .navbar-brand {
+    font-family: "Ubuntu";
+    font-size: 2.0rem;
+    font-weight: bold;
+  }
+  
+  .nav-item {
+    padding: 0 5px;
+  }
+  
+  .nav-link {
+    font-size: 1.2rem;
+    font-family: "Montserrat";
+    font-weight: 500;
+  }
+
+  .navbar {
+      border-bottom: 1px solid #EAE2B6;
+  }
