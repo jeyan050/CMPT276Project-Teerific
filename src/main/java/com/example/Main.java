@@ -961,6 +961,7 @@ public String listUsers(Map<String, Object> model)
 {
   try (Connection connection = dataSource.getConnection()){
     Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
     ResultSet listU = stmt.executeQuery("SELECT * FROM users");
     ArrayList<User> output = new ArrayList<User>();
     while (listU.next()) {
@@ -1011,7 +1012,8 @@ public String listTournaments(Map<String, Object> model)
 {
   try (Connection connection = dataSource.getConnection()){
     Statement stmt = connection.createStatement();
-    ResultSet listT = stmt.executeQuery("SELECT * FROM tournaments");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30), third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
+    ResultSet listT = stmt.executeQuery("SELECT * FROM tournaments IF ");
     ArrayList<Tournament> output = new ArrayList<Tournament>();
     while (listT.next()) {
       Tournament temp = new Tournament();
@@ -1064,6 +1066,8 @@ public String listOwners(Map<String, Object> model)
 {
   try (Connection connection = dataSource.getConnection()){
     Statement stmt = connection.createStatement();
+    String checkIfOwnerTExists = getSQLNewTableOwner();
+    stmt.executeQuery(checkIfOwnerTExists);
     ResultSet listO = stmt.executeQuery("SELECT * FROM owners");
     ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
     while (listO.next()) {
