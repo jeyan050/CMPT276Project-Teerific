@@ -205,6 +205,20 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
       user.setPriority(priorities[0]);      //sets the priority of the user to 'GOLFER'
 
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
+      
+      // creates and check if admin account created
+      int checkIfAdminExists = 0;
+      ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
+      while (checkAdmin.next()){
+        checkIfAdminExists++;
+      }
+      if (checkIfAdminExists == 0){
+        String adminPassword = "cmpt276";
+        String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
+        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+        stmt.executeUpdate(insert);
+      }
+
       stmt.executeUpdate("INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
       
       String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
@@ -297,7 +311,20 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     }
 
     //add to user table
-    String userInfo = getSQLNewTableUsers();              
+    String userInfo = getSQLNewTableUsers();      
+    
+    // creates and check if admin account created
+    int checkIfAdminExists = 0;
+    ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
+    while (checkAdmin.next()){
+      checkIfAdminExists++;
+    }
+    if (checkIfAdminExists == 0){
+      String adminPassword = "cmpt276";
+      String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
+      String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+      stmt.executeUpdate(insert);
+    }
     
     //create a user based on owner fields
     User user = new User();
