@@ -30,9 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
 import javax.sql.DataSource;
-import javax.swing.JOptionPane;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -126,7 +123,7 @@ public String getLoginPage(Map<String, Object> model){
 public String checkLoginInfo(Map<String, Object> model, User user) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
     String sql = "SELECT * FROM users WHERE username = '" + user.getUsername() + "'";
     ResultSet rs = stmt.executeQuery(sql);
 
@@ -193,7 +190,7 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
 
       user.setPriority(priorities[0]);      //sets the priority of the user to 'GOLFER'
 
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
       stmt.executeUpdate("INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
       
       String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
@@ -247,7 +244,7 @@ public String getOwnerSignUpPage(Map<String, Object> model){
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner owner){
-  //create a new user, owner, golfcourse, then add to database
+  //create a new user, owner, golf course, then add to database
 
   try(Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
@@ -270,12 +267,12 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     
     
     //snake case the course name 
-    /* 'THIS IS BETTER THAN CAMAL CASE' for this situation:  
+    /* 'THIS IS BETTER THAN CAMEL CASE' for this situation:
         - cannot have spaces in name or else it breaks the SQL query
-        - snake case works best as it makes for easy conversion back to orginal formate
+        - snake case works best as it makes for easy conversion back to original format
         - camel case is disregarded by the SQL, implying no way of knowing where to split the words to convert back to original format */
     String updatedCourseName = convertToSnakeCase(owner.getCourseName());
-    String courseInfo = "CREATE TABLE IF NOT EXISTS " + updatedCourseName + "(holeNumber integer, yardage integer, par integer, handicap integer)";
+    String courseInfo = "CREATE TABLE IF NOT EXISTS '" + updatedCourseName + "' (holeNumber integer, yardage integer, par integer, handicap integer)";
     stmt.executeUpdate(courseInfo);
 
 
@@ -349,10 +346,10 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
 //helper
 String getSQLNewTableOwner() {
   return  "CREATE TABLE IF NOT EXISTS owners (" +
-          "courseName varchar(100), address varchar(50), city varchar(30), country varchar(40), website varchar(150), phoneNumber varchar(15), " + 
+          "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
           "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
-          "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(10), weekendRates varchar(10), numHoles integer, " + 
-          "userName varchar(50), password varchar(100),firstName varchar(50),lastName varchar(50),email varchar(75),yardage varchar(20),gender varchar(20))";
+          "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
+          "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
 }
 
 
@@ -388,7 +385,7 @@ String getSQLDeleteOwner(CourseOwner owner, String secretPW){
 
 //helper
 String getSQLNewTableUsers(){
-  return "CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))";
+  return "CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))";
 }
 
 
@@ -520,7 +517,7 @@ public String bookingSuccessful(){
 // RENT EQUIPMENT
 //**********************
 //TODO: Add extra style 
-// TODO: Corner cases (out of stock case, quant in cart > stock case, negative number case)
+// TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
 @GetMapping(
   path = "/tee-rific/rentEquipment"
 )
@@ -571,7 +568,7 @@ public String handleCheckout() throws Exception {
     stmt.executeUpdate("DROP TABLE cart");
 
     // Create table of rentals so employees can keep track
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS LiveRentals (id serial, username varchar(50), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS LiveRentals (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
     //TODO: Link user to rental
     stmt.executeUpdate("INSERT INTO LiveRentals (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
   }
@@ -665,7 +662,7 @@ public EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exc
 
 public void ownerCreateInventory(Connection connection) throws Exception {
   Statement stmt = connection.createStatement();
-  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(20), stock integer DEFAULT 0)");
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(100), stock integer DEFAULT 0)");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
@@ -754,9 +751,9 @@ public String tournament()
 }
 
 @GetMapping(
-  path = "/tee-rific/avalableTournaments"
+  path = "/tee-rific/availableTournaments"
 )
-public String avalableTournaments(Map<String, Object> model)
+public String availableTournaments(Map<String, Object> model)
 {
   try(Connection connection = dataSource.getConnection())
   {
@@ -783,7 +780,7 @@ public String avalableTournaments(Map<String, Object> model)
     model.put("tournaments", output); //
     Tournament tournament = new Tournament();
     model.put("tournament", tournament); //
-    return "avalableTournaments";
+    return "availableTournaments";
 
   } catch (Exception e)
   {
@@ -812,10 +809,10 @@ public String handleTournamentCreation(Map<String, Object> model, Tournament tou
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30), third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement integer, game_mode varchar(100), club_name varchar(100))");
     stmt.executeUpdate("INSERT INTO tournaments (name, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
     System.out.println(tournament.getBuyIn());
-    return "redirect:/tee-rific/avalableTournaments";
+    return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e) 
   {
     model.put("message", e.getMessage());
@@ -882,7 +879,7 @@ public String deleteTournament(Map<String, Object> model, Tournament tournament)
   {
     Statement stmt = connection.createStatement();
     stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
-    return "redirect:/tee-rific/avalableTournaments";
+    return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e)
   {
     model.put("message", e.getMessage());
@@ -934,7 +931,7 @@ public String accountDeleted()
   return "accountDeleted";
 }
 
-@PostMapping( //TODO: User Aaccount Deletion Has Not Been Tested
+@PostMapping( //TODO: User Account Deletion Has Not Been Tested
   path = "/tee-rific/accountDeleted",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
@@ -1018,9 +1015,6 @@ public String listTournaments(Map<String, Object> model)
     ArrayList<Tournament> output = new ArrayList<Tournament>();
     while (listT.next()) {
       Tournament temp = new Tournament();
-
-      // id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30),
-      // third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
 
       temp.setId(listT.getInt("id"));
       temp.setName(listT.getString("name"));
