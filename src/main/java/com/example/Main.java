@@ -272,7 +272,7 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
         - snake case works best as it makes for easy conversion back to original format
         - camel case is disregarded by the SQL, implying no way of knowing where to split the words to convert back to original format */
     String updatedCourseName = convertToSnakeCase(owner.getCourseName());
-    String courseInfo = "CREATE TABLE IF NOT EXISTS '" + updatedCourseName + "' (holeNumber integer, yardage integer, par integer, handicap integer)";
+    String courseInfo = "CREATE TABLE IF NOT EXISTS " + updatedCourseName + " (holeNumber integer, yardage integer, par integer, handicap integer)";
     stmt.executeUpdate(courseInfo);
 
 
