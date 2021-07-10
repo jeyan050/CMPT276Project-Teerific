@@ -50,7 +50,7 @@
                             <td th:text="${user.lname}"></td>
                             <td th:text="${user.email}"></td>
                             <td th:text="${user.gender}"></td>
-                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/users/'+user.username}">
+                            <form action="#" method="post" th:action="${'/tee-rific/admin/users/'+user.username}">
                                 <td class="deleteButton">
                                     <input type="submit" value="Delete">
                                 </td>
@@ -58,7 +58,7 @@
                         </tr>
                     </table><br>
 
-                    <form method= "get" th:action="@{/tee-rific/adminHome}">
+                    <form method= "get" th:action="@{/tee-rific/home/admin}">
                         <button type="submit" class="button">Back to Home</button>
                     </form>
                 </div>

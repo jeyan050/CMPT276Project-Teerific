@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Owner Account Created</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 
@@ -14,6 +12,9 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;900&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -21,28 +22,56 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- Bootstrap Scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <title>Home Page</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
-        <div class="content">
-            <div class="woodBackdrop border content">
-                <div class="sandBackdrop">
-                    <div>
-                        <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    <!-- maybe we can put the name of the course instead of owner below -->
-                    <div class="titleFont dynamicSize">Owner Home Page</div>            
-                    <form method= "get" th:action="@{/tee-rific/golfCourseDetails}">
-                        <button type="submit" class="button">Edit Golf Course Details</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/editOwnerAccount}">
-                        <button type="submit" class="button">Edit Account Details</button>
-                    </form>
-                    <form method= "get" th:action="@{/tee-rific/login}">
-                        <button type="submit" class="button">Log Out</button>
-                    </form>
-                </div>
-             </div>
+        <nav class="navbar navbar-expand-lg navbar-dark woodBackdrop">
+            <img class="logo" th:src="@{/images/tee-rific.png}">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="/tee-rific/golfCourseDetails">Course Details</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/tee-rific/editOwnerAccount">Account Details</a>
+                </li>
+                <!-- this redirects back to golfer home page, do not want that, need to have this return owner homepage -->
+                <!-- <li class="nav-item">
+                  <a class="nav-link" href="/tee-rific/aboutUs">About Us</a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/tee-rific/login">Log Out</a>
+                  </li>
+              </ul>
+            </div>
+          </nav>
+         
+        <div class="homePageContainer">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/golfCourseDetails}">
+                    <button id="editCourseButton" class="homePageButton" type="submit">Course Details</button>
+                </form> 
+
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/editOwnerAccount}">
+                    <button id="editOwnerButton" class="homePageButton" type="submit">Account Details</button>
+                </form> 
+
+                <!-- this redirects back to golfer home page, do not want that, need to have this return owner homepage -->
+                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/aboutUs">
+                    <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
+                </form>  -->
+
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/login}">
+                    <button id="logoutOwnerButton" class="homePageButton" type="submit">Log Out</button>
+                </form>
         </div>
         <footer>
             <div class= "woodBackdrop footer">
@@ -53,8 +82,7 @@
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-        </footer>
+            </footer>
     </div>
 </body>
-<script src="/js/signup.js" type="text/javascript"> </script>
 </html>

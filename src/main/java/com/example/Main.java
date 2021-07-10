@@ -157,11 +157,11 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
     
     if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))){
       if(priority.equals(priorities[0])){           //golferAccount
-        return "home";
+        return "redirect:/tee-rific/home";
       }else if(priority.equals(priorities[1])){     //ownerAccount
-        return "ownerHome";
+        return "redirect:/tee-rific/home/owner";
       }else{                                        //adminAccount
-        return "adminHome";
+        return "redirect:/tee-rific/home/admin";
       } 
     }
     failedLogin = true;
@@ -171,6 +171,7 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
     return "error";
   }
 }
+
 //**********************
 // SIGN-UP
 //**********************
@@ -277,10 +278,7 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
   try(Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
 
-    //TODO: fix password encrypt
-
     String encryptedPassword = BCrypt.hashpw(owner.getPassword(), BCrypt.gensalt());
-
 
     //TODO: will need to figure out way to store image into sql later - Mike
 
@@ -476,14 +474,14 @@ public String getHomePage(Map<String, Object> model){
 }//getHomePage()
 
 @GetMapping(
-  path = "/tee-rific/ownerHome"
+  path = "/tee-rific/home/owner"
 )
 public String getOwnerHomePage(Map<String, Object> model){
   return "ownerHome";
 }
 
 @GetMapping(
-  path = "/tee-rific/adminHome"
+  path = "/tee-rific/home/admin"
 )
 public String getAdminHomePage(Map<String, Object> model){
   return "adminHome";
@@ -997,7 +995,7 @@ public String deleteUser(Map<String, Object> model, User user) throws Exception
 // LIST OF USERS
 //--------------------------------
 @GetMapping(
-  path = "/tee-rific/adminHome/users"
+  path = "/tee-rific/admin/users"
 )
 public String listUsers(Map<String, Object> model)
 {
@@ -1029,7 +1027,7 @@ public String listUsers(Map<String, Object> model)
 }
 
 @PostMapping(
-  path = "/tee-rific/adminHome/users/{username}",
+  path = "/tee-rific/admin/users/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String deleteUser(Map<String, Object> model, @PathVariable("username") String name){
@@ -1048,7 +1046,7 @@ public String deleteUser(Map<String, Object> model, @PathVariable("username") St
 // LIST OF TOURNAMENTS
 //--------------------------------
 @GetMapping(
-  path = "/tee-rific/adminHome/tournaments"
+  path = "/tee-rific/admin/tournaments"
 )
 public String listTournaments(Map<String, Object> model)
 {
@@ -1083,7 +1081,7 @@ public String listTournaments(Map<String, Object> model)
 }
 
 @PostMapping(
-  path = "/tee-rific/adminHome/tournaments/{id}",
+  path = "/tee-rific/admin/tournaments/{id}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String deleteTournament(Map<String, Object> model, @PathVariable("id") long id){
@@ -1102,7 +1100,7 @@ public String deleteTournament(Map<String, Object> model, @PathVariable("id") lo
 // LIST OF OWNERS AND GOLF COURSES
 //--------------------------------
 @GetMapping(
-  path = "/tee-rific/adminHome/owners"
+  path = "/tee-rific/admin/owners"
 )
 public String listOwners(Map<String, Object> model)
 {
@@ -1139,7 +1137,7 @@ public String listOwners(Map<String, Object> model)
 }
 
 @PostMapping(
-  path = "/tee-rific/adminHome/owner/{username}",
+  path = "/tee-rific/admin/owner/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
 public String deleteOwner(Map<String, Object> model, @PathVariable("username") String name){
@@ -1156,7 +1154,7 @@ public String deleteOwner(Map<String, Object> model, @PathVariable("username") S
 }
 
 @GetMapping(
-  path = "/tee-rific/adminHome/owners/golfCourse/{courseName}"
+  path = "/tee-rific/admin/owners/golfCourse/{courseName}"
 )
 public String viewGolfCourse(Map<String, Object> model, @PathVariable("courseName") String course){
   try (Connection connection = dataSource.getConnection()){

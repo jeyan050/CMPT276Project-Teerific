@@ -95,6 +95,44 @@ div {
     
 }
 
+#editCourseButton {
+    background-image: url("https://media4.giphy.com/media/cjVSmqbIn6gwXXoVlI/giphy.gif?cid=790b7611dd6fb6cce7b057f6bc016a8c092f2f8f5b5e7c00&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#editOwnerButton {
+    background-image: url("https://media4.giphy.com/media/l2Je43vWtWb3aGX9S/giphy.gif?cid=ecf05e470aqr6js7ia5n7mto7fduh9bpyia69vjrb6hai0bk&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#logoutOwnerButton {
+    background-image: url("https://media1.giphy.com/media/3o6Mb2V24MJTQMTwyY/giphy.gif?cid=790b7611ee854f6f00c2f12f06dba7863ba7441287f825fc&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#adminUsersButton {
+    background-image: url("https://media3.giphy.com/media/xT5LMAdfzp0iSqyGFq/giphy.gif?cid=790b7611c1468ff98a13b681c45ecad598436243a12fa565&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#adminOwnersCoursesButton {
+    background-image: url("https://media3.giphy.com/media/3orifdiiMp00Qu1lm0/giphy.gif?cid=790b7611010fce4d6a6717c5033d35a298dddbcb377bb4f4&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#adminTournamentsButton {
+    background-image: url("https://media1.giphy.com/media/ZP14lPlhETHos/giphy.gif?cid=790b761108a8112537dafaf28bab873d06a6187711b33a3b&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+#logoutAdminButton {
+    background-image: url("https://media1.giphy.com/media/l2JdZKub444p8isw0/giphy.gif?cid=790b76110c1b984b92f8d0c8aa3279b1e87387c98ce174fc&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
+
+
+
 
 /**************************/
 /* CLASSES (MULTIPLE USE) */

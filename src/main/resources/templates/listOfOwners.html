@@ -48,7 +48,7 @@
                         </tr>
                         <tr th:each="owner : ${ownerList}">
                             <td>
-                                <a th:href="${'/tee-rific/adminHome/owners/golfCourse/'+owner.courseName}" th:text="${owner.courseName}">...</a>
+                                <a th:href="${'/tee-rific/admin/owners/golfCourse/'+owner.courseName}" th:text="${owner.courseName}">...</a>
                             </td>
                             <td th:text="${owner.address}"></td>
                             <td th:text="${owner.city}"></td>
@@ -60,7 +60,7 @@
                             <td th:text="${owner.lname}"></td>
                             <td th:text="${owner.email}"></td>
                             <td th:text="${owner.gender}"></td>
-                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/owner/'+owner.username}">
+                            <form action="#" method="post" th:action="${'/tee-rific/admin/owner/'+owner.username}">
                                 <td class="deleteButton">
                                     <input type="submit" value="Delete">
                                 </td>
@@ -68,7 +68,7 @@
                         </tr>
                     </table><br>
 
-                    <form method= "get" th:action="@{/tee-rific/adminHome}">
+                    <form method= "get" th:action="@{/tee-rific/home/admin}">
                         <button type="submit" class="button">Back to Home</button>
                     </form>
                 </div>

@@ -54,7 +54,7 @@
                             <td th:text="${tournament.ageRequirement}"></td>
                             <td th:text="${tournament.gameMode}"></td>
                             <td th:text="${tournament.clubName}"></td>
-                            <form action="#" method="post" th:action="${'/tee-rific/adminHome/tournaments/'+tournament.id}">
+                            <form action="#" method="post" th:action="${'/tee-rific/admin/tournaments/'+tournament.id}">
                                 <td class="deleteButton">
                                     <input type="submit" value="Delete">
                                 </td>
@@ -62,7 +62,7 @@
                         </tr>
                     </table><br>
 
-                    <form method= "get" th:action="@{/tee-rific/adminHome}">
+                    <form method= "get" th:action="@{/tee-rific/home/admin}">
                         <button type="submit" class="button">Back to Home</button>
                     </form>
                 </div>
