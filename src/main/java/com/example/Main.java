@@ -315,6 +315,7 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     
     // creates and check if admin account created
     int checkIfAdminExists = 0;
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
     ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
     while (checkAdmin.next()){
       checkIfAdminExists++;
