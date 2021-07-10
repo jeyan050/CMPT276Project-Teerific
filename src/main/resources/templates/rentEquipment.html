@@ -25,14 +25,14 @@
                 <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
                 Golf Course Equipment
                 <form action="#" method="post" th:action="@{/tee-rific/rentEquipment}" th:object="${cart}">
-                    <p>Choose quantity (Balls)</p>
-                    <input type="number" th:field=*{numBalls}>
+                    <p class="label"></p>
+                    <input type="number" th:field=*{numBalls} class="input">
 
-                    <p>Choose quantity (Carts)</p>
-                    <input type="number" th:field=*{numCarts}>
+                    <p class="label"></p>
+                    <input type="number" th:field=*{numCarts} class="input">
 
-                    <p>Choose quantity (Clubs)</p>
-                    <input type="number" th:field=*{numClubs}> <br>
+                    <p class="label"></p>
+                    <input type="number" th:field=*{numClubs} class="input"> <br>
 
                     <button type="submit" class="button">Checkout</button>
                 </form>
@@ -53,4 +53,5 @@
           <script src="/js/buttonEffect.js" type="text/javascript"> </script>
     </footer>
 </body>
+<script th:src="@{/js/rentEquipment.js}" type="text/javascript"> </script>
 </html>
