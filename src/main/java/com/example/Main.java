@@ -739,6 +739,53 @@ public void ownerUpdateInventory(Connection connection, EquipmentCart cart) thro
   stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
 }
 
+//**********************
+// BROWSE COURSES "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
+//          "courseLogo varchar(150), " +
+//          "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
+//          "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
+//**********************
+
+  @GetMapping(
+          path = "/tee-rific/courses"
+  )
+  public String viewAllCourses(Map<String, Object> model) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate(getSQLNewTableOwner());
+      ResultSet rs = stmt.executeQuery("SELECT * FROM owners");
+      ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
+      while(rs.next()) {
+        CourseOwner course = new CourseOwner();
+        course.setCourseName(rs.getString("courseName"));
+        course.setAddress(rs.getString("address"));
+        course.setCity(rs.getString("city"));
+        course.setCountry(rs.getString("country"));
+        course.setWebsite(rs.getString("website"));
+        course.setPhoneNumber(rs.getString("phoneNumber"));
+        course.setCourseLogo(rs.getString("courseLogo"));
+        course.setDirectionsToCourse(rs.getString("directionsToCourse"));
+        course.setDescription(rs.getString("description"));
+        course.setWeekdayRates(rs.getString("weekdayRates"));
+        course.setWeekendRates(rs.getString("weekendRates"));
+        course.setNumHoles(rs.getInt("numHoles"));
+        course.setUsername(rs.getString("userName"));
+        course.setPassword(rs.getString("password"));
+        course.setFname(rs.getString("firstName"));
+        course.setLname(rs.getString("lastName"));
+        course.setEmail(rs.getString("email"));
+        course.setYardage(rs.getString("yardage"));
+        course.setGender(rs.getString("gender"));
+
+        output.add(course);
+      }
+      model.put("courses", output);
+      return "listCourses";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }
 
 
 //**********************
