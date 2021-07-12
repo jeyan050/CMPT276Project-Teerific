@@ -10,6 +10,7 @@ public class Scorecard {
     private String formatPlayed;
     private String attestor;
     private ArrayList groupMembers;
+    private String gameID;
 
     public String getDatePlayed() {
         return this.datePlayed;
@@ -52,4 +53,11 @@ public class Scorecard {
     }
     public void setUsername(ArrayList f) { this.groupMembers = f; }
 
+    public String getGameID(){
+        return this.gameID;
+    }
+
+    public void setGameID(String gameID){
+        this.gameID = gameID;
+    }
 }

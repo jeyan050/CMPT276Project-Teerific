@@ -532,16 +532,51 @@ public String getBookingPage(){
 }//getBookingPage()
 
 
+int serial = 1;
+
 @PostMapping(
   path = "/tee-rific/booking",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String updateSchedule(){
-  boolean validAppointment = true;
-  if(validAppointment){
-    return "redirect:/tee-rific/bookingSuccessful";
+public String updateSchedule(Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    
+    boolean validAppointment = true;
+    // Statement stmt = connection.createStatement();
+
+    // //creates a new scorecard
+    // Scorecard scorecard = new Scorecard();
+
+    // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
+    // scorecard.setGameID(String.valueOf(serial));      
+    // scorecard.setDatePlayed("");
+    // scorecard.setCoursePlayed("My Great Course");
+    // scorecard.setTeesPlayed("");
+    // scorecard.setHolesPlayed("");
+    // scorecard.setFormatPlayed("");
+    // scorecard.setAttestor("");
+    // serial++;
+
+    // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
+    // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
+    // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+    // stmt.executeUpdate(sqlScorecardsInit);
+
+    // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+    //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() + 
+    //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() + 
+    //                   "', '" + scorecard.getAttestor() + "')");
+
+
+
+    if(validAppointment){
+      return "redirect:/tee-rific/bookingSuccessful";
+    }
+    return "booking";
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
   }
-  return "booking";
 }//updateSchedule()
 
 
@@ -793,20 +828,101 @@ public void ownerUpdateInventory(Connection connection, EquipmentCart cart) thro
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/scorecard"
+  path = "/tee-rific/scorecards"
 )
-public String getScorecard(){
-  return "scorecard";
-}//getScorecard()
+public String getScorecards(Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
 
 
-@PostMapping(
-  path = "/tee-rific/scorecard",
-  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+    //TODO: Scorecards -- how to store an arrayList/array in SQL for the users
+    String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+    stmt.executeUpdate(sqlScorecardsInit);
+
+    ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards");
+    ArrayList<Scorecard> output = new ArrayList<Scorecard>();
+    while(rs.next()) {
+      Scorecard scorecard = new Scorecard();
+      scorecard.setGameID(rs.getString("id"));
+      scorecard.setDatePlayed(rs.getString("date"));
+      scorecard.setCoursePlayed(rs.getString("course"));
+      scorecard.setTeesPlayed(rs.getString("teesPlayed"));
+      scorecard.setHolesPlayed(rs.getString("holesPlayed"));
+      scorecard.setFormatPlayed(rs.getString("formatPlayed"));
+      scorecard.setAttestor(rs.getString("attestor"));
+      //TODO: Scorecards -- store an arrayList/array in SQL for the users
+
+      output.add(scorecard);
+    }
+
+    model.put("scorecards", output);
+    return "scorecard";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+}//getScorecards()
+
+
+@GetMapping(
+  path = "/tee-rific/scorecards/{gameID}"
 )
-public String updateScorecard(){
-  return "scorecard";
-}//updateScorecard()
+public String getSpecificScorecard(@PathVariable("gameID")String gameID, Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+
+    //get the scorecard info
+    String getScorecardInfo = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+    ResultSet scoreCardInfo = stmt.executeQuery(getScorecardInfo);
+
+    Scorecard scorecard = new Scorecard();
+    while(scoreCardInfo.next()){
+      scorecard.setGameID(scoreCardInfo.getString("id"));
+      scorecard.setDatePlayed(scoreCardInfo.getString("date"));
+      scorecard.setCoursePlayed(scoreCardInfo.getString("course"));
+      scorecard.setTeesPlayed(scoreCardInfo.getString("teesPlayed"));
+      scorecard.setHolesPlayed(scoreCardInfo.getString("holesPlayed"));
+      scorecard.setFormatPlayed(scoreCardInfo.getString("formatPlayed"));
+      scorecard.setAttestor(scoreCardInfo.getString("attestor"));
+        //TODO: Scorecards -- store an arrayList/array in SQL for the users
+    }
+   
+    //get the course info by searching for snakeCase name in DB
+    String courseName = scorecard.getCoursePlayed();
+    String convertedName = convertToSnakeCase(courseName);
+
+    String getCourseInfo = "SELECT * FROM " + convertedName;
+    ResultSet courseInfo = stmt.executeQuery(getCourseInfo);
+    ArrayList<Hole> courseHoles = new ArrayList<Hole>();
+    while(courseInfo.next()){
+      Hole hole = new Hole();
+      hole.setHoleNumber(Integer.parseInt(courseInfo.getString("holeNumber")));
+      hole.setYardage(Integer.parseInt(courseInfo.getString("yardage")));
+      hole.setPar(Integer.parseInt(courseInfo.getString("par")));
+      hole.setHandicap(Integer.parseInt(courseInfo.getString("handicap")));
+
+      courseHoles.add(hole);
+    }
+
+    model.put("scorecard", scorecard);
+    model.put("course", courseHoles);
+
+    return "game";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }  
+}//getSpecificScorecard()
+
+
+//TODO: postMapping for scorecard updating 
+// @PostMapping(
+//   path = "/tee-rific/scorecards/{gameID}",
+//   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+// )
+// public String updateScorecard(@PathVariable("gameID")String gameID, Map<String, Object> model){
+//   return "game";
+// }//updateScorecard()
 
 
 @GetMapping(
