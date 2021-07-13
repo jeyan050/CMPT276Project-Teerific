@@ -837,8 +837,9 @@ public String tournament()
   return "tournament";
 }
 
+// TODO: page crashes on the live version, local host works fine for some reason
 @GetMapping(
-  path = "/tee-rific/availableTournaments"
+  path = "/tee-rific/availableTournaments" 
 )
 public String availableTournaments(Map<String, Object> model)
 {
@@ -852,6 +853,8 @@ public String availableTournaments(Map<String, Object> model)
       Tournament tournament = new Tournament();
       tournament.setId(rs.getInt("id"));
       tournament.setName(rs.getString("name"));
+      tournament.setDate(rs.getString("date"));
+      tournament.setTime(rs.getString("time"));
       tournament.setParticipantSlots(rs.getInt("participant_slots"));
       tournament.setBuyIn(rs.getInt("buy_in"));
       tournament.setFirstPrize(rs.getString("first_prize"));
@@ -896,8 +899,24 @@ public String handleTournamentCreation(Map<String, Object> model, Tournament tou
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement integer, game_mode varchar(100), club_name varchar(100))");
-    stmt.executeUpdate("INSERT INTO tournaments (name, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement integer, game_mode varchar(100), club_name varchar(100))");
+    if (tournament.getBuyIn() == null)
+    {
+      //set it to 0
+    }
+    if (tournament.getFirstPrize() == null)
+    {
+      //set it to 0
+    }
+    if (tournament.getSecondPrize() == null)
+    {
+      //set it to 0
+    }
+    if (tournament.getThirdPrize() == null)
+    {
+      //set it to 0
+    }
+    stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
     System.out.println(tournament.getBuyIn());
     return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e) 
@@ -923,6 +942,8 @@ public String viewSelectedTournament(Map<String, Object> model, @PathVariable St
       Tournament tournament = new Tournament();
       tournament.setId(rs.getInt("id"));
       tournament.setName(rs.getString("name"));
+      tournament.setDate(rs.getString("date"));
+      tournament.setTime(rs.getString("time"));
       tournament.setParticipantSlots(rs.getInt("participant_slots"));
       tournament.setBuyIn(rs.getInt("buy_in"));
       tournament.setFirstPrize(rs.getString("first_prize"));
@@ -966,6 +987,8 @@ public String deleteTournament(Map<String, Object> model, Tournament tournament)
   {
     Statement stmt = connection.createStatement();
     stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
+    System.out.println(tournament.getId());
+    System.out.println(tournament.getName());
     return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e)
   {
@@ -974,12 +997,23 @@ public String deleteTournament(Map<String, Object> model, Tournament tournament)
   }
 }
 
+
+
 @GetMapping(
   path = "/tee-rific/tournamentSignUp"
 )
-public String tournamentSignUp()
+public String tournamentSignUp(Map<String, Object> model, Tournament tournament)
 {
-  return "tournamentSignUp";
+  try (Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    //add user to tournament.participants
+    return "tournamentSignUp";
+  } catch (Exception e)
+  {
+    model.put("message", e.getMessage());
+    return "error";
+  }
 }
 
 // @PostMapping(
@@ -997,6 +1031,7 @@ public String tournamentSignUp()
 //     return "error";
 //   }
 // }
+
 
 //**********************
 // USER ACCOUNT

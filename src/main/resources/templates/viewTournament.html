@@ -15,7 +15,8 @@
                 <table>
                 <thead>
                         <th>Name</th>
-                        <!-- <th>Date</th> -->
+                        <th>Date</th>
+                        <th>Time</th>
                         <th>Club</th>
                         <th>Game Mode</th>
                         <th>Buy In</th>
@@ -27,7 +28,8 @@
                     <tr th:each="tournament : ${tournaments}">
                         <!-- link to the tournament by clicking on name-->
                         <td th:text="${tournament.name}"></td>
-                        <!-- <td th:text="${tournament.date}"></td> -->
+                        <td th:text="${tournament.date}"></td>
+                        <td th:text="${tournament.time}"></td>
                         <td th:text="${tournament.clubName}"></td>
                         <td th:text="${tournament.gameMode}"></td>
                         <td th:text="${tournament.buyIn}"></td>
@@ -38,12 +40,16 @@
                         <!-- participant slots remaining:  -->
                     </tr>
                 </table>
-                <form method="get" action="/tee-rific/tournamentSignUp">
-                    <button type="submit" class = "button">Sign Up</button>
+                <form method="get" action="/tee-rific/tournamentSignUp" th:object="${tournament}">
+                    <input type = "hidden"  th:value="${tournament.id}"/>
+                    <input type = "hidden"  th:value="${tournament.name}"/>
+                    <input type="submit" class = "button" value="Sign Up">
                 </form>
                 <!-- if admin AND created the tournament -->
-                <form method="get" action="/tee-rific/tournamentDelete">
-                    <button type="submit" class = "button">Delete Tournament</button>
+                <form method="get" action="/tee-rific/tournamentDelete" th:object="${tournament}">
+                    <input type = "hidden"  th:value="${tournament.id}"/>
+                    <input type = "hidden"  th:value="${tournament.name}"/>
+                    <input type="submit" class = "button" value= "Delete Tournament">
                 </form>
                 <form method="get" action="/tee-rific/avalableTournaments">
                     <button type="submit" class = "button">Go Back</button>

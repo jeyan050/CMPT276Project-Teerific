@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.ArrayList;
+
 public class Tournament {
     private Integer id;
     private String name;
@@ -11,7 +13,9 @@ public class Tournament {
     private Integer ageRequirement;
     private String gameMode;
     private String clubName; 
-    // date, I think I can import a date package
+    private String date;
+    private String time;
+    private ArrayList<User> participants;
 
 //getters
 
@@ -55,6 +59,18 @@ public class Tournament {
     {
         return this.clubName;
     }
+    public String getDate()
+    {
+        return this.date;
+    }
+    public String getTime()
+    {
+        return this.time;
+    }
+    public ArrayList<User> getParticipants()
+    {
+        return this.participants;
+    }
 
 //setters
 
@@ -97,5 +113,17 @@ public class Tournament {
     public void setClubName(String clubName)
     {
         this.clubName = clubName;
+    }
+    public void setDate(String d)
+    {
+        this.date = d;
+    }
+    public void setTime(String t)
+    {
+        this.time = t;
+    }
+    public void setHoles(ArrayList<User> updatedUserList)
+    {
+        this.participants = updatedUserList;
     }
 }
