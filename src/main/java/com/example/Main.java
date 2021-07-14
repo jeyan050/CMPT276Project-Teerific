@@ -1100,7 +1100,7 @@ public String displayDeleteTournamentPage()
   path = "/tee-rific/tournamentDelete",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String deleteTournament(Map<String, Object> model, Tournament tournament)
+public String deleteTournament(Map<String, Object> model, Tournament tournament) throws Exception
 {
   try (Connection connection = dataSource.getConnection())
   {
@@ -1127,6 +1127,7 @@ public String tournamentSignUp(Map<String, Object> model, Tournament tournament)
   {
     Statement stmt = connection.createStatement();
     //add user to tournament.participants
+    //pop up displays if the user is already signed up in the tournament
     return "tournamentSignUp";
   } catch (Exception e)
   {

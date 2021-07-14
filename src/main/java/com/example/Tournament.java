@@ -122,7 +122,7 @@ public class Tournament {
     {
         this.time = t;
     }
-    public void setHoles(ArrayList<User> updatedUserList)
+    public void setParticipants(ArrayList<User> updatedUserList)
     {
         this.participants = updatedUserList;
     }

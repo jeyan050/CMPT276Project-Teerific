@@ -28,7 +28,7 @@
                         <td th:text="${tournament.date}"></td>
                         <td th:text="${tournament.clubName}"></td>
                         <td th:text="${tournament.gameMode}"></td>
-                        <td th:text="${tournament.buyIn}"></td>                        
+                        <td th:text="${'$' + tournament.buyIn}"></td>                        
                     </tr>
                 </table>
                 <form method="get" action="/tee-rific/home">
