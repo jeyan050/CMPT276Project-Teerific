@@ -1016,24 +1016,27 @@ public String handleTournamentCreation(Map<String, Object> model, Tournament tou
   {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement integer, game_mode varchar(100), club_name varchar(100))");
-    if (tournament.getBuyIn() == null)
+    Integer buyIn = tournament.getBuyIn();
+    if (buyIn == null)
     {
-      //set it to 0
+      buyIn = 0;
     }
+    String firstPrize = tournament.getFirstPrize();
     if (tournament.getFirstPrize() == null)
     {
-      //set it to 0
+      firstPrize = "0";
     }
+    String secondPrize = tournament.getSecondPrize();
     if (tournament.getSecondPrize() == null)
     {
-      //set it to 0
+      secondPrize = "0";
     }
+    String thirdPrize = tournament.getThirdPrize();
     if (tournament.getThirdPrize() == null)
     {
-      //set it to 0
+      thirdPrize = "0";
     }
-    stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + tournament.getBuyIn() + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize()+ "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-    System.out.println(tournament.getBuyIn());
+    stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
     return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e) 
   {

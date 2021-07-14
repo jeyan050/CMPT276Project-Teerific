@@ -32,6 +32,7 @@
                         <td th:text="${tournament.time}"></td>
                         <td th:text="${tournament.clubName}"></td>
                         <td th:text="${tournament.gameMode}"></td>
+                        <!-- TODO: Add $ in front of buyIn -->
                         <td th:text="${tournament.buyIn}"></td>
                         <td th:text="${tournament.firstPrize}"></td>
                         <td th:text="${tournament.secondPrize}"></td>
@@ -51,7 +52,7 @@
                     <input type = "hidden"  th:value="${tournament.name}"/>
                     <input type="submit" class = "button" value= "Delete Tournament">
                 </form>
-                <form method="get" action="/tee-rific/avalableTournaments">
+                <form method="get" action="/tee-rific/availableTournaments">
                     <button type="submit" class = "button">Go Back</button>
                 </form>
             </div>
