@@ -61,13 +61,16 @@
                             <td th:text="${owner.email}"></td>
                             <td th:text="${owner.gender}"></td>
                             <form action="#" method="post" th:action="${'/tee-rific/admin/owner/'+owner.username}">
-                                <td class="deleteButton">
-                                    <input type="submit" value="Delete">
+                                <td>
+                                    <input class="button deleteButton ownerDB" type="submit" value="Delete">
                                 </td>
                             </form>
                         </tr>
                     </table><br>
 
+                    <form method="post" th:action="@{/tee-rific/admin/owners/clear}">
+                        <button type="submit" class="button">Clear Database</button>
+                    </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
                         <button type="submit" class="button">Back to Home</button>
                     </form>

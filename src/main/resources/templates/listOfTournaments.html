@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>List of Users</title>
+    <title>List of Tournaments</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
     <link th:href="@{/listStyle.css}" type="text/css" rel="stylesheet">
@@ -31,7 +31,7 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">List of Users</div>            
+                    <div class="titleFont dynamicSize">List of Tournaments</div>            
                     <table class="tableSizing">
                         <tr>
                             <th>Name</th>
@@ -55,13 +55,15 @@
                             <td th:text="${tournament.gameMode}"></td>
                             <td th:text="${tournament.clubName}"></td>
                             <form action="#" method="post" th:action="${'/tee-rific/admin/tournaments/'+tournament.id}">
-                                <td class="deleteButton">
-                                    <input type="submit" value="Delete">
+                                <td>
+                                    <input class="button deleteButton" type="submit" value="Delete">
                                 </td>
                             </form>
                         </tr>
                     </table><br>
-
+                    <form method="post" th:action="@{/tee-rific/admin/tournaments/clear}">
+                        <button type="submit" class="button">Clear Database</button>
+                    </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
                         <button type="submit" class="button">Back to Home</button>
                     </form>
