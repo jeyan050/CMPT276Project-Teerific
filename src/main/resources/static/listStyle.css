@@ -24,10 +24,6 @@ table {
     font-size: 13px;
 }
 
-.owners {
-    font-size: 13px;
-}
-
 .tableSizing {
     table-layout: fixed;
     width: 1080px;
@@ -36,4 +32,13 @@ table {
 
 .password {
     width: 300px;
+}
+
+.deleteButton {
+    width: 80px;
+}
+
+.ownerDB {
+    font-size: 13px;
+    width: 50px;
 }

@@ -1200,6 +1200,20 @@ public String listUsers(Map<String, Object> model)
   try (Connection connection = dataSource.getConnection()){
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(30), username varchar(30), password varchar(100), fname varchar(30), lname varchar(30), email varchar(30), gender varchar(30))");
+    
+    // creates and check if admin account created
+    int checkIfAdminExists = 0;
+    ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
+    while (checkAdmin.next()){
+      checkIfAdminExists++;
+    }
+    if (checkIfAdminExists == 0){
+      String adminPassword = "cmpt276";
+      String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
+      String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+      stmt.executeUpdate(insert);
+    }
+    
     ResultSet listU = stmt.executeQuery("SELECT * FROM users");
     ArrayList<User> output = new ArrayList<User>();
     while (listU.next()) {
@@ -1223,6 +1237,24 @@ public String listUsers(Map<String, Object> model)
     return "error";
   } 
 }
+
+@PostMapping(
+  path = "/tee-rific/admin/users/clear",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String clearUserDB(Map<String, Object> model){
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    String sql = "DROP TABLE users";
+    stmt.executeUpdate(sql);
+
+    return "redirect:/tee-rific/admin/users";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
 
 @PostMapping(
   path = "/tee-rific/admin/users/{username}",
@@ -1272,6 +1304,23 @@ public String listTournaments(Map<String, Object> model)
 
     model.put("tournamentList",output);
     return "listOfTournaments";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+@PostMapping(
+  path = "/tee-rific/admin/tournaments/clear",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String clearTournamentDB(Map<String, Object> model){
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    String sql = "DROP TABLE tournaments";
+    stmt.executeUpdate(sql);
+
+    return "redirect:/tee-rific/admin/tournaments";
   } catch (Exception e) {
     model.put("message", e.getMessage());
     return "error";
@@ -1335,6 +1384,23 @@ public String listOwners(Map<String, Object> model)
 }
 
 @PostMapping(
+  path = "/tee-rific/admin/owners/clear",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String clearOwnerDB(Map<String, Object> model){
+  try (Connection connection = dataSource.getConnection()){
+    Statement stmt = connection.createStatement();
+    String sql = "DROP TABLE users";
+    stmt.executeUpdate(sql);
+
+    return "redirect:/tee-rific/admin/owners";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}
+
+@PostMapping(
   path = "/tee-rific/admin/owner/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
@@ -1343,6 +1409,8 @@ public String deleteOwner(Map<String, Object> model, @PathVariable("username") S
     Statement stmt = connection.createStatement();
     String sql = "DELETE FROM owners WHERE username='"+name+"'";
     stmt.executeUpdate(sql);
+    String userSql = "DELETE FROM users WHERE username='"+name+"'";
+    stmt.executeUpdate(userSql);
 
     return "deleteSuccess";
   } catch (Exception e) {
