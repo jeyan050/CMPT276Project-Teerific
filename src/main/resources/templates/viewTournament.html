@@ -40,8 +40,8 @@
                         <td th:text="${tournament.secondPrize}"></td>
                         <td th:text="${tournament.thirdPrize}"></td>
                         <td th:text="${tournament.ageRequirement}"></td>
-                        <!-- replace the "-2" with - participants.size()-->
-                        <th:block th:with="remainingSlots=${tournament.participantSlots - 2}">
+                        <!-- replace the "-0" with - participants.size()-->
+                        <th:block th:with="remainingSlots=${tournament.participantSlots - 0}">
                         <td th:text= "${remainingSlots}"></td>
                         </th:block>
                     </tr>
