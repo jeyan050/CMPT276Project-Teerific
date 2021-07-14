@@ -954,6 +954,7 @@ public String tournament()
 }
 
 // TODO: page crashes on the live version, local host works fine for some reason
+// TODO: breaks if no tournaments have been created yet
 @GetMapping(
   path = "/tee-rific/availableTournaments" 
 )
