@@ -10,7 +10,7 @@ public class Tournament {
     private String firstPrize;
     private String secondPrize;
     private String thirdPrize;
-    private Integer ageRequirement;
+    private String ageRequirement;
     private String gameMode;
     private String clubName; 
     private String date;
@@ -47,7 +47,7 @@ public class Tournament {
     {
         return this.thirdPrize;
     }
-    public Integer getAgeRequirement()
+    public String getAgeRequirement()
     {
         return this.ageRequirement;
     }
@@ -102,7 +102,7 @@ public class Tournament {
     {
         this.thirdPrize = thirdP;
     }
-    public void setAgeRequirement(Integer reqAge)
+    public void setAgeRequirement(String reqAge)
     {
         this.ageRequirement = reqAge;
     }
@@ -122,7 +122,7 @@ public class Tournament {
     {
         this.time = t;
     }
-    public void setHoles(ArrayList<User> updatedUserList)
+    public void setParticipants(ArrayList<User> updatedUserList)
     {
         this.participants = updatedUserList;
     }

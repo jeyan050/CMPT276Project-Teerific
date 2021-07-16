@@ -12,8 +12,9 @@
         <div class="layer_7">
             <div class="layer_8">
                 <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <h1>Successfully signed up for the  Tournament! </h1>
-                <!-- <span th:text="${tournament.name}"></span> ! -->
+                <th:block th:each="tournament : ${tournaments}">
+                    <h1>Successfully signed up for <span th:text="${tournament.name}"></span> ?</h1>
+                </th:block>
                 <p>But not really, have not implimented that  yet</p>
                 <form method="get" action="/tee-rific/home">
                     <button type="submit" class = "button">Home Page</button>

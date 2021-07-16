@@ -1067,6 +1067,7 @@ public String tournament(@PathVariable("username")String user, Map<String, Objec
 }
 
 // TODO: page crashes on the live version, local host works fine for some reason
+// TODO: breaks if no tournaments have been created yet
 @GetMapping(
   path = "/tee-rific/availableTournaments/{username}" 
 )
@@ -1088,7 +1089,7 @@ public String availableTournaments(@PathVariable("username")String user, Map<Str
       tournament.setFirstPrize(rs.getString("first_prize"));
       tournament.setSecondPrize(rs.getString("second_prize"));
       tournament.setThirdPrize(rs.getString("third_prize"));
-      tournament.setAgeRequirement(rs.getInt("age_requirement"));
+      tournament.setAgeRequirement(rs.getString("age_requirement"));
       tournament.setGameMode(rs.getString("game_mode"));
       tournament.setClubName(rs.getString("club_name"));
 
@@ -1130,7 +1131,7 @@ public String handleTournamentCreation(@PathVariable("username")String user, Map
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement integer, game_mode varchar(100), club_name varchar(100))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100))");
     Integer buyIn = tournament.getBuyIn();
     if (buyIn == null)
     {
@@ -1154,6 +1155,13 @@ public String handleTournamentCreation(@PathVariable("username")String user, Map
     stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
     
     return "redirect:/tee-rific/availableTournaments/" + user;
+    // String ageRequirement = tournament.getAgeRequirement();
+    // if (tournament.getAgeRequirement() == null)
+    // {
+    //   ageRequirement = "0";
+    // }
+    // stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + ageRequirement + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
+    // return "redirect:/tee-rific/availableTournaments";
   } catch (Exception e) 
   {
     model.put("message", e.getMessage());
@@ -1185,7 +1193,7 @@ public String viewSelectedTournament(@PathVariable("username")String user, Map<S
       tournament.setFirstPrize(rs.getString("first_prize"));
       tournament.setSecondPrize(rs.getString("second_prize"));
       tournament.setThirdPrize(rs.getString("third_prize"));
-      tournament.setAgeRequirement(rs.getInt("age_requirement"));
+      tournament.setAgeRequirement(rs.getString("age_requirement"));
       tournament.setGameMode(rs.getString("game_mode"));
       tournament.setClubName(rs.getString("club_name"));
 
@@ -1248,6 +1256,7 @@ public String tournamentSignUp(@PathVariable("username")String user, Map<String,
     //add user to tournament.participants
 
     model.put("username", user);
+    //pop up displays if the user is already signed up in the tournament
     return "tournamentSignUp";
   } catch (Exception e)
   {
@@ -1378,12 +1387,14 @@ public String listTournaments(Map<String, Object> model)
 
       temp.setId(listT.getInt("id"));
       temp.setName(listT.getString("name"));
+      temp.setDate(listT.getString("date"));
+      temp.setTime(listT.getString("time"));
       temp.setParticipantSlots(listT.getInt("participant_slots"));
       temp.setBuyIn(listT.getInt("buy_in"));
       temp.setFirstPrize(listT.getString("first_prize"));
       temp.setSecondPrize(listT.getString("second_prize"));
       temp.setThirdPrize(listT.getString("third_prize"));
-      temp.setAgeRequirement(listT.getInt("age_requirement"));
+      temp.setAgeRequirement(listT.getString("age_requirement"));
       temp.setGameMode(listT.getString("game_mode"));
       temp.setClubName(listT.getString("club_name"));
 

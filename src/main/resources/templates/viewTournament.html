@@ -11,7 +11,9 @@
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
-                <h1>Sign up for Tournament: <span th:text="${tournament.name}"></span> ?</h1>
+                <th:block th:each="tournament : ${tournaments}">
+                    <h1>Sign up for Tournament: <span th:text="${tournament.name}"></span> ?</h1>
+                </th:block>
                 <table>
                 <thead>
                         <th>Name</th>
@@ -24,21 +26,24 @@
                         <th>Second Prize</th>
                         <th>Third Prize</th>
                         <th>Age Requirement</th>
+                        <th>Slots Remaining</th>
                     </thead>
                     <tr th:each="tournament : ${tournaments}">
-                        <!-- link to the tournament by clicking on name-->
+                        <!-- link to the tournament by clicking on name, unsure if this is the method we want to go with-->
                         <td th:text="${tournament.name}"></td>
                         <td th:text="${tournament.date}"></td>
                         <td th:text="${tournament.time}"></td>
                         <td th:text="${tournament.clubName}"></td>
                         <td th:text="${tournament.gameMode}"></td>
-                        <!-- TODO: Add $ in front of buyIn -->
-                        <td th:text="${tournament.buyIn}"></td>
+                        <td th:text="${'$' + tournament.buyIn}"></td>
                         <td th:text="${tournament.firstPrize}"></td>
                         <td th:text="${tournament.secondPrize}"></td>
                         <td th:text="${tournament.thirdPrize}"></td>
                         <td th:text="${tournament.ageRequirement}"></td>
-                        <!-- participant slots remaining:  -->
+                        <!-- replace the "-0" with - participants.size()-->
+                        <th:block th:with="remainingSlots=${tournament.participantSlots - 0}">
+                        <td th:text= "${remainingSlots}"></td>
+                        </th:block>
                     </tr>
                 </table>
                 <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + username}" th:object="${tournament}">
