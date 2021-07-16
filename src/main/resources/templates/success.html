@@ -9,12 +9,12 @@
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <!-- Welcome to TEE-RIFIC "username"! -->
-                <h2>Your Account has been Created, <br> Welcome to TEE-RIFIC!</h2>
+                <img th:src="@{/images/tee-rific.png}">
+                <h2>Welcome to TEE-RIFIC '<em th:text="${username}"></em>'!</h2>
+                <h2>Your Account has been Created</h2>
 
-                <form method="get" action="/tee-rific/home">
-                    <button type="submit" class = "button">Go to the Home Page</button>
+                <form method="get" th:action="@{/tee-rific/login}">
+                    <button type="submit" class = "button">Login</button>
                 </form>
             </div>
         </div>

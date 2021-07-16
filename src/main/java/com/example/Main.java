@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
 import javax.sql.DataSource;
+import javax.xml.transform.Result;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -113,7 +114,7 @@ public String getLoginPage(Map<String, Object> model){
     failedLogin = false;
   }
   return "login";
-}
+}//getLoginPage()
 
 
 @PostMapping(
@@ -156,13 +157,7 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
     System.out.println(user.getPassword());
     
     if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))){
-      if(priority.equals(priorities[0])){           //golferAccount
-        return "redirect:/tee-rific/home";
-      }else if(priority.equals(priorities[1])){     //ownerAccount
-        return "redirect:/tee-rific/home/owner";
-      }else{                                        //adminAccount
-        return "redirect:/tee-rific/home/admin";
-      } 
+      return "redirect:/tee-rific/home/" + user.getUsername();
     }
     failedLogin = true;
     return "redirect:/tee-rific/login";
@@ -170,7 +165,8 @@ public String checkLoginInfo(Map<String, Object> model, User user) throws Except
     model.put("message", e.getMessage());
     return "error";
   }
-}
+}//checkLoginInfo()
+
 
 //**********************
 // SIGN-UP
@@ -190,13 +186,12 @@ public String getSignupPage(Map<String, Object> model) {
       usernameError = false;
     }
     return "signup";
-}
+}//getSignupPage()
+
+
 @PostMapping(
         path = "/tee-rific/signup"
 )
-
-//im thinking maybe not using a serial id since we are only allowing one unique username for each user (meaning a unique id specifier likely isn't required) - Kyle
-
 public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) throws Exception {
     try(Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
@@ -234,13 +229,15 @@ public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) t
         usernameError = true;
         return "redirect:/tee-rific/signup";
       } else {
+        model.put("username", user.getUsername());
         return "success";     
       }
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
     }
-}
+}//handleBrowserNewUserSubmit()
+
 
 //**********************
 // OWNER SIGN-UP
@@ -264,9 +261,9 @@ public String getOwnerSignUpPage(Map<String, Object> model){
     model.put("courseNameError", error); 
     courseNameError = false;
   }
-
   return "ownerSignUp";
-}
+}//getOwnerSignUpPage()
+
 
 @PostMapping(
   path = "/tee-rific/signup/Owner",
@@ -286,12 +283,10 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     String ownerInfo = getSQLNewTableOwner();
     String insertOwners = getSQLInsertOwner(owner, encryptedPassword);
 
-
     //add user to database
     stmt.executeUpdate(ownerInfo);
     stmt.executeUpdate(insertOwners);
-    
-    
+        
     //snake case the course name 
     /* 'THIS IS BETTER THAN CAMEL CASE' for this situation:
         - cannot have spaces in name or else it breaks the SQL query
@@ -300,7 +295,6 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
     String updatedCourseName = convertToSnakeCase(owner.getCourseName());
     String courseInfo = "CREATE TABLE IF NOT EXISTS " + updatedCourseName + " (holeNumber integer, yardage integer, par integer, handicap integer)";
     stmt.executeUpdate(courseInfo);
-
 
     //initializes a table to keep track of the course hole details
     for(int i = 0; i < owner.getNumHoles(); i++){
@@ -358,7 +352,6 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
       checkCNCount++;
     }
 
-
     if (checkUserCount > 1){
       // delete from user and owner database
       stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
@@ -375,27 +368,25 @@ public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner ow
       courseNameError = true;
       return "redirect:/tee-rific/signup/Owner";
     } else 
-      return "ownerCreated";     
+      model.put("username", user.getUsername());
+      return "success";     
   } catch (Exception e) {
     model.put("message", e.getMessage());
     return "error";
   }
-}
+}//handleBrowserOwnerSubmit()
 
 
-//helper
 String getSQLNewTableOwner() {
   return  "CREATE TABLE IF NOT EXISTS owners (" +
           "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
           "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
           "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
           "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
-}
+}//getSQLNewTableOwner()
 
 
-//helper 
-String getSQLInsertOwner(CourseOwner owner, String secretPW){
-
+private String getSQLInsertOwner(CourseOwner owner, String secretPW){
   return "INSERT INTO owners ( " + 
           "courseName, address, city, country, website, phoneNumber, courseLogo, " +
           "directionsToCourse, description, weekdayRates, weekendRates, numHoles, " +
@@ -406,11 +397,10 @@ String getSQLInsertOwner(CourseOwner owner, String secretPW){
           owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + 
           owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" + 
           owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "')";
-}
+}//getSQLInsertOwner()
 
-//helper 
-String getSQLDeleteOwner(CourseOwner owner, String secretPW){
 
+private String getSQLDeleteOwner(CourseOwner owner, String secretPW){
   return "DELETE FROM owners WHERE courseName='" + owner.getCourseName() + "' and address='" + owner.getAddress() + 
           "' and city='" + owner.getCity() +  "' and country='" + owner.getCountry() + "' and website='"  +
           owner.getWebsite() + "' and phoneNumber='" + owner.getPhoneNumber() + "' and courseLogo='" +
@@ -419,24 +409,20 @@ String getSQLDeleteOwner(CourseOwner owner, String secretPW){
           owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() + 
           "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
           "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() + "'";
-}
+}//getSQLDeleteOwner()
 
 
-
-//helper
-String getSQLNewTableUsers(){
+private String getSQLNewTableUsers(){
   return "CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))";
-}
+}//getSQLNewTableUsers()
 
 
-//helper
-String getSQLInsertUser(User user, String secretPW){
-
+private String getSQLInsertUser(User user, String secretPW){
   return "INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + secretPW + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')";
-}
+}//getSQLInsertUser()
 
 
-String convertToSnakeCase(String toConvert){
+private String convertToSnakeCase(String toConvert){
   String updated = "";
   for(int i = 0; i < toConvert.length(); i++){
     if(toConvert.charAt(i) == ' '){
@@ -446,10 +432,10 @@ String convertToSnakeCase(String toConvert){
     }
   }
   return updated;
-}
+}//convertToSnakeCase()
 
 
-String convertFromSnakeCase(String toConvert){
+private String convertFromSnakeCase(String toConvert){
   String updated = "";
   for(int i = 0; i < toConvert.length(); i++){
     if(toConvert.charAt(i) == '_'){
@@ -459,7 +445,7 @@ String convertFromSnakeCase(String toConvert){
     }
   }
   return updated;
-}
+}//convertFromSnakeCase()
 
 
 //**********************
@@ -467,28 +453,35 @@ String convertFromSnakeCase(String toConvert){
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/home"
+  path = "/tee-rific/home/{username}"
 )
-public String getHomePage(Map<String, Object> model){
-  return "home";
+public String getHomePage(@PathVariable("username")String user, Map<String, Object> model) throws Exception{
+  try(Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    String getUserPriority= "SELECT priority FROM users WHERE username='" + user +"'";
+    ResultSet rs = stmt.executeQuery(getUserPriority);
+
+    String userPriority = "";
+    while(rs.next()){
+      userPriority = rs.getString("priority");
+    }
+
+    if(userPriority.equals(priorities[0])){         // returns golfer homepage
+      return "home";       
+    }else if(userPriority.equals(priorities[1])){   //returns owner homepage
+      return "ownerHome";
+    }else{                                          //returns admin homepage
+      return "adminHome";
+    }
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
 }//getHomePage()
 
-@GetMapping(
-  path = "/tee-rific/home/owner"
-)
-public String getOwnerHomePage(Map<String, Object> model){
-  return "ownerHome";
-}
-
-@GetMapping(
-  path = "/tee-rific/home/admin"
-)
-public String getAdminHomePage(Map<String, Object> model){
-  return "adminHome";
-}
 
 //**********************
-// MODIFY ACCOUNT
+// COURSES
 //**********************
 
 //TODO: get all the courses, display ratings, allow user to rate courses
@@ -498,26 +491,105 @@ public String getAdminHomePage(Map<String, Object> model){
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/editOwnerAccount"
+  path = "/tee-rific/account/{username}"
 )
-public String getEditOwnerAccountPage(){
-  return "editAccountOwner";
-}
+public String getAccountPage(@PathVariable("username")String user, Map<String, Object> model)
+{
+  model.put("username", user);
+  return "account";
+}//getAccountPage()
 
-//TODO: add a method to update the desired information
-
-//**********************
-// MODIFY COURSE DETAILS
-//**********************
 
 @GetMapping(
-  path = "/tee-rific/golfCourseDetails"
+  path = "/tee-rific/editAccount/{username}"
 )
-public String getCourseDetails(){
-  return "golfCourseDetails";
-}
+public String getEditAccountPage(@PathVariable("username")String user, Map<String, Object> model){
+  try(Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    String getUserPriority= "SELECT priority FROM users WHERE username='" + user +"'";
+    ResultSet rs = stmt.executeQuery(getUserPriority);
 
-//TODO: add a method to modify the golf course details
+    String userPriority = "";
+    while(rs.next()){
+      userPriority = rs.getString("priority");
+    }
+
+    if(userPriority.equals(priorities[0])){         // returns golfer edit account
+      //TODO: get the user object and pass the info into the model
+      model.put("username", user);
+      return "editAccount";       
+    }else{                                          //returns owner edit account
+      //TODO: get the owner object and pass the info into the model
+      model.put("username", user);
+      return "editAccountOwner";
+    }
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  }
+}//getEditAccountPage()
+
+
+@PostMapping(
+  path = "/tee-rific/editAccount/{username}",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String updateAccountInformation(@PathVariable("username")String user, Map<String, Object> model){
+  //TODO: add a method to update the desired Account information
+  return "redirect:/tee-rific/editAccount/{username}";
+}//updateAccountInformation()
+
+
+@GetMapping(
+  path = "/tee-rific/delete/{username}"
+)
+public String accountDeleted(@PathVariable("username")String user, Map<String, Object> model)
+{
+  model.put("username", user);
+  return "accountDeleted";
+}//accountDeleted()
+
+
+@PostMapping( 
+  path = "/tee-rific/delete/{username}",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String deleteUser(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
+  try (Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+   
+    //if the user Account is an owner, user login information from user table and owner table is deleted, leave course details so scorecards wont be NULL for columns that need them, needs to be tested
+    String remove = "DELETE FROM users WHERE username ='" + user + "'";
+    stmt.execute(remove);
+    remove = "DELETE FROM owners WHERE username ='" + user + "'";
+    stmt.execute(remove);
+  
+    model.put("username", user);
+    return "accountDeleted";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "error";
+  } 
+}//deleteUser()
+
+
+//********************************
+// MODIFY COURSE DETAILS -- OWNER
+//********************************
+
+@GetMapping(
+  path = "/tee-rific/golfCourseDetails/{username}"
+)
+public String getCourseDetails(@PathVariable("username")String user, Map<String, Object> model){
+  //TODO: get the course details here and insert into the model
+
+  model.put("username", user);
+  return "golfCourseDetails";
+}//getCourseDetails()
+
+
+//TODO: add a post-method to modify the golf course details
 
 
 //**********************
@@ -525,53 +597,52 @@ public String getCourseDetails(){
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/booking"
+  path = "/tee-rific/booking/{username}"
 )
-public String getBookingPage(){
+public String getBookingPage(@PathVariable("username")String user, Map<String, Object> model){
+  model.put("username", user);
   return "booking";
 }//getBookingPage()
 
 
-int serial = 1;
-
 @PostMapping(
-  path = "/tee-rific/booking",
+  path = "/tee-rific/booking/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String updateSchedule(Map<String, Object> model) throws Exception {
+public String updateSchedule(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     
     boolean validAppointment = true;
     // Statement stmt = connection.createStatement();
 
-    // //creates a new scorecard
-    // Scorecard scorecard = new Scorecard();
-
-    // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
-    // scorecard.setGameID(String.valueOf(serial));      
-    // scorecard.setDatePlayed("");
-    // scorecard.setCoursePlayed("My Great Course");
-    // scorecard.setTeesPlayed("");
-    // scorecard.setHolesPlayed("");
-    // scorecard.setFormatPlayed("");
-    // scorecard.setAttestor("");
-    // serial++;
-
-    // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
-    // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
-    // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
-    // stmt.executeUpdate(sqlScorecardsInit);
-
-    // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
-    //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() + 
-    //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() + 
-    //                   "', '" + scorecard.getAttestor() + "')");
-
-
-
     if(validAppointment){
-      return "redirect:/tee-rific/bookingSuccessful";
+      // //creates a new scorecard
+      // Scorecard scorecard = new Scorecard();
+
+      // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
+      // scorecard.setGameID(String.valueOf(serial));      
+      // scorecard.setDatePlayed("");
+      // scorecard.setCoursePlayed("My Great Course");
+      // scorecard.setTeesPlayed("");
+      // scorecard.setHolesPlayed("");
+      // scorecard.setFormatPlayed("");
+      // scorecard.setAttestor("");
+      // serial++;
+
+      // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
+      // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
+      // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+      // stmt.executeUpdate(sqlScorecardsInit);
+
+      // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+      //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() + 
+      //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() + 
+      //                   "', '" + scorecard.getAttestor() + "')");
+
+      model.put("username", user);
+      return "bookingSuccessful";     //may need to change this
     }
+    model.put("username", user);
     return "booking";
   }catch (Exception e) {
     model.put("message", e.getMessage());
@@ -583,7 +654,9 @@ public String updateSchedule(Map<String, Object> model) throws Exception {
 @GetMapping(
   path = "/tee-rific/bookingSuccessful"
 )
-public String bookingSuccessful(){
+public String bookingSuccessful(@PathVariable("username")String user, Map<String, Object> model){
+
+  model.put("username", user);
   return "bookingSuccessful";
 }//bookingSuccessful()
 
@@ -591,51 +664,59 @@ public String bookingSuccessful(){
 //**********************
 // RENT EQUIPMENT
 //**********************
+
 //TODO: Add extra style 
-// TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
+//TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
 @GetMapping(
-  path = "/tee-rific/rentEquipment"
+  path = "/tee-rific/rentEquipment/{username}"
 )
-public String rentEquipment(Map<String, Object> model) {
+public String rentEquipment(@PathVariable("username")String user, Map<String, Object> model) {
   EquipmentCart cart = new EquipmentCart();
+  
+  model.put("username", user);
   model.put("cart", cart);
   return "rentEquipment";
-}
+}//rentEquipment()
+
 
 @PostMapping(
-  path = "/tee-rific/rentEquipment",
+  path = "/tee-rific/rentEquipment/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String handleShop(Map<String, Object> model, EquipmentCart cart) throws Exception {
+public String handleShop(@PathVariable("username")String user, Map<String, Object> model, EquipmentCart cart) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     // Create a table with our cart data inside to display on checkout
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS cart (numBalls integer, numCarts integer, numClubs integer)");
     stmt.executeUpdate("INSERT INTO cart VALUES ('"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
   }
-    
-    // Redirect to checkout page
-    return "redirect:/tee-rific/rentEquipment/checkout";
-}
+
+    model.put("username", user);
+    return "redirect:/tee-rific/rentEquipment/checkout/" + user;
+}//handleShop()
+
 
 @GetMapping(
-  path="/tee-rific/rentEquipment/checkout"
+  path="/tee-rific/rentEquipment/checkout/{username}"
 )
-public String handleViewCart(Map<String, Object> model) throws Exception {
+public String handleViewCart(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     // Create a table with our cart data inside to display on checkout
     EquipmentCart toView = getUserCartContentsFromDB(connection);
     toView.printfields();
+
+    model.put("username", user);
     model.put("userCart", toView);
     return "rentEquipmentCheckout";
   }
-}
+}//handleViewCart()
+
 
 @PostMapping(
-  path = "/tee-rific/rentEquipment/checkout",
+  path = "/tee-rific/rentEquipment/checkout/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String handleCheckout() throws Exception {
+public String handleCheckout(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
     EquipmentCart cart = getUserCartContentsFromDB(connection);
@@ -647,18 +728,22 @@ public String handleCheckout() throws Exception {
     //TODO: Link user to rental
     stmt.executeUpdate("INSERT INTO LiveRentals (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
   }
-  return "redirect:/tee-rific/rentEquipment/checkout/success";
-}
+  model.put("username", user);
+  return "redirect:/tee-rific/rentEquipment/checkout/success/" + user;
+}//handleCheckout()
+
 
 @GetMapping(
-  path="/tee-rific/rentEquipment/checkout/success"
+  path="/tee-rific/rentEquipment/checkout/success/{username}"
 )
-public String rentSuccessPage() {
+public String rentSuccessPage(@PathVariable("username")String user, Map<String, Object> model) {
+  model.put("username", user);
   return "rentEquipmentSuccess";
-}
+}//rentSuccessPage()
 
 
 // ------ OWNER'S PAGE ------ //
+// TODO: ensure paths are correct
 // TODO: Add style to table in viewInventory page
 @GetMapping(
   path="/tee-rific/golfCourseDetails/inventory"
@@ -679,8 +764,10 @@ public String viewInventory(Map<String, Object> model) throws Exception {
     model.put("eqsArray", eqs);
     return "inventory";
   }
-}
+}//viewInventory()
 
+
+// TODO: ensure paths are correct
 @GetMapping(
   path="/tee-rific/golfCourseDetails/inventory/update"
 )
@@ -688,7 +775,10 @@ public String invUpdate(Map<String, Object> model) {
   EquipmentCart cart = new EquipmentCart();
   model.put("ownerCart", cart);
   return "inventoryUpdate";
-}
+}//invUpdate()
+
+
+// TODO: ensure paths are correct
 @PostMapping(
   path="/tee-rific/golfCourseDetails/inventory/update",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -698,10 +788,10 @@ public String handleInvUpdate(Map<String, Object> model, EquipmentCart cart) thr
     ownerUpdateInventory(connection, cart);
   }
   return "redirect:/tee-rific/golfCourseDetails/inventory";
-}
+}//handleInvUpdate()
 
-// HELPER FUNCTIONS
-public void updateInventory(Connection connection, EquipmentCart cart) throws Exception {
+
+private void updateInventory(Connection connection, EquipmentCart cart) throws Exception {
   Statement stmt = connection.createStatement();
   ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
@@ -720,9 +810,10 @@ public void updateInventory(Connection connection, EquipmentCart cart) throws Ex
   stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
   stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
   stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
-}
+}//updateInventory()
 
-public EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exception {
+
+private EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exception {
   Statement stmt = connection.createStatement();
   ResultSet rs = stmt.executeQuery("SELECT * FROM cart");
   rs.next();
@@ -733,28 +824,31 @@ public EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exc
   ret.setNumClubs(rs.getInt("numclubs"));
 
   return ret;
-}
+}//getUserCartContentsFromDB()
 
-public void ownerCreateInventory(Connection connection) throws Exception {
+
+private void ownerCreateInventory(Connection connection) throws Exception {
   Statement stmt = connection.createStatement();
   stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(100), stock integer DEFAULT 0)");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
-  
-}
+}//ownerCreateInventory()
 
-public void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
+
+private void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
   Statement stmt = connection.createStatement();
   stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('"+nameOfItem+"')");
-}
+}//ownerInsertNewItem()
 
-public void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
+
+private void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
   Statement stmt = connection.createStatement();
   stmt.executeUpdate("DELETE FROM inventory WHERE name='"+nameOfItem+"'");
-}
+}//ownerDeleteItem()
 
-public void ownerUpdateInventory(Connection connection, EquipmentCart cart) throws Exception {
+
+private void ownerUpdateInventory(Connection connection, EquipmentCart cart) throws Exception {
   Statement stmt = connection.createStatement();
   // ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
@@ -772,19 +866,17 @@ public void ownerUpdateInventory(Connection connection, EquipmentCart cart) thro
   stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
   stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
   stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
-}
+}//ownerUpdateInventory()
+
 
 //**********************
-// BROWSE COURSES "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
-//          "courseLogo varchar(150), " +
-//          "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
-//          "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
+// BROWSE COURSES
 //**********************
 
   @GetMapping(
-          path = "/tee-rific/courses"
+    path = "/tee-rific/courses/{username}"
   )
-  public String viewAllCourses(Map<String, Object> model) throws Exception {
+  public String viewAllCourses(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       stmt.executeUpdate(getSQLNewTableOwner());
@@ -815,12 +907,48 @@ public void ownerUpdateInventory(Connection connection, EquipmentCart cart) thro
         output.add(course);
       }
       model.put("courses", output);
+      model.put("username", user);
       return "listCourses";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
     }
-  }
+  }//viewAllCourses()
+
+
+  @GetMapping(
+    path="/tee-rific/courses/{courseID}/{username}"
+  )
+  public String getCourseInfo(@PathVariable("courseID")String courseID, @PathVariable("username")String user, Map<String, Object> model) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      //get the course info by searching for snakeCase name in DB
+      String convertedName = convertToSnakeCase(courseID);
+
+      String getCourseInfo = "SELECT * FROM " + convertedName;
+      ResultSet courseInfo = stmt.executeQuery(getCourseInfo);
+      ArrayList<Hole> courseHoles = new ArrayList<Hole>();
+      while(courseInfo.next()){
+        Hole hole = new Hole();
+        hole.setHoleNumber(Integer.parseInt(courseInfo.getString("holeNumber")));
+        hole.setYardage(Integer.parseInt(courseInfo.getString("yardage")));
+        hole.setPar(Integer.parseInt(courseInfo.getString("par")));
+        hole.setHandicap(Integer.parseInt(courseInfo.getString("handicap")));
+
+        courseHoles.add(hole);
+      }
+
+      model.put("courseName", courseID);
+      model.put("username", user);
+      model.put("course", courseHoles);
+
+      return "courseInformation";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }//getCourseInfo()
 
 
 //**********************
@@ -828,12 +956,11 @@ public void ownerUpdateInventory(Connection connection, EquipmentCart cart) thro
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/scorecards"
+  path = "/tee-rific/scorecards/{username}"
 )
-public String getScorecards(Map<String, Object> model) throws Exception {
+public String getScorecards(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
-
 
     //TODO: Scorecards -- how to store an arrayList/array in SQL for the users
     String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
@@ -855,6 +982,7 @@ public String getScorecards(Map<String, Object> model) throws Exception {
       output.add(scorecard);
     }
 
+    model.put("username", user);
     model.put("scorecards", output);
     return "scorecard";
   } catch (Exception e) {
@@ -865,9 +993,9 @@ public String getScorecards(Map<String, Object> model) throws Exception {
 
 
 @GetMapping(
-  path = "/tee-rific/scorecards/{gameID}"
+  path = "/tee-rific/scorecards/{username}/{gameID}"
 )
-public String getSpecificScorecard(@PathVariable("gameID")String gameID, Map<String, Object> model) throws Exception {
+public String getSpecificScorecard(@PathVariable("username")String user, @PathVariable("gameID")String gameID, Map<String, Object> model) throws Exception {
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
 
@@ -904,6 +1032,7 @@ public String getSpecificScorecard(@PathVariable("gameID")String gameID, Map<Str
       courseHoles.add(hole);
     }
 
+    model.put("username", user);
     model.put("scorecard", scorecard);
     model.put("course", courseHoles);
 
@@ -925,40 +1054,23 @@ public String getSpecificScorecard(@PathVariable("gameID")String gameID, Map<Str
 // }//updateScorecard()
 
 
-@GetMapping(
-  path = "/tee-rific/scoresHistory"
-)
-public String getAllScores(){
-  return "scoresHistory";
-}//getAllScores()
-
-
-@GetMapping(
-  path = "/tee-rific/scoreHistory/{course}"
-)
-public String getScoresFromCourse(@PathVariable("course") String course){
-  return "scoresHistory";
-}//getScoresFromCourse()
-
-
 //**********************
 // TOURNAMENT
-//**************
+//**********************
 
 @GetMapping(
-  path = "/tee-rific/tournament"
+  path = "/tee-rific/tournament/{username}"
 )
-public String tournament()
-{
+public String tournament(@PathVariable("username")String user, Map<String, Object> model){
+  model.put("username", user);
   return "tournament";
 }
 
 // TODO: page crashes on the live version, local host works fine for some reason
 @GetMapping(
-  path = "/tee-rific/availableTournaments" 
+  path = "/tee-rific/availableTournaments/{username}" 
 )
-public String availableTournaments(Map<String, Object> model)
-{
+public String availableTournaments(@PathVariable("username")String user, Map<String, Object> model){
   try(Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
@@ -983,34 +1095,37 @@ public String availableTournaments(Map<String, Object> model)
       output.add(tournament);
     }
 
-    model.put("tournaments", output); //
+    model.put("tournaments", output);
     Tournament tournament = new Tournament();
-    model.put("tournament", tournament); //
-    return "availableTournaments";
+    model.put("tournament", tournament);
 
-  } catch (Exception e)
-  {
+    model.put("username", user);
+    return "availableTournaments";
+  } catch (Exception e){
     model.put("message", e.getMessage());
     return "error";
   }
-}
+}//availableTournaments()
 
 
 @GetMapping(
-  path = "/tee-rific/createTournament"
+  path = "/tee-rific/createTournament/{username}"
 )
-public String createTournament(Map<String, Object> model)
+public String createTournament(@PathVariable("username")String user, Map<String, Object> model)
 {
   Tournament tournament = new Tournament();
+
   model.put("newTournament", tournament);
+  model.put("username", user);
   return "createTournament";
-}
+}//createTournament()
+
 
 @PostMapping(
-  path = "/tee-rific/createTournament",
+  path = "/tee-rific/createTournament/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String handleTournamentCreation(Map<String, Object> model, Tournament tournament) throws Exception
+public String handleTournamentCreation(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament) throws Exception
 {
   try (Connection connection = dataSource.getConnection())
   {
@@ -1037,18 +1152,20 @@ public String handleTournamentCreation(Map<String, Object> model, Tournament tou
       thirdPrize = "0";
     }
     stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-    return "redirect:/tee-rific/availableTournaments";
+    
+    return "redirect:/tee-rific/availableTournaments/" + user;
   } catch (Exception e) 
   {
     model.put("message", e.getMessage());
     return "error"; 
   }
-}
+}//handleTournamentCreation()
+
 
 @GetMapping(
-  path = "/tee-rific/viewTournament/{tid}"
+  path = "/tee-rific/viewTournament/{tid}/{username}"
 )
-public String viewSelectedTournament(Map<String, Object> model, @PathVariable String tid)
+public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable String tid)
 {
   try(Connection connection = dataSource.getConnection())
   {
@@ -1075,10 +1192,10 @@ public String viewSelectedTournament(Map<String, Object> model, @PathVariable St
       output.add(tournament);
     }
 
-    model.put("tournaments", output); //
+    model.put("tournaments", output);
     Tournament tournament = new Tournament();
-    model.put("tournament", tournament); //
-    
+    model.put("tournament", tournament);
+    model.put("username", user);
     return "viewTournament";
 
   } catch (Exception e)
@@ -1086,21 +1203,24 @@ public String viewSelectedTournament(Map<String, Object> model, @PathVariable St
     model.put("message", e.getMessage());
     return "error";
   }
-}
+}//viewSelectedTournament()
+
 
 @GetMapping(
-  path = "/tee-rific/tournamentDelete"
+  path = "/tee-rific/tournamentDelete/{username}"
 )
-public String displayDeleteTournamentPage()
+public String displayDeleteTournamentPage(@PathVariable("username")String user, Map<String, Object> model)
 {
+  model.put("username", user);
   return "tournamentDelete";
-}
+}//displayDeleteTournamentPage()
+
 
 @PostMapping(
-  path = "/tee-rific/tournamentDelete",
+  path = "/tee-rific/tournamentDelete/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String deleteTournament(Map<String, Object> model, Tournament tournament)
+public String deleteTournament(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament)
 {
   try (Connection connection = dataSource.getConnection())
   {
@@ -1108,32 +1228,34 @@ public String deleteTournament(Map<String, Object> model, Tournament tournament)
     stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
     System.out.println(tournament.getId());
     System.out.println(tournament.getName());
-    return "redirect:/tee-rific/availableTournaments";
+    return "redirect:/tee-rific/availableTournaments/" + user;
   } catch (Exception e)
   {
     model.put("message", e.getMessage());
     return "error";
   }
-}
-
+}//deleteTournament()
 
 
 @GetMapping(
-  path = "/tee-rific/tournamentSignUp"
+  path = "/tee-rific/tournamentSignUp/{username}"
 )
-public String tournamentSignUp(Map<String, Object> model, Tournament tournament)
+public String tournamentSignUp(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament)
 {
   try (Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
     //add user to tournament.participants
+
+    model.put("username", user);
     return "tournamentSignUp";
   } catch (Exception e)
   {
     model.put("message", e.getMessage());
     return "error";
   }
-}
+}//tournamentSignUp()
+
 
 // @PostMapping(
 //   path ="tee-rific/tournamentSignUp",
@@ -1151,43 +1273,6 @@ public String tournamentSignUp(Map<String, Object> model, Tournament tournament)
 //   }
 // }
 
-
-//**********************
-// USER ACCOUNT
-//**********************
-
-@GetMapping(
-  path = "/tee-rific/userProfile"
-)
-public String userProfile()
-{
-  return "userProfile";
-}
-
-@GetMapping(
-  path = "/tee-rific/accountDeleted"
-)
-public String accountDeleted()
-{
-  return "accountDeleted";
-}
-
-@PostMapping( //TODO: User Account Deletion Has Not Been Tested
-  path = "/tee-rific/accountDeleted",
-  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-)
-public String deleteUser(Map<String, Object> model, User user) throws Exception
-{
-  try (Connection connection = dataSource.getConnection())
-  {
-    Statement stmt = connection.createStatement();
-    // stmt.execute("DELETE FROM users WHERE username = " user)
-    return "redirect:/tee-rific/accountDeleted";
-  } catch (Exception e) {
-    model.put("message", e.getMessage());
-    return "error";
-  } 
-}
 
 //**********************
 // ADMIN BUTTONS
@@ -1459,10 +1544,11 @@ public String viewGolfCourse(Map<String, Object> model, @PathVariable("courseNam
 //**********************
 
 @GetMapping(
-  path = "/tee-rific/aboutUs"
+  path = "/tee-rific/aboutUs/{username}"
 )
-public String aboutDevelopers(Map<String, Object> model){
+public String aboutDevelopers(@PathVariable("username")String user, Map<String, Object> model){
   //this is optional, if you guys feel comfortable doing so, we can upload 'selfies' of our team and maybe talk about our development process
+  model.put("username", user);
   return "aboutUs";
 }//aboutDevelopers()
 

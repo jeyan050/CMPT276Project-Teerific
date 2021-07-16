@@ -40,22 +40,22 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/booking">Book</a>
+                  <a class="nav-link" th:href="${'/tee-rific/booking/' + username}">Book</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/courses">Courses</a>
+                  <a class="nav-link" th:href="${'/tee-rific/courses/' + username}">Courses</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/scorecards">Scorecards</a>
+                  <a class="nav-link" th:href="${'/tee-rific/scorecards/' + username}">Scorecards</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/tee-rific/tournament">Tournaments</a>
+                    <a class="nav-link" th:href="${'/tee-rific/tournament/' + username}">Tournaments</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/tee-rific/userProfile">Account</a>
+                    <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/tee-rific/aboutUs">About Us</a>
+                    <a class="nav-link" th:href="${'/tee-rific/aboutUs/' + username}">About Us</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="/tee-rific/logout">Log Out</a>
@@ -65,27 +65,27 @@
           </nav>
          
         <div class="homePageContainer">
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/booking">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/booking/' + username}">
                     <button id="bookingButton" class="homePageButton" type="submit">Book Tee Time</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/courses">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/courses/' + username}">
                     <button id="coursesButton" class="homePageButton" type="submit">Browse Courses</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/scorecards">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/scorecards/' + username}">
                     <button id="scorecardButton" class="homePageButton" type="submit">Scorecards</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/tournament">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/tournament/' + username}">
                     <button id="tournamentsButton" class="homePageButton" type="submit">Tournaments</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/userProfile">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="accountButton" class="homePageButton" type="submit">My Account</button>
                 </form> 
                 
-                <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/aboutUs">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                     <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
                 </form> 
 

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Owner Account Created</title>
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 
@@ -21,6 +20,7 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <title>Course Information</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -30,12 +30,26 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Your Golf Course Has Been Added</div>
-                    <form method= "get" th:action="@{/tee-rific/home/owner}">
-                        <button type="submit" class="button">Home Page</button>
+                    <div class="titleFont dynamicSize" th:text="${courseName}"></div>
+                    <table>
+                        <tr>
+                            <th>Hole #</th>
+                            <th>Yardage</th>
+                            <th>Handicap</th>
+                            <th>Par</th>        
+                        </tr>
+                        <tr th:each="hole: ${course}">
+                            <td th:text="${hole.holeNumber}"></td>
+                            <td th:text="${hole.yardage}"></td>
+                            <td th:text="${hole.handicap}"></td>
+                            <td th:text="${hole.par}"></td>
+                        </tr>
+                    </table>
+                    <form  method= "get" th:action="${'/tee-rific/courses/' + username}">
+                        <button type="submit" class="button">All Courses</button>
                     </form>
                 </div>
-             </div>
+            </div>
         </div>
         <footer>
             <div class= "woodBackdrop footer">
@@ -49,5 +63,3 @@
         </footer>
     </div>
 </body>
-<script src="/js/signup.js" type="text/javascript"> </script>
-</html>

@@ -39,37 +39,35 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/golfCourseDetails">Course Details</a>
+                  <a class="nav-link" th:href="${'/tee-rific/golfCourseDetails/' + username}">Course Details</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/editOwnerAccount">Account Details</a>
+                  <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account Details</a>
                 </li>
-                <!-- this redirects back to golfer home page, do not want that, need to have this return owner homepage -->
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/aboutUs">About Us</a>
-                </li> -->
+                  <li class="nav-item">
+                  <a class="nav-link" th:href="${'/tee-rific/aboutUs/' + username}">About Us</a>
+                </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/tee-rific/login">Log Out</a>
+                    <a class="nav-link" href="/tee-rific/logout">Log Out</a>
                   </li>
               </ul>
             </div>
           </nav>
          
         <div class="homePageContainer">
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/golfCourseDetails}">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/golfCourseDetails/' + username}">
                     <button id="editCourseButton" class="homePageButton" type="submit">Course Details</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/editOwnerAccount}">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="editOwnerButton" class="homePageButton" type="submit">Account Details</button>
                 </form> 
 
-                <!-- this redirects back to golfer home page, do not want that, need to have this return owner homepage -->
-                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/aboutUs">
-                    <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
-                </form>  -->
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
+                  <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
+                </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/login}">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/logout}">
                     <button id="logoutOwnerButton" class="homePageButton" type="submit">Log Out</button>
                 </form>
         </div>

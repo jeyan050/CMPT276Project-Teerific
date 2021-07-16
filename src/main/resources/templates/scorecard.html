@@ -43,12 +43,15 @@
                             <td th:text="${scorecard.datePlayed}"></td>
                             <td th:text="${scorecard.formatPlayed}"></td>
                             <td>
-                                <form action="#" method="get" th:action="${'/tee-rific/scorecards/'+scorecard.gameID}">
+                                <form action="#" method="get" th:action="${'/tee-rific/scorecards/' + username + '/' +scorecard.gameID}">
                                     <button type="Submit">View</button>
                                 </form>
                             </td>
                         </tr>
                     </table>
+                    <form  method= "get" th:action="${'/tee-rific/home/' + username}">
+                        <button type="submit" class="button">Home Page</button>
+                    </form>
                 </div>
             </div>
         </div>

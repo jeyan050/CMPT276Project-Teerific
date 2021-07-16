@@ -41,19 +41,19 @@
                         <!-- participant slots remaining:  -->
                     </tr>
                 </table>
-                <form method="get" action="/tee-rific/tournamentSignUp" th:object="${tournament}">
+                <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + username}" th:object="${tournament}">
                     <input type = "hidden"  th:value="${tournament.id}"/>
                     <input type = "hidden"  th:value="${tournament.name}"/>
                     <input type="submit" class = "button" value="Sign Up">
                 </form>
                 <!-- if admin AND created the tournament -->
-                <form method="get" action="/tee-rific/tournamentDelete" th:object="${tournament}">
+                <form method="get" th:action="${'/tee-rific/tournamentDelete/' + username}" th:object="${tournament}">
                     <input type = "hidden"  th:value="${tournament.id}"/>
                     <input type = "hidden"  th:value="${tournament.name}"/>
                     <input type="submit" class = "button" value= "Delete Tournament">
                 </form>
-                <form method="get" action="/tee-rific/availableTournaments">
-                    <button type="submit" class = "button">Go Back</button>
+                <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
+                    <button type="submit" class = "button">Tournaments Page</button>
                 </form>
             </div>
         </div>

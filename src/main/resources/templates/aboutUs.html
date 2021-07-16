@@ -11,12 +11,12 @@
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
+                <img th:src="@{/images/tee-rific.png}">
                 <h1>Developer Page</h1>
-                <form method="get" action="/tee-rific/home">
+                *Information About Developers here*
+                <form method="get" th:action="${'/tee-rific/home/' + username}">
                     <button type="submit" class = "button">Go Back</button>
                 </form>
-                *Information About Developers here*
             </div>
         </div>
     </div>

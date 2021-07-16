@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Browse Courses</title>
 
   <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
   <link th:href="@{/listStyle.css}" type="text/css" rel="stylesheet">
@@ -18,6 +17,7 @@
   <!-- bootstrap stylesheet -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+  <title>Browse Courses</title>
 
 </head>
 <body class="grassBackdrop">
@@ -42,7 +42,7 @@
     <tr th:each="course: ${courses}">
       <td th:text="${course.courseLogo}"></td>
       <td>
-        <a th:href="${'/tee-rific/courses/'+course.courseName}" th:text="${course.courseName}"></a>
+        <a th:href="${'/tee-rific/courses/' + course.courseName + '/' + username}" th:text="${course.courseName}"></a>
       </td>
       <td th:text="${course.address}"></td>
       <td th:text="${course.city}"></td>
@@ -52,8 +52,8 @@
 
   </table><br>
 
-        <form method= "get" th:action="@{/tee-rific/home}">
-          <button type="submit" class="button">Back to Home</button>
+        <form method= "get" th:action="${'/tee-rific/home/' + username}">
+          <button type="submit" class="button">Home Page</button>
         </form>
       </div>
     </div>
