@@ -64,6 +64,12 @@
                         <input type="text" id="address" class="inputBox" th:field="*{address}" placeholder="Address"><p id="errorA"></p>
                         <input type="text" id="city" class="inputBox" th:field="*{city}" placeholder="City"><p id="errorCi"></p>
                         <input type="text" id="country" class="inputBox" th:field="*{country}" placeholder="Country"><p id="errorCo"></p>
+                        <br>
+                        <p>Business Hours</p>
+                        <label for="timeOpen">Open</label>
+                        <input type="time" id="timeOpen" class="inputBox" th:field="*{timeOpen}"> <p id="errorTO"></p>
+                        <label for="timeClose">Close</label>
+                        <input type="time" id="timeClose" class="inputBox" th:field="*{timeClose}"> <p id="errorTC"></p>
                          
                         <h3>Account Details</h3>
                         <input type="text" id="username" class="inputBox" th:field="*{username}" placeholder="Username"><p id="errorU">
