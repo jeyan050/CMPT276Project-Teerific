@@ -1138,31 +1138,14 @@ public class Main {
       {
         buyIn = 0;
       }
-      String firstPrize = tournament.getFirstPrize();
-      if (tournament.getFirstPrize() == null)
+      String ageReq = tournament.getAgeRequirement();
+      if (ageReq == null)
       {
-        firstPrize = "0";
+        ageReq = "all ages";
       }
-      String secondPrize = tournament.getSecondPrize();
-      if (tournament.getSecondPrize() == null)
-      {
-        secondPrize = "0";
-      }
-      String thirdPrize = tournament.getThirdPrize();
-      if (tournament.getThirdPrize() == null)
-      {
-        thirdPrize = "0";
-      }
-      stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
+      stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize() + "','" + ageReq + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
       
       return "redirect:/tee-rific/availableTournaments/" + user;
-      // String ageRequirement = tournament.getAgeRequirement();
-      // if (tournament.getAgeRequirement() == null)
-      // {
-      //   ageRequirement = "0";
-      // }
-      // stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + ageRequirement + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-      // return "redirect:/tee-rific/availableTournaments";
     } catch (Exception e) 
     {
       model.put("message", e.getMessage());
@@ -1172,15 +1155,15 @@ public class Main {
 
 
   @GetMapping(
-    path = "/tee-rific/viewTournament/{tid}/{username}"
+    path = "/tee-rific/viewTournament/{tournamentId}/{username}"
   )
-  public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable String tid)
+  public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable("tournamentId") String tournamentId)
   {
     try(Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      model.put("id", tid);
-      ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tid);
+      model.put("id", tournamentId);
+      ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tournamentId);
       ArrayList<Tournament> output = new ArrayList<Tournament>();
       while (rs.next())
       {
@@ -1205,6 +1188,8 @@ public class Main {
       Tournament tournament = new Tournament();
       model.put("tournament", tournament);
       model.put("username", user);
+      model.put("tournamentId", tournamentId);
+
       return "viewTournament";
 
     } catch (Exception e)
@@ -1216,25 +1201,28 @@ public class Main {
 
 
   @GetMapping(
-    path = "/tee-rific/tournamentDelete/{username}"
+    path = "/tee-rific/tournamentDelete/{tournamentId}/{username}"
   )
-  public String displayDeleteTournamentPage(@PathVariable("username")String user, Map<String, Object> model)
+  public String displayDeleteTournamentPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model)
   {
     model.put("username", user);
+    model.put("tournamentId", tournamentId);
     return "tournamentDelete";
   }//displayDeleteTournamentPage()
 
 
   @PostMapping(
-    path = "/tee-rific/tournamentDelete/{username}",
+    path = "/tee-rific/tournamentDelete/{tournamentId}/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String deleteTournament(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament)
+  public String deleteTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable("tournamentId") String tournamentId, Tournament tournament)
   {
     try (Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
+      System.out.println(tournament.getId());
+      System.out.println(tournament.getName());
+      stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
       System.out.println(tournament.getId());
       System.out.println(tournament.getName());
       return "redirect:/tee-rific/availableTournaments/" + user;
@@ -1247,9 +1235,9 @@ public class Main {
 
 
   @GetMapping(
-    path = "/tee-rific/tournamentSignUp/{username}"
+    path = "/tee-rific/tournamentSignUp/{tournamentId}/{username}"
   )
-  public String tournamentSignUp(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament)
+  public String tournamentSignUp(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, Tournament tournament)
   {
     try (Connection connection = dataSource.getConnection())
     {
@@ -1257,6 +1245,7 @@ public class Main {
       //add user to tournament.participants
 
       model.put("username", user);
+      model.put("tournamentId", tournamentId);
       //pop up displays if the user is already signed up in the tournament
       return "tournamentSignUp";
     } catch (Exception e)

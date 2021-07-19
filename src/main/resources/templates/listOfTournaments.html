@@ -35,25 +35,30 @@
                     <table class="tableSizing">
                         <tr>
                             <th>Name</th>
-                            <th>Participation Slots</th>
-                            <th>Buy in</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Club</th>
+                            <th>Game Mode</th>
+                            <th>Buy In</th>
                             <th>First Prize</th>
                             <th>Second Prize</th>
                             <th>Third Prize</th>
                             <th>Age Requirement</th>
-                            <th>Game Mode</th>
-                            <th>Club Name</th>
+                            <th>Participant Slots </th>
                         </tr>
                         <tr th:each="tournament : ${tournamentList}">
                             <td th:text="${tournament.name}"></td>
-                            <td th:text="${tournament.participantSlots}"></td>
+                            <td th:text="${tournament.date}"></td>
+                            <td th:text="${tournament.time}"></td>
+                            <td th:text="${tournament.clubName}"></td>
+                            <td th:text="${tournament.gameMode}"></td>
                             <td th:text="${tournament.buyIn}"></td>
                             <td th:text="${tournament.firstPrize}"></td>
                             <td th:text="${tournament.secondPrize}"></td>
                             <td th:text="${tournament.thirdPrize}"></td>
                             <td th:text="${tournament.ageRequirement}"></td>
-                            <td th:text="${tournament.gameMode}"></td>
-                            <td th:text="${tournament.clubName}"></td>
+                            <!-- replace the "-0" with - participants.size()-->
+                            <td th:text="${tournament.participantSlots}"></td>
                             <form action="#" method="post" th:action="${'/tee-rific/admin/tournaments/'+tournament.id}">
                                 <td>
                                     <input class="button deleteButton" type="submit" value="Delete">
