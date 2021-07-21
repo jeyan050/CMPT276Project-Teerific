@@ -63,7 +63,7 @@
             <form method="get" action="/tee-rific/golfCourseDetails/inventory/update">
                 <button type="submit" class = "button">Update Stock</button>
             </form>
-            <form method="get" action="/tee-rific/golfCourseDetails">
+            <form method="get" th:action="${'/tee-rific/golfCourseDetails/' + username}">
                 <button type="submit" class = "button">Back</button>
             </form>
             <form method="get" action="/tee-rific/home/owner">
