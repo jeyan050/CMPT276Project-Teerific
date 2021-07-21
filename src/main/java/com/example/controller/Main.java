@@ -379,15 +379,6 @@ public class Main {
   private String getSQLInsertOwner(CourseOwner owner, String secretPW){
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
-<<<<<<< HEAD:src/main/java/com/example/controller/Main.java
-            "directionsToCourse, description, weekdayRates, weekendRates, numHoles, " +
-            "userName, password, firstName, lastName, email, yardage, gender) VALUES ('" +
-            owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
-            owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
-            owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
-            owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" +
-            owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
-=======
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
             "timeClose, userName, password, firstName, lastName, email, yardage, gender) VALUES ('" +
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
@@ -395,7 +386,6 @@ public class Main {
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
             owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
             owner.getTimeClose() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
->>>>>>> booking:src/main/java/com/example/Main.java
             owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "')";
   }
 
@@ -804,11 +794,6 @@ public class Main {
 //TODO: add a post-method to modify the golf course details
 
 
-<<<<<<< HEAD:src/main/java/com/example/controller/Main.java
-//**********************
-// BOOKING
-//**********************
-=======
   //**********************
   // BOOKING
   //**********************
@@ -817,7 +802,6 @@ public class Main {
   // 3. Show options for renting equipment and such and enter into bookings table
   // 4. Create a scorecard for the game with the generated Game ID
 //TODO: can someone do invalid inputs :3
->>>>>>> booking:src/main/java/com/example/Main.java
 
 
   @GetMapping(
@@ -889,11 +873,7 @@ public class Main {
       return "redirect:/";
     }
 
-<<<<<<< HEAD:src/main/java/com/example/controller/Main.java
-    String courseName = pathVars.get("courseName");
-=======
     String courseName = convertFromSnakeCase(pathVars.get("courseName"));
->>>>>>> booking:src/main/java/com/example/Main.java
     String gameIDStr = pathVars.get("gameID");
     Integer gameID = Integer.parseInt(gameIDStr);
 
@@ -972,54 +952,6 @@ public class Main {
     }
   }// displayCourseTimes()
 
-<<<<<<< HEAD:src/main/java/com/example/controller/Main.java
-  // @PostMapping(
-  //         path = "/tee-rific/booking/{username}",
-  //         consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-  // )
-  // public String updateSchedule(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
-
-  //   try (Connection connection = dataSource.getConnection()) {
-
-  //     boolean validAppointment = true;
-  //     // Statement stmt = connection.createStatement();
-
-  //     if(validAppointment){
-  //       // //creates a new scorecard
-  //       // Scorecard scorecard = new Scorecard();
-
-  //       // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
-  //       // scorecard.setGameID(String.valueOf(serial));
-  //       // scorecard.setDatePlayed("");
-  //       // scorecard.setCoursePlayed("My Great Course");
-  //       // scorecard.setTeesPlayed("");
-  //       // scorecard.setHolesPlayed("");
-  //       // scorecard.setFormatPlayed("");
-  //       // scorecard.setAttestor("");
-  //       // serial++;
-
-  //       // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
-  //       // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
-  //       // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
-  //       // stmt.executeUpdate(sqlScorecardsInit);
-
-  //       // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
-  //       //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() +
-  //       //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() +
-  //       //                   "', '" + scorecard.getAttestor() + "')");
-
-  //       model.put("username", user);
-  //       return "Booking&ViewingCourses/bookingSuccessful";     //may need to change this
-  //     }
-  //     model.put("username", user);
-  //     return "Booking&ViewingCourses/booking";
-  //   }catch (Exception e) {
-  //     model.put("message", e.getMessage());
-  //     return "LandingPages/error";
-  //   }
-  // }
-  
-=======
   @PostMapping(
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -1033,7 +965,6 @@ public class Main {
       String teetime = booking.getTime();
       teetime = teetime + ":00";
       booking.setTime(teetime);
->>>>>>> booking:src/main/java/com/example/Main.java
 
       System.out.println(booking.getDate());
       System.out.println(booking.getTime());
@@ -1064,19 +995,6 @@ public class Main {
   
 
   @GetMapping(
-<<<<<<< HEAD:src/main/java/com/example/controller/Main.java
-          path = "/tee-rific/bookingSuccessful"
-  )
-  public String bookingSuccessful(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
-
-    if(!user.equals(request.getSession().getAttribute("username"))) {
-      return "redirect:/";
-    }
-
-    model.put("username", user);
-    return "Booking&ViewingCourses/bookingSuccessful";
-  }
-=======
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}/success"
   )
   public String bookingSuccessful(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
@@ -1110,7 +1028,6 @@ public class Main {
       model.put("gameID", gameIDStr);
       model.put("courseName", courseName);
       model.put("username", user);
->>>>>>> booking:src/main/java/com/example/Main.java
 
       return "Booking&ViewingCourses/bookingSuccessful";
     } catch (Exception e) {
@@ -1985,19 +1902,9 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String clearUserDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmtUser = connection.createStatement();
-      Statement stmtOwner = connection.createStatement();
-
-      ResultSet deleteOwners = stmtUser.executeQuery("SELECT * FROM users");          // Delete owner accounts as well
-      while(deleteOwners.next()){
-        String checkPrioirty = deleteOwners.getString("priority");
-        if (checkPrioirty.equals(priorities[1])){
-          String userName = deleteOwners.getString("username");
-          stmtOwner.executeUpdate("DELETE FROM owners WHERE username='"+userName+"'");
-        }
-      }
-
-      stmtUser.executeUpdate("DROP TABLE users");
+      Statement stmt = connection.createStatement();
+      String sql = "DROP TABLE users";
+      stmt.executeUpdate(sql);
 
       return "redirect:/tee-rific/admin/users";
     } catch (Exception e) {
@@ -2064,7 +1971,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
       model.put("tournamentList",output);
-      return "Admin/listOfTournaments";
+      return "Tournaments/listOfTournaments";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -2154,20 +2061,14 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
   @PostMapping(
-    path = "/tee-rific/admin/owners/clear",
-    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+          path = "/tee-rific/admin/owners/clear",
+          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
   public String clearOwnerDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmtOwner = connection.createStatement();
-      Statement stmtUser = connection.createStatement();
-      ResultSet deleteOwners = stmtOwner.executeQuery("SELECT * FROM owners");
-      while(deleteOwners.next()){
-        String ownerName = deleteOwners.getString("username");
-        stmtUser.executeUpdate("DELETE FROM users WHERE username='"+ownerName+"'");
-      }
-
-      stmtOwner.executeUpdate("DROP TABLE owners");
+      Statement stmt = connection.createStatement();
+      String sql = "DROP TABLE users";
+      stmt.executeUpdate(sql);
 
       return "redirect:/tee-rific/admin/owners";
     } catch (Exception e) {
