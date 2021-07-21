@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
@@ -25,15 +26,176 @@
     <div class="pageWrap">
         <div class="content">
             <div class="woodBackdrop border content">
-                <div class="sandBackdrop">
+                <div class="sandBackdrop" th:each="owner : ${ownerInfo}">
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Edit Account Infomation</div>   
 
                      <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
+                     <div style="font-size:40px" class="titleFont dynamicSize">Account Details</div>   
+                     <table>
+                        <tr>
+                            <td class="title">Username</td>
+                            <td class="value" th:text="${owner.username}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/username/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Password</td>
+                            <td class="value" th:text="${owner.password}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/password/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">First Name</td>
+                            <td class="value" th:text="${owner.fname}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/fname/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Last Name</td>
+                            <td class="value" th:text="${owner.lname}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/lname/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Email</td>
+                            <td class="value" th:text="${owner.email}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/email/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Gender</td>
+                            <td class="value" th:text="${owner.gender}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/gender/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
 
-                    <form method= "get" th:action="${'/tee-rific/account/' + username}">
+                    <div style="font-size:40px" class="titleFont dynamicSize">Golf Course Details: <span th:text="${owner.courseName}"></span></div>   
+                     <table>
+                        <tr>
+                            <td class="title">Address</td>
+                            <td class="value" th:text="${owner.address}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/address/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">City</td>
+                            <td class="value" th:text="${owner.city}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/city/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Country</td>
+                            <td class="value" th:text="${owner.country}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/country/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Phone Number</td>
+                            <td class="value" th:text="${owner.phoneNumber}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/phonenumber/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Website</td>
+                            <td class="value" th:text="${owner.website}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/website/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Time Open</td>
+                            <td class="value" th:text="${owner.timeOpen}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeopen/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Time Closed</td>
+                            <td class="value" th:text="${owner.timeClose}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeclose/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Weekday Rates</td>
+                            <td class="value" th:text="${owner.weekdayRates}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekdayrates/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Weekend Rates</td>
+                            <td class="value" th:text="${owner.weekendRates}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekendrates/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Directions to Course</td>
+                            <td class="value" th:text="${owner.directionsToCourse}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/directionstocourse/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Description</td>          
+                            <td class="value" th:text="${owner.description}"></td>
+                            <td>
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/description/'+ owner.username}">
+                                    <button type="submit" class="button editButton">Edit</button>
+                                    <!-- use a text area for editing -->
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <form method= "get" th:action="${'/tee-rific/account/' + owner.username}">
                         <button type="submit" class="button">Go Back</button>
                     </form>
                 </div>

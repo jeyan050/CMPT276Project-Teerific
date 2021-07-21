@@ -488,7 +488,7 @@ public class Main {
   //TODO: get all the courses, display ratings, allow user to rate courses
 
   //**********************
-  // MODIFY ACCOUNT
+  // MODIFY ACCOUNT / MY ACCOUNT
   //**********************
 
   @GetMapping(
@@ -517,38 +517,207 @@ public class Main {
 
       if(userPriority.equals(priorities[0])){         // returns golfer edit account
         //TODO: get the user object and pass the info into the model
-        model.put("username", user);
+        String getUserDetails= "SELECT * FROM users WHERE username='" + user +"'";
+        ResultSet details = stmt.executeQuery(getUserDetails);
+        details.next();
+
+        User output = new User();
+
+        output.setUsername(details.getString("username"));
+        output.setPassword(details.getString("password"));
+        output.setFname(details.getString("fname"));
+        output.setLname(details.getString("lname"));
+        output.setEmail(details.getString("email"));
+        output.setGender(details.getString("gender"));
+        
+        model.put("userInfo", output);
         return "editAccount";       
       }else{                                          //returns owner edit account
         //TODO: get the owner object and pass the info into the model
-        model.put("username", user);
+        String getUserDetails= "SELECT * FROM owners WHERE username='" + user +"'";
+        ResultSet details = stmt.executeQuery(getUserDetails);
+        details.next();
+
+        CourseOwner output = new CourseOwner();
+
+        output.setUsername(details.getString("username"));      //Account Info
+        output.setPassword(details.getString("password"));
+        output.setFname(details.getString("firstname"));
+        output.setLname(details.getString("lastname"));
+        output.setEmail(details.getString("email"));
+        output.setGender(details.getString("gender"));  
+        
+        output.setCourseName(details.getString("coursename"));  //Course Basic Info
+        output.setAddress(details.getString("address"));
+        output.setCity(details.getString("city"));
+        output.setCountry(details.getString("country"));
+        output.setPhoneNumber(details.getString("phonenumber"));  
+        output.setWebsite(details.getString("website"));
+        // output.setCourseLogo(details.getString("courselogo"));  
+        // output.setYardage(details.getString("yardage"));  
+        
+        output.setTimeOpen(details.getString("timeopen"));   
+        output.setTimeClose(details.getString("timeclose")); 
+        output.setWeekdayRates(details.getString("weekdayrates"));  
+        output.setWeekendRates(details.getString("weekendrates"));
+        output.setDirectionsToCourse(details.getString("directionstocourse"));  
+        output.setDescription(details.getString("description")); 
+        
+        model.put("ownerInfo", output);
         return "editAccountOwner";
       }
     }catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
     }
-  }//getEditAccountPage()
+  }
 
-
-  @PostMapping(
-    path = "/tee-rific/editAccount/{username}",
-    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-  )
-  public String updateAccountInformation(@PathVariable("username")String user, Map<String, Object> model){
-    //TODO: add a method to update the desired Account information
-    return "redirect:/tee-rific/editAccount/{username}";
-  }//updateAccountInformation()
-
+  Boolean changeUsernameError = false;
+  Boolean changeValueError = false;
 
   @GetMapping(
-    path = "/tee-rific/delete/{username}"
+    path = "/tee-rific/editAccount/{editColumn}/{username}"
   )
-  public String accountDeleted(@PathVariable("username")String user, Map<String, Object> model)
-  {
-    model.put("username", user);
-    return "accountDeleted";
-  }//accountDeleted()
+  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model){
+    // CourseOwner newValue = new CourseOwner();
+    // model.put("value", newValue);
+
+    model.put("column", column);
+    model.put("user", user);
+
+    // if (changeUsernameError == true){
+    //   changeUsernameError = false;
+    //   String error = "Username is already taken.";
+    //   model.put("errorMessage", error);
+    // } else if (changeValueError == true){
+    //   changeUsernameError = false;
+    //   String error = "Error Updating value, Retry again.";
+    //   model.put("errorMessage", error);
+    // }
+
+    // if (column == "timeopen" || column == "timeclose")                   // Since theres different input fields the owner can update,
+    //   return "editTimeValues";                                           // it should redirect to the appropriate html with the right
+    // else if (column == "description" || column == "directionstocourse")  // input field to fill out.     - Justin
+    //   return "editTextAreas";
+    // else if (column == "gender")
+    //   return "editGender";
+    // else
+    System.out.println("test");
+    return "editShortStringValues";
+  }
+
+  // @PostMapping(
+  //   path = "/tee-rific/editAccount/{editColumn}/{username}",  
+  // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  // )
+  // public String changeAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, CourseOwner newValue){
+  //   try (Connection connection = dataSource.getConnection())
+  //   {
+  //     Statement stmt = connection.createStatement();
+  //     String selectUser= "SELECT priority FROM users WHERE username='" + user +"'";
+  //     ResultSet userData = stmt.executeQuery(selectUser);
+
+  //     String value = "";
+  //     if (column == "username"){         // To get value, depending on which column
+  //       // check if username is taken        
+  //       ResultSet check = stmt.executeQuery("SELECT username FROM users WHERE username ='"+newValue.getUsername()+"'");
+  //       int checkCount = 0;
+  //       while (check.next()){
+  //         checkCount++;
+  //       }
+  //       if (checkCount > 0){
+  //         changeUsernameError = true;
+  //         return "redirect:/tee-rific/editAccount/username/"+user;  //
+  //       }
+
+  //       value = newValue.getUsername();
+  //     } else if (column == "password")
+  //       // encrypt password
+  //       value = BCrypt.hashpw(newValue.getPassword(), BCrypt.gensalt());
+  //     else if (column == "fname" || column == "firstname")
+  //       value = newValue.getFname();
+  //     else if (column == "lname" || column == "lastname")
+  //       value = newValue.getLname();
+  //     else if (column == "email")
+  //       value = newValue.getEmail();
+  //     else if (column == "gender")
+  //       value = newValue.getGender();
+  //     else if (column == "address")
+  //       value = newValue.getAddress();
+  //     else if (column == "city")
+  //       value = newValue.getCity();
+  //     else if (column == "country")
+  //       value = newValue.getCountry();
+  //     else if (column == "phonenumber")
+  //       value = newValue.getPhoneNumber();
+  //     else if (column == "website")
+  //       value = newValue.getWebsite();
+  //     else if (column == "timeopen")
+  //       value = newValue.getTimeOpen();
+  //     else if (column == "timeclose")
+  //       value = newValue.getTimeClose();
+  //     else if (column == "weekdayrates")
+  //       value = newValue.getWeekdayRates();
+  //     else if (column == "weekendrates")
+  //       value = newValue.getWeekendRates();
+  //     else if (column == "directionstocourse")
+  //       value = newValue.getDirectionsToCourse();
+  //     else if (column == "description")
+  //       value = newValue.getDescription();
+  //     else {
+  //       changeValueError = true;
+  //       return "redirect:/tee-rific/editAccount/"+column+"/"+user;  //
+  //     }
+      
+  //     String userPriority = "";
+  //     while(userData.next()){
+  //       userPriority = userData.getString("priority");
+  //     }
+
+  //     if(userPriority.equals(priorities[0])){     //If user/golfer
+  //       String updateColumnValue = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
+  //       stmt.executeUpdate(updateColumnValue);
+  //     } else {
+  //       // Update user part of account
+  //       if (column == "username" || column == "password" || column == "firstname" || column == "lastname" || column == "email" || column == "gender"){
+  //         if (column == "firstname"){         // This if and else if are for first name and last name, since its different name on owner db
+  //           String updateUserInfo = "UPDATE users SET fname='" + value + "' WHERE username='" + user;
+  //           stmt.executeUpdate(updateUserInfo);
+  //         } else if (column == "lastname"){
+  //           String updateUserInfo = "UPDATE users SET lname='" + value + "' WHERE username='" + user;
+  //           stmt.executeUpdate(updateUserInfo);
+  //         } else {
+  //           String updateUserInfo = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
+  //           stmt.executeUpdate(updateUserInfo);
+  //         }
+  //       }
+  //       // Update owner part of account
+  //       String updateOwnerInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user;
+  //       stmt.executeUpdate(updateOwnerInfo);
+  //     }
+    
+  //     model.put("username", user);
+  //     return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully";
+  //   } catch (Exception e) {
+  //     model.put("message", e.getMessage());
+  //     return "error";
+  //   } 
+  // }
+
+  // @GetMapping(
+  //   path = "/tee-rific/editAccount/accountUpdatedSuccessfully"
+  // )
+  // public String redirectToEditSuccess(){
+  //   return "editSuccess";
+  // }
+
+  // @GetMapping(
+  //   path = "/tee-rific/delete/{username}"
+  // )
+  // public String accountDeleted(@PathVariable("username")String user, Map<String, Object> model){
+  //   model.put("username", user);
+  //   return "accountDeleted";
+  // }//accountDeleted()
 
 
   @PostMapping( 
@@ -1246,7 +1415,7 @@ public class Main {
 
       model.put("username", user);
       model.put("tournamentId", tournamentId);
-      //pop up displays if the user is already signed up in the tournament
+      // pop up displays if the user is already signed up in the tournament
       return "tournamentSignUp";
     } catch (Exception e)
     {
