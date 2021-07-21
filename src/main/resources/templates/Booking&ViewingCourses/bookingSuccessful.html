@@ -29,7 +29,20 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Booking Successful</div>
+                    <div class="titleFont dynamicSize">Booking Successful!</div>
+                    <p>Thank you for booking with Tee-rific! Here is your game info.</p>
+                    <table th:object="${toDisplay}">
+                        <tr>
+                            <td>Location:</td><td th:value="${courseName}"></td>
+                        </tr>
+                        <tr>
+                            <td>Date:</td><td th:value="*{date}"></td>
+                        </tr>
+                        <tr>
+                            <td>Tee-Time:</td><td th:value="*{time}"></td>
+                        </tr>
+                    </table>
+                    
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
                         <button type="submit" class = "button">Home Page</button>
                     </form>
