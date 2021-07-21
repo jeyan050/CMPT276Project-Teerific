@@ -1,0 +1,106 @@
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign Up</title>
+</head>
+<body>
+    <div class="layer_6">
+        <div class="layer_7">
+            <div class="layer_8">
+                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
+                <h1>Admin Sign Up</h1>
+            </div>
+        </div>
+     </div>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Owner Sign-Up</title>
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">New Owner User</div>
+                    <!-- <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/owner}" th:object="${newOwner}"></form> -->
+                    <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/Owner}" th:object="${newOwner}">
+                    
+                        <h3>Course Details</h3>
+                        <input type="text" id="courseName" class="inputBox" th:field="*{courseName}" placeholder="Course Name"><p id="errorCN"></p>
+                            <div th:each="errorText1 : ${courseNameError}">
+                                <p th:text="${errorText1}"></p>
+                            </div>
+                        <input type="text" id="address" class="inputBox" th:field="*{address}" placeholder="Address"><p id="errorA"></p>
+                        <input type="text" id="city" class="inputBox" th:field="*{city}" placeholder="City"><p id="errorCi"></p>
+                        <input type="text" id="country" class="inputBox" th:field="*{country}" placeholder="Country"><p id="errorCo"></p>
+                         
+                        <h3>Account Details</h3>
+                        <input type="text" id="username" class="inputBox" th:field="*{username}" placeholder="Username"><p id="errorU">
+                            <div th:each="errorText2 : ${usernameError}">
+                                <p th:text="${errorText2}"></p>
+                            </div>
+                        <input type="password" id="passw1" class="inputBox" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
+                        <input type="password" id="passw2" class="inputBox" placeholder="Confirm Password"><p id="errorP2"></p>
+                        <input type="text" id="firstN" class="inputBox" th:field="*{fname}" placeholder="First Name"><p id="errorF"></p>
+                        <input type="text" id="lastN" class="inputBox" th:field="*{lname}" placeholder="Last Name"><p id="errorL"></p>
+                        <input type="text" id="email" class="inputBox" th:field="*{email}" placeholder="Email"><p id="errorE"></p>
+                        <select class ="inputBox" th:field="*{gender}">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
+                        </select>
+
+                        <button type="submit" id="submitOwner" class="button">Create New Owner</button>
+                    </form>
+                    <form method= "get" th:action="@{/tee-rific/login}">
+                        <button type="submit" class="button">Sign In</button>
+                    </form>
+                </div>
+             </div>
+        </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script th:src="@{/js/signupOwner.js}" type="text/javascript"> </script>
+              <!-- <script th:src="/js/buttonEffect.js}" type="text/javascript"> </script> -->
+        </footer>
+    </div>
+</body>
+</html>

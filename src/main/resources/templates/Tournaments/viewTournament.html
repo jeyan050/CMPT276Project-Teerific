@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Tournament</title>
+</head>
+<body>
+    <div class="layer_6">
+        <div class="layer_7">
+            <div class="layer_8">
+                <th:block th:each="tournament : ${tournaments}">
+                    <h1>Sign up for Tournament: <span th:text="${tournament.name}"></span> ?</h1>
+                </th:block>
+                <table>
+                <thead>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Club</th>
+                        <th>Game Mode</th>
+                        <th>Buy In</th>
+                        <th>First Prize</th>
+                        <th>Second Prize</th>
+                        <th>Third Prize</th>
+                        <th>Age Requirement</th>
+                        <th>Slots Remaining</th>
+                    </thead>
+                    <tr th:each="tournament : ${tournaments}">
+                        <!-- link to the tournament by clicking on name, unsure if this is the method we want to go with-->
+                        <td th:text="${tournament.name}"></td>
+                        <td th:text="${tournament.date}"></td>
+                        <td th:text="${tournament.time}"></td>
+                        <td th:text="${tournament.clubName}"></td>
+                        <td th:text="${tournament.gameMode}"></td>
+                        <td th:text="${'$' + tournament.buyIn}"></td>
+                        <td th:text="${tournament.firstPrize}"></td>
+                        <td th:text="${tournament.secondPrize}"></td>
+                        <td th:text="${tournament.thirdPrize}"></td>
+                        <td th:text="${tournament.ageRequirement}"></td>
+                        <!-- replace the "-0" with - participants.size()-->
+                        <th:block th:with="remainingSlots=${tournament.participantSlots - 0}">
+                        <td th:text= "${remainingSlots}"></td>
+                        </th:block>
+                    </tr>
+                </table>
+                <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + username}" th:object="${tournament}">
+                    <input type = "hidden"  th:value="${tournament.id}"/>
+                    <input type = "hidden"  th:value="${tournament.name}"/>
+                    <input type="submit" class = "button" value="Sign Up">
+                </form>
+                <!-- if admin AND created the tournament -->
+                <form method="get" th:action="${'/tee-rific/tournamentDelete/' + username}" th:object="${tournament}">
+                    <input type = "hidden"  th:value="${tournament.id}"/>
+                    <input type = "hidden"  th:value="${tournament.name}"/>
+                    <input type="submit" class = "button" value= "Delete Tournament">
+                </form>
+                <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
+                    <button type="submit" class = "button">Tournaments Page</button>
+                </form>
+            </div>
+        </div>
+     </div>
+     <footer>
+        <div class= "woodBackdrop footer">
+            <i class="socialIcon fab fa-facebook-f"></i>
+            <i class="socialIcon fab fa-twitter"></i>
+            <i class="socialIcon fab fa-instagram"></i>
+            <i class="socialIcon fas fa-envelope"></i>
+            <p>© Copyright 2021 Tee-rific</p>
+          </div>
+          <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+    </footer>
+</body>
+</html>

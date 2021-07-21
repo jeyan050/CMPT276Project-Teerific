@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Checkout</title>
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <table>
+                        <tr><td>Quantity Balls:</td><td th:text="${userCart.numBalls}"></td></tr>
+                        <tr><td>Quantity Carts:</td><td th:text="${userCart.numCarts}"></td></tr>
+                        <tr><td>Quantity Clubs:</td><td th:text="${userCart.numClubs}"></td></tr>
+                    </table>
+                    <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/checkout/' + username}">
+                        <button type="submit" class="button">Confirm Selection</button>
+                    </form>   
+        
+                    <div>
+                        <form method="get" th:action="${'/tee-rific/rentEquipment/' + username}">
+                            <button type="submit" class = "button">Back</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+        </footer>
+    </div>
+    
+</body>
+
+
+
+</html>
