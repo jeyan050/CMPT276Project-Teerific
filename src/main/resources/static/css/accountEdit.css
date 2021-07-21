@@ -1,0 +1,26 @@
+.border {
+    width: clamp(600px, 90%, 650px);
+}
+
+table {
+    width: 580px; 
+    table-layout: fixed; 
+    word-wrap: break-word;
+}
+
+.editButton {
+    width: 60px;
+}
+
+.editSpace {
+    padding: 0px;
+}
+
+.value {
+    width: 400px;
+}
+
+.title {
+    font-weight: bold;
+    width: 100px;
+}

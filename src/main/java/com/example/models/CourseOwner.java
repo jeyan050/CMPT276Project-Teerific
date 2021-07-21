@@ -13,6 +13,8 @@ public class CourseOwner {
     private String city;
     private String country;
     private String phoneNumber;
+    private String timeOpen;
+    private String timeClose;
     private String website;
     private int numHoles;
     private ArrayList<Hole> holes;
@@ -91,6 +93,22 @@ public class CourseOwner {
     }
     public void setPhoneNumber(String f) {
         this.phoneNumber = f;
+    }
+
+    public String getTimeOpen() {
+        return this.timeOpen;
+    } 
+
+    public void setTimeOpen(String t) {
+        this.timeOpen = t;
+    }
+
+    public String getTimeClose() {
+        return this.timeClose;
+    }
+
+    public void setTimeClose(String t) {
+        this.timeClose = t;
     }
 
     public String getWebsite() {

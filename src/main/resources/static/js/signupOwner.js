@@ -5,6 +5,8 @@ function checkInput(event) {
     var checkAddress = document.getElementById("address").value;
     var checkCity = document.getElementById("city").value;
     var checkCountry = document.getElementById("country").value;
+    var checkOpenTime = document.getElementById("timeOpen").value;
+    var checkCloseTime = document.getElementById("timeClose").value;
 
     var checkUsername = document.getElementById("username").value;
     var checkPassword1 = document.getElementById("passw1").value;
@@ -29,6 +31,14 @@ function checkInput(event) {
         document.getElementById("errorCo").innerHTML = "Country is empty: Please enter a Country";
         return false;
     }
+    else if (checkOpenTime == ""){
+        document.getElementById("errorTO").innerHTML = "Open time is empty: Please enter a time";
+        return false;
+    }
+    else if (checkCloseTime == ""){
+        document.getElementById("errorTC").innerHTML = "Close time is empty: Please enter a time";
+        return false;
+    }
     else if (checkUsername == ""){
         document.getElementById("errorU").innerHTML = "Username is empty: Please enter a Username";
         return false;
@@ -38,7 +48,7 @@ function checkInput(event) {
         return false;
     }
     else if (checkPassword2 == ""){
-        document.getElementById("errorP2").innerHTML = "Password Comfirmation is empty: Please enter a Password Comfirmation";
+        document.getElementById("errorP2").innerHTML = "Password Confirmation is empty: Please enter a Password Comfirmation";
         return false;
     }
     else if (checkPassword1 != checkPassword2) {

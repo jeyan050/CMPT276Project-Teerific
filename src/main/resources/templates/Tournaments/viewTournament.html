@@ -29,7 +29,6 @@
                         <th>Slots Remaining</th>
                     </thead>
                     <tr th:each="tournament : ${tournaments}">
-                        <!-- link to the tournament by clicking on name, unsure if this is the method we want to go with-->
                         <td th:text="${tournament.name}"></td>
                         <td th:text="${tournament.date}"></td>
                         <td th:text="${tournament.time}"></td>
@@ -46,15 +45,11 @@
                         </th:block>
                     </tr>
                 </table>
-                <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + username}" th:object="${tournament}">
-                    <input type = "hidden"  th:value="${tournament.id}"/>
-                    <input type = "hidden"  th:value="${tournament.name}"/>
+                <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + tournamentId + '/' + username}">
                     <input type="submit" class = "button" value="Sign Up">
                 </form>
-                <!-- if admin AND created the tournament -->
-                <form method="get" th:action="${'/tee-rific/tournamentDelete/' + username}" th:object="${tournament}">
-                    <input type = "hidden"  th:value="${tournament.id}"/>
-                    <input type = "hidden"  th:value="${tournament.name}"/>
+                <!-- if owner AND created the tournament -->
+                <form method="get" th:action="${'/tee-rific/tournamentDelete/' + tournamentId + '/' + username}">
                     <input type="submit" class = "button" value= "Delete Tournament">
                 </form>
                 <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">

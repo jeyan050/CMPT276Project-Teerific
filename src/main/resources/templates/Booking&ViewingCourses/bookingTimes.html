@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
@@ -30,14 +30,16 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Booking Page</div>
+                    <div class="titleFont dynamicSize">Available Times</div>
 
-                    <form method="post" th:action="${'/tee-rific/booking/' + username}" th:object="${selectedCourse}">
-                        <select th:field="*{courseName}">
-                            <option value="bruh" disabled>Select Course...</option>
-                            <option th:each="course : ${coursesList}" th:value="${course.courseName}" th:text="${course.courseName}"></option>
-                        </select> <br>
-                        <button type="submit" class = "button">Next</button>
+                    <form method="post" th:action="${'/tee-rific/booking/' + courseName + gameID + username}" th:object="${booking}">
+                        <input type="date" th:field="*{date}"> <br>
+                        <input type="button" th:field="*{time}" th:each="time : ${timeSlots}" th:value="*{value}" th:text="*{value}"> <br>
+
+                        <label>Enter party size:</label>
+                        <input type="number" th:field="*{numPlayers}" placeholder="1"> <br>
+
+                        <button type="submit" class = "button">Confirm Booking</button>
                     </form>
     
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
