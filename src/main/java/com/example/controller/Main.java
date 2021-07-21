@@ -861,7 +861,7 @@ public class Main {
   @GetMapping(
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}"
   )
-  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     // Kyle's shit
     String user = pathVars.get("username");
 
@@ -956,10 +956,11 @@ public class Main {
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleNewBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking) {
+  public String handleNewBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking) throws Exception {
     String user = pathVars.get("username");
-    String courseName = convertFromSnakeCase(pathVars.get("courseName"));
+    String courseNameSC = pathVars.get("courseName");
     String gameIDStr = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     try (Connection connection = dataSource.getConnection()) {
       String teetime = booking.getTime();
@@ -970,7 +971,7 @@ public class Main {
       System.out.println(booking.getTime());
       System.out.println(booking.getNumPlayers());
 
-      updateBookingsTable(connection, booking, courseName, gameIDStr);
+      updateBookingsTable(connection, booking, courseNameSC, gameIDStr);
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
@@ -984,7 +985,7 @@ public class Main {
 
       userCreateScorecardsTable(connection, user);
       userInsertScorecard(connection, user, scorecard);
-      courseName = convertToSnakeCase(courseName);
+      courseName = convertToSnakeCase(courseNameSC);
 
       return "redirect:/tee-rific/booking/{courseName}/{gameID}/{username}/success";
     } catch (Exception e) {
@@ -997,10 +998,11 @@ public class Main {
   @GetMapping(
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}/success"
   )
-  public String bookingSuccessful(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+  public String bookingSuccessful(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     String user = pathVars.get("username");
-    String courseName = convertFromSnakeCase(pathVars.get("courseName"));
+    String courseNameSC = pathVars.get("courseName");
     String gameIDStr = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
@@ -1013,7 +1015,7 @@ public class Main {
     // Confirmation / Success page, display booking info
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseName+" WHERE gameID='"+gameIDStr+"'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameIDStr+"'");
       rs.next();
 
       TeeTimeBooking toDisplay = new TeeTimeBooking();
@@ -1034,13 +1036,13 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // bookingSuccessful()
 
 
   // HELPER BOIS
   public void ownerCreateBookingsTable(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(3))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
   } //ownerCreateBookingsTable
 
   public String createNewBooking(Connection connection, String user, String courseName) throws Exception {
@@ -1070,7 +1072,7 @@ public class Main {
   public void updateBookingsTable(Connection connection, TeeTimeBooking booking, String courseName, String gameID) throws Exception {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("UPDATE bookings_"+courseName+" SET (date, teetime, numplayers) = ('"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"') WHERE gameID='"+gameID+"'");
-  }
+  } //updateBookingsTable()
 
 
 //**********************
@@ -1546,7 +1548,7 @@ public void userCreateScorecardsTable(Connection connection, String username) th
 
 public void userInsertScorecard(Connection connection, String username, Scorecard scorecard) throws Exception {
   Statement stmt = connection.createStatement();
-  stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+  stmt.executeUpdate("INSERT INTO scorecards_"+username+" (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
                       "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() +
                       "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() +
                       "', '" + scorecard.getAttestor() + "')");
