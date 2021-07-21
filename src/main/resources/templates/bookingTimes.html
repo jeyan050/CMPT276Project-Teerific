@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
@@ -32,12 +32,16 @@
                     </div>
                     <div class="titleFont dynamicSize">Available Times</div>
 
-                    <form method="post" th:action="${'/tee-rific/booking/' + courseName + gameID + username}" th:object="${booking}">
+                    <form method="post" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}" th:object="${booking}">
                         <input type="date" th:field="*{date}"> <br>
-                        <input type="button" th:field="*{time}" th:each="time : ${timeSlots}" th:value="*{value}" th:text="*{value}"> <br>
+                        <input type="radio" th:field="*{time}" th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"> <br>
+                        <!-- <select th:field="*{time}">
+                            <option value="bruh" disabled>Select Time...</option>
+                            <option th:each="ts : ${timeSlots}" th:value="*{ts.time}" th:text="*{ts.time}"></option>
+                        </select> <br> -->
 
                         <label>Enter party size:</label>
-                        <input type="number" th:field="*{numPlayers}" placeholder="1"> <br>
+                        <input type="number" th:field="*{numPlayers}" value="1"> <br>
 
                         <button type="submit" class = "button">Confirm Booking</button>
                     </form>

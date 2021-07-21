@@ -6,9 +6,8 @@ public class TeeTimeBooking {
     private int numPlayers;
     private String time;
     private String optionalNote;
-    private int numRentalBalls;
-    private int numRentalCarts;
-    private int numRentalClubs;
+    private String rentalID;
+
 
     public String getUsername() {
         return this.username;
@@ -43,20 +42,11 @@ public class TeeTimeBooking {
         this.optionalNote = f;
     }
 
-    public int getNumRentalBalls() { return this.numRentalBalls; }
-    public void setNumRentalBalls(int f) {
-        this.numRentalBalls = f;
-    }
+   public String getRentalID() {
+       return this.rentalID;
+   }
 
-    public int getNumRentalCarts() { return this.numRentalCarts; }
-    public void setNumRentalCarts(int f) {
-        this.numRentalCarts = f;
-    }
-
-    public int getNumRentalClubs() {
-        return this.numRentalClubs;
-    }
-    public void setNumRentalClubs(int f) {
-        this.numRentalClubs = f;
-    }
+   public void setRentalID(String f) {
+       this.rentalID = f;
+   }
 }
