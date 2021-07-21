@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
@@ -25,15 +26,59 @@
     <div class="pageWrap">
         <div class="content">
             <div class="woodBackdrop border content">
-                <div class="sandBackdrop">
+                <div class="sandBackdrop" th:each="user : ${userInfo}">
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Edit Account Infomation</div>   
 
                     <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
-
-                    <form method= "get" th:action="${'/tee-rific/account/' + username}">
+                    <table>
+                        <tr>
+                            <td class="title">Username</td>
+                            <td class="value" th:text="${user.username}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/username/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Password</td>
+                            <td class="value" th:text="${user.password}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/password/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">First Name</td>
+                            <td class="value" th:text="${user.fname}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/fname/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Last Name</td>
+                            <td class="value" th:text="${user.lname}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/lname/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Email</td>
+                            <td class="value" th:text="${user.email}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/email/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Gender</td>
+                            <td class="value" th:text="${user.gender}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/gender/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <form method= "get" th:action="${'/tee-rific/account/' + user.username}">
                         <button type="submit" class="button">Go Back</button>
                     </form>
                 </div>
