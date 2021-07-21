@@ -31,8 +31,13 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Booking Page</div>
-                    <form method="get" th:action="${'/tee-rific/rentEquipment/' + username}">
-                        <button type="submit" class = "button">Confirm</button>
+
+                    <form method="post" th:action="${'/tee-rific/booking/' + username}" th:object="${selectedCourse}">
+                        <select th:field="*{courseName}">
+                            <option value="bruh" disabled>Select Course...</option>
+                            <option th:each="course : ${coursesList}" th:value="${course.courseName}" th:text="${course.courseName}"></option>
+                        </select> <br>
+                        <button type="submit" class = "button">Next</button>
                     </form>
     
                     <form method="get" th:action="${'/tee-rific/home/' + username}">

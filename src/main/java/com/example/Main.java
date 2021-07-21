@@ -36,9 +36,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
+// import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Map;
+import java.lang.Integer;
 
 @Controller
 @SpringBootApplication
@@ -94,6 +95,7 @@ public class Main {
   //************************************
   // TEE-RIFIC CODE STARTS HERE
   //************************************
+  // TODO: (For later) Move all helper functions to a separate file for refactorization, it's starting to get hard to look at - Chino
 
   String[] priorities = {"GOLFER", "OWNER", "ADMIN"};
 
@@ -335,8 +337,9 @@ public class Main {
       stmt.executeUpdate(userInfo);
       stmt.executeUpdate(insertUser);
 
-      // Initialize rental inventory of golf course - Chino
-      ownerCreateInventory(connection);
+      // Initialize rental inventory and bookings table of golf course - Chino
+      ownerCreateInventory(connection, updatedCourseName);  // TODO: redo inventories to have unqiue ones for each course
+      ownerCreateBookingsTable(connection, updatedCourseName);
 
       // check if username or course name exists for already existing user
       String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
@@ -596,60 +599,183 @@ public class Main {
   //**********************
   // BOOKING
   //**********************
+  // 1. User first selects which specific course to play at (to specify open / close times)
+  // 2. User picks date and time for teetime (using table of buttons)
+  // 3. Show options for renting equipment and such and enter into bookings table
+  // 4. Create a scorecard for the game with the generated Game ID
 
+  // Select Course
   @GetMapping(
     path = "/tee-rific/booking/{username}"
   )
-  public String getBookingPage(@PathVariable("username")String user, Map<String, Object> model){
-    model.put("username", user);
-    return "booking";
-  }//getBookingPage()
+  public String displayCourses(@PathVariable("username")String user, Map<String, Object> model) {
+    ArrayList<CourseOwner> coursesList = new ArrayList<CourseOwner>();
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM owners");
+
+      while (rs.next()) {
+        CourseOwner course = new CourseOwner();
+        course.setCourseName(rs.getString("courseName"));
+        coursesList.add(course);
+      }
+
+      CourseOwner selectedCourse = new CourseOwner();
+
+      model.put("username", user);
+      model.put("selectedCourse", selectedCourse);
+      model.put("coursesList", coursesList);
+      return "bookingCourse";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }// displayCourses()
 
 
   @PostMapping(
     path = "/tee-rific/booking/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String updateSchedule(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
+  public String handleSelectCourse(@PathVariable("username")String user, CourseOwner selectedCourse, Map<String, Object> model) {
+    // Enter into bookings db to create a ID for the game
     try (Connection connection = dataSource.getConnection()) {
-      
-      boolean validAppointment = true;
-      // Statement stmt = connection.createStatement();
+      String courseName = convertToSnakeCase(selectedCourse.getCourseName());
+      String id = createNewBooking(connection, user, courseName);
 
-      if(validAppointment){
-        // //creates a new scorecard
-        // Scorecard scorecard = new Scorecard();
-
-        // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
-        // scorecard.setGameID(String.valueOf(serial));      
-        // scorecard.setDatePlayed("");
-        // scorecard.setCoursePlayed("My Great Course");
-        // scorecard.setTeesPlayed("");
-        // scorecard.setHolesPlayed("");
-        // scorecard.setFormatPlayed("");
-        // scorecard.setAttestor("");
-        // serial++;
-
-        // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
-        // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
-        // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
-        // stmt.executeUpdate(sqlScorecardsInit);
-
-        // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
-        //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() + 
-        //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() + 
-        //                   "', '" + scorecard.getAttestor() + "')");
-      }
-      model.put("username", user);
-      return "bookingSuccessful";     //may need to change this
-      // model.put("username", user);
-      // return "booking";
-      
+      return "redirect:/tee-rific/booking/"+courseName+"/"+id+"/"+user+"";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
     }
-  }//updateSchedule()
+  }// handleSelectCourse()
+
+  @GetMapping(
+    path = "/tee-rific/booking/{courseName}/{gameID}/{username}"
+  )
+  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model) {
+    String user = pathVars.get("username");
+    String courseName = pathVars.get("courseName");
+    String gameIDStr = pathVars.get("gameID");
+    Integer gameID = Integer.parseInt(gameIDStr);
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      // ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseName+" where gameID='"+gameID+"'");
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE courseName='"+courseName+"'");
+      courseInfo.next();
+
+      // Convert DB data into ints for comparison
+      String timeOpenStr = courseInfo.getString("timeopen");
+      timeOpenStr = timeOpenStr + ":00";
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      String timeOpenMinStr = timeOpenSegments[1];
+
+      String timeCloseStr = courseInfo.getString("timeclose");
+      timeCloseStr = timeCloseStr + ":00";
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      String timeCloseMinStr = timeCloseSegments[1];
+
+      int timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      int timeOpenMin = Integer.parseInt(timeOpenMinStr);
+      int timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      int timeCloseMin = Integer.parseInt(timeCloseMinStr);
+
+      // Time timeOpen = Time.valueOf(timeOpenStr);
+      // Time timeClose = Time.valueOf(timeCloseStr);
+
+      // Create array of valid teetimes based on open / closing times of specified course
+      // TODO: (if we have time) extend so to consider gold course capacity
+      ArrayList<String> validTimeSlots = new ArrayList<String>();
+      Integer hour = 0;
+      Integer min = 0;
+
+      for (int i = 0; i < 48; i++) {
+        if (hour >= timeOpenHr && hour < timeCloseHr) {
+          if (hour == timeOpenHr && min < timeOpenMin) {
+            min = 30;
+          }
+          if (hour == timeOpenHr && min < timeOpenMin) {
+            min = 0;
+            hour++;
+          }
+
+          String timeslot = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+          validTimeSlots.add(timeslot);
+
+          hour++;
+          if (min == 0) {
+            min = 30;
+          } else {
+            min = 0;
+          }
+        }
+      }
+
+      TeeTimeBooking booking = new TeeTimeBooking();
+      booking.setUsername(user);
+
+      model.put("timeSlots", validTimeSlots);
+      model.put("courseName", courseName);
+      model.put("gameID", gameID);
+      model.put("username", user);
+      model.put("booking", booking);
+      return "bookingTimes"; 
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }// displayCourseTimes()
+
+  // @PostMapping(
+  //   path = "/tee-rific/booking/{username}",
+  //   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  // )
+  // public String updateSchedule(@PathVariable("username")String user, Map<String, Object> model) throws Exception {
+  //   try (Connection connection = dataSource.getConnection()) {
+      
+  //     boolean validAppointment = true;
+  //     // Statement stmt = connection.createStatement();
+
+  //     if(validAppointment){
+  //       // //creates a new scorecard
+  //       // Scorecard scorecard = new Scorecard();
+
+  //       // //TODO: the argument passed in should be a serial of some sort so that there is never multiple gameID's, then the serial should be assigned to the user in some sort of way so that everyone does not get access to the game
+  //       // scorecard.setGameID(String.valueOf(serial));      
+  //       // scorecard.setDatePlayed("");
+  //       // scorecard.setCoursePlayed("My Great Course");
+  //       // scorecard.setTeesPlayed("");
+  //       // scorecard.setHolesPlayed("");
+  //       // scorecard.setFormatPlayed("");
+  //       // scorecard.setAttestor("");
+  //       // serial++;
+
+  //       // //TODO: Scorecards -- store an arrayList/array in SQL for the users - MIKE
+  //       // //TODO: Scorecards -- how to store an arrayList/array in SQL for the users - MIKE
+  //       // String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+  //       // stmt.executeUpdate(sqlScorecardsInit);
+
+  //       // stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+  //       //                   "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() + 
+  //       //                   "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() + 
+  //       //                   "', '" + scorecard.getAttestor() + "')");
+  //     }
+  //     model.put("username", user);
+  //     return "bookingSuccessful";     //may need to change this
+  //     // model.put("username", user);
+  //     // return "booking";
+      
+  //   } catch (Exception e) {
+  //     model.put("message", e.getMessage());
+  //     return "error";
+  //   }
+  // }//updateSchedule()
 
 
   @GetMapping(
@@ -661,11 +787,44 @@ public class Main {
     return "bookingSuccessful";
   }//bookingSuccessful()
 
+  // HELPERS 
+  public void ownerCreateBookingsTable(Connection connection, String courseName) throws Exception {
+    Statement stmt = connection.createStatement();
+
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), teetime time)");
+  } //ownerCreateBookingsTable
+
+  public String createNewBooking(Connection connection, String user, String courseName) throws Exception {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("INSERT INTO bookings_"+courseName+" (username) VALUES ('"+user+"')");
+
+    // Go to very bottom of table since we just inserted there
+    ResultSet rs = stmt.executeQuery("SELECT gameID FROM bookings_"+courseName+"");
+    String id = "";
+    while (rs.next()) {
+      System.out.println(rs.getString("gameID"));
+      id = rs.getString("gameID");
+    }
+    System.out.println(id);
+    return id;
+  }// createNewBooking()
+
+  public String singleDigitToDoubleDigitString(Integer n) {
+    // Converts single digit ints to double digit strings
+    // ie 0 -> "00"
+    String ret = Integer.toString(n);
+    if (n < 10) {
+      ret = "0" + ret;
+    }
+    return ret;
+  } // singleDigitToDoubleDigitString()
+
 
   //**********************
   // RENT EQUIPMENT
   //**********************
 
+  //TODO: Sync up LiveRentals id with Scorecards gameID
   //TODO: Add extra style 
   //TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
   @GetMapping(
@@ -828,7 +987,7 @@ public class Main {
   }//getUserCartContentsFromDB()
 
 
-  private void ownerCreateInventory(Connection connection) throws Exception {
+  private void ownerCreateInventory(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(100), stock integer DEFAULT 0)");
     stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
