@@ -1985,9 +1985,19 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String clearUserDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmt = connection.createStatement();
-      String sql = "DROP TABLE users";
-      stmt.executeUpdate(sql);
+      Statement stmtUser = connection.createStatement();
+      Statement stmtOwner = connection.createStatement();
+
+      ResultSet deleteOwners = stmtUser.executeQuery("SELECT * FROM users");          // Delete owner accounts as well
+      while(deleteOwners.next()){
+        String checkPrioirty = deleteOwners.getString("priority");
+        if (checkPrioirty.equals(priorities[1])){
+          String userName = deleteOwners.getString("username");
+          stmtOwner.executeUpdate("DELETE FROM owners WHERE username='"+userName+"'");
+        }
+      }
+
+      stmtUser.executeUpdate("DROP TABLE users");
 
       return "redirect:/tee-rific/admin/users";
     } catch (Exception e) {
@@ -2054,7 +2064,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
       model.put("tournamentList",output);
-      return "Tournaments/listOfTournaments";
+      return "Admin/listOfTournaments";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -2144,14 +2154,20 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
   @PostMapping(
-          path = "/tee-rific/admin/owners/clear",
-          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+    path = "/tee-rific/admin/owners/clear",
+    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
   public String clearOwnerDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmt = connection.createStatement();
-      String sql = "DROP TABLE users";
-      stmt.executeUpdate(sql);
+      Statement stmtOwner = connection.createStatement();
+      Statement stmtUser = connection.createStatement();
+      ResultSet deleteOwners = stmtOwner.executeQuery("SELECT * FROM owners");
+      while(deleteOwners.next()){
+        String ownerName = deleteOwners.getString("username");
+        stmtUser.executeUpdate("DELETE FROM users WHERE username='"+ownerName+"'");
+      }
+
+      stmtOwner.executeUpdate("DROP TABLE owners");
 
       return "redirect:/tee-rific/admin/owners";
     } catch (Exception e) {
