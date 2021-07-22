@@ -1663,31 +1663,14 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       {
         buyIn = 0;
       }
-      String firstPrize = tournament.getFirstPrize();
-      if (tournament.getFirstPrize() == null)
+      String ageReq = tournament.getAgeRequirement();
+      if (ageReq == null)
       {
-        firstPrize = "0";
+        ageReq = "all ages";
       }
-      String secondPrize = tournament.getSecondPrize();
-      if (tournament.getSecondPrize() == null)
-      {
-        secondPrize = "0";
-      }
-      String thirdPrize = tournament.getThirdPrize();
-      if (tournament.getThirdPrize() == null)
-      {
-        thirdPrize = "0";
-      }
-      stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + tournament.getAgeRequirement() + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-
+      stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize() + "','" + ageReq + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
+      
       return "redirect:/tee-rific/availableTournaments/" + user;
-      // String ageRequirement = tournament.getAgeRequirement();
-      // if (tournament.getAgeRequirement() == null)
-      // {
-      //   ageRequirement = "0";
-      // }
-      // stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + firstPrize + "','" + secondPrize + "','" + thirdPrize + "','" + ageRequirement + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-      // return "redirect:/tee-rific/availableTournaments";
     } catch (Exception e)
     {
       model.put("message", e.getMessage());
@@ -1699,7 +1682,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   @GetMapping(
           path = "/tee-rific/viewTournament/{tid}/{username}"
   )
-  public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable String tid, HttpServletRequest request)
+  public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable("tournamentId") String tournamentId, HttpServletRequest request)
   {
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -1712,8 +1695,8 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try(Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      model.put("id", tid);
-      ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tid);
+      model.put("id", tournamentId);
+      ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tournamentId);
       ArrayList<Tournament> output = new ArrayList<Tournament>();
       while (rs.next())
       {
@@ -1738,6 +1721,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       Tournament tournament = new Tournament();
       model.put("tournament", tournament);
       model.put("username", user);
+      model.put("tournamentId", tournamentId);
       return "Tournaments/viewTournament";
 
     } catch (Exception e)
@@ -1749,9 +1733,9 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
 
   @GetMapping(
-          path = "/tee-rific/tournamentDelete/{username}"
+    path = "/tee-rific/tournamentDelete/{tournamentId}/{username}"
   )
-  public String displayDeleteTournamentPage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
+  public String displayDeleteTournamentPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request)
   {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
@@ -1763,22 +1747,21 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
 
     model.put("username", user);
+    model.put("tournamentId", tournamentId);
     return "Tournaments/tournamentDelete";
   }//displayDeleteTournamentPage()
 
 
   @PostMapping(
-          path = "/tee-rific/tournamentDelete/{username}",
+          path = "/tee-rific/tournamentDelete/{tournamentId}/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String deleteTournament(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament)
+  public String deleteTournament(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, Tournament tournament)
   {
     try (Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      stmt.execute("DELETE FROM tournaments WHERE id = " + tournament.getId());
-      System.out.println(tournament.getId());
-      System.out.println(tournament.getName());
+      stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
       return "redirect:/tee-rific/availableTournaments/" + user;
     } catch (Exception e)
     {
@@ -1789,10 +1772,10 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
 
   @GetMapping(
-          path = "/tee-rific/tournamentSignUp/{username}"
-  )
-  public String tournamentSignUp(@PathVariable("username")String user, Map<String, Object> model, Tournament tournament, HttpServletRequest request)
-  {
+    path = "/tee-rific/tournamentSignUp/{tournamentId}/{username}"
+    )
+  public String tournamentSignUp(@PathVariable("username")String user,  @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, Tournament tournament, HttpServletRequest request)
+    {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/tournamentSignUp/" + request.getSession().getAttribute("username");
@@ -1806,9 +1789,21 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     {
       Statement stmt = connection.createStatement();
       //add user to tournament.participants
-
       model.put("username", user);
-      //pop up displays if the user is already signed up in the tournament
+      model.put("tournamentId", tournamentId);
+      // ArrayList<User> old_partitipant_list = tournament.getParticipants();
+      // //search participant list to see if use is already registered
+      // for (User participant : old_partitipant_list)
+      // {
+      //   if (participant == user)
+      //   {
+      //     //pop up displays to show that the user is already signed up in the tournament
+      //     return "tournamentSignUp";
+      //   }
+      // }
+      // old_partitipant_list.add(user);
+      // tournament.setParticipants(old_partitipant_list);
+      // //display sign up success
       return "Tournaments/tournamentSignUp";
     } catch (Exception e)
     {
@@ -2184,5 +2179,40 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     request.getSession().invalidate();
     return "redirect:/";
   }
+
+  // try 
+  // {
+  //   URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=vancouver&units=metric&appid=96bf787bdb96400f9a642360f1e901d7");
+  //   HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+  //   conn.setRquestMethod("GET");
+  //   conn.connect();
+  
+  //   int response_code = conn.getResponseCode();
+  //   if (response_code != 200)
+  //   {
+  //     //throw exception
+  //   }
+  //   else
+  //   {
+  //     String inline = "";
+  //     Scanner scanner = new Scanner(url.openStream());
+  //     while (scanner.hasNext())
+  //     {
+  //       inline += scanner.nextLine();
+  //     }
+  //     scanner.close();
+  
+  //   JSONParser parse = new JSONParser();
+  //   JSONObject data_obj = (JSONObject) parse.parse(inline);
+  //   }
+  // }
+
+
+
+  //read the weather data I want
+
+  // JSONObject object = (JSONObject) data_obj.get("data I want here");
+
+
 
 }
