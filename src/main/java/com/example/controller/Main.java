@@ -324,8 +324,9 @@ public class Main {
       stmt.executeUpdate(userInfo);
       stmt.executeUpdate(insertUser);
 
-      // Initialize rental inventory of golf course - Chino
-      ownerCreateInventory(connection);
+      // Initialize rental inventory and bookings of golf course - Chino
+      ownerCreateInventory(connection, updatedCourseName);
+      ownerCreateBookingsTable(connection, updatedCourseName);
 
       // check if username or course name exists for already existing user
       String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
@@ -371,8 +372,8 @@ public class Main {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
-            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
-            "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
+            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
+            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
   }
 
 
@@ -861,7 +862,7 @@ public class Main {
   @GetMapping(
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}"
   )
-  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     // Kyle's shit
     String user = pathVars.get("username");
 
@@ -956,21 +957,18 @@ public class Main {
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleNewBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking) {
+  public String handleNewBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking) throws Exception {
     String user = pathVars.get("username");
-    String courseName = convertFromSnakeCase(pathVars.get("courseName"));
+    String courseNameSC = pathVars.get("courseName");
     String gameIDStr = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     try (Connection connection = dataSource.getConnection()) {
       String teetime = booking.getTime();
       teetime = teetime + ":00";
       booking.setTime(teetime);
 
-      System.out.println(booking.getDate());
-      System.out.println(booking.getTime());
-      System.out.println(booking.getNumPlayers());
-
-      updateBookingsTable(connection, booking, courseName, gameIDStr);
+      updateBookingsTable(connection, booking, courseNameSC, gameIDStr);
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
@@ -984,7 +982,7 @@ public class Main {
 
       userCreateScorecardsTable(connection, user);
       userInsertScorecard(connection, user, scorecard);
-      courseName = convertToSnakeCase(courseName);
+      courseName = convertToSnakeCase(courseNameSC);
 
       return "redirect:/tee-rific/booking/{courseName}/{gameID}/{username}/success";
     } catch (Exception e) {
@@ -997,10 +995,11 @@ public class Main {
   @GetMapping(
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}/success"
   )
-  public String bookingSuccessful(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+  public String bookingSuccessful(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     String user = pathVars.get("username");
-    String courseName = convertFromSnakeCase(pathVars.get("courseName"));
+    String courseNameSC = pathVars.get("courseName");
     String gameIDStr = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
@@ -1013,7 +1012,7 @@ public class Main {
     // Confirmation / Success page, display booking info
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseName+" WHERE gameID='"+gameIDStr+"'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameIDStr+"'");
       rs.next();
 
       TeeTimeBooking toDisplay = new TeeTimeBooking();
@@ -1034,13 +1033,13 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // bookingSuccessful()
 
 
   // HELPER BOIS
   public void ownerCreateBookingsTable(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(3))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
   } //ownerCreateBookingsTable
 
   public String createNewBooking(Connection connection, String user, String courseName) throws Exception {
@@ -1070,7 +1069,7 @@ public class Main {
   public void updateBookingsTable(Connection connection, TeeTimeBooking booking, String courseName, String gameID) throws Exception {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate("UPDATE bookings_"+courseName+" SET (date, teetime, numplayers) = ('"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"') WHERE gameID='"+gameID+"'");
-  }
+  } //updateBookingsTable()
 
 
 //**********************
@@ -1080,9 +1079,12 @@ public class Main {
   //TODO: Add extra style
 //TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
   @GetMapping(
-          path = "/tee-rific/rentEquipment/{username}"
+          path = "/tee-rific/rentEquipment/{courseName}/{gameID}/{username}"
   )
-  public String rentEquipment(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
+  public String rentEquipment(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameIDStr = pathVars.get("gameID");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
@@ -1094,6 +1096,8 @@ public class Main {
 
     EquipmentCart cart = new EquipmentCart();
 
+    model.put("gameID", gameIDStr);
+    model.put("courseName", courseNameSC);
     model.put("username", user);
     model.put("cart", cart);
     return "Rentals/rentEquipment";
@@ -1101,27 +1105,38 @@ public class Main {
 
 
   @PostMapping(
-          path = "/tee-rific/rentEquipment/{username}",
+          path = "/tee-rific/rentEquipment/{courseName}/{gameID}/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleShop(@PathVariable("username")String user, Map<String, Object> model, EquipmentCart cart, HttpServletRequest request) throws Exception {
-
+  public String handleShop(@PathVariable Map<String, String> pathVars, Map<String, Object> model, EquipmentCart cart) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameIDStr = pathVars.get("gameID");
+    
     try (Connection connection = dataSource.getConnection()) {
       // Create a table with our cart data inside to display on checkout
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS cart (numBalls integer, numCarts integer, numClubs integer)");
-      stmt.executeUpdate("INSERT INTO cart VALUES ('"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
-    }
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS cart_"+user+" (numBalls integer, numCarts integer, numClubs integer)");
+      stmt.executeUpdate("INSERT INTO cart_"+user+" VALUES ('"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+      model.put("username", user);
 
-    model.put("username", user);
-    return "redirect:/tee-rific/rentEquipment/checkout/" + user;
+      return "redirect:/tee-rific/rentEquipment/checkout/" + courseNameSC +"/"+ gameIDStr +"/"+ user;
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
   }
 
 
+
   @GetMapping(
-          path="/tee-rific/rentEquipment/checkout/{username}"
+          path="/tee-rific/rentEquipment/checkout/{courseName}/{gameID}/{username}"
   )
-  public String handleViewCart(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String handleViewCart(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameIDStr = pathVars.get("gameID");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/rentEquipment/checkout/" + request.getSession().getAttribute("username");
@@ -1133,42 +1148,64 @@ public class Main {
 
     try (Connection connection = dataSource.getConnection()) {
       // Create a table with our cart data inside to display on checkout
-      EquipmentCart toView = getUserCartContentsFromDB(connection);
+      EquipmentCart toView = getUserCartContentsFromDB(connection, user);
       toView.printfields();
 
+      model.put("gameID", gameIDStr);
+      model.put("courseName", courseNameSC);
       model.put("username", user);
       model.put("userCart", toView);
       return "Rentals/rentEquipmentCheckout";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
     }
   }
 
 
   @PostMapping(
-          path = "/tee-rific/rentEquipment/checkout/{username}",
+          path = "/tee-rific/rentEquipment/checkout/{courseName}/{gameID}/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleCheckout(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String handleCheckout(@PathVariable Map<String, String> pathVars, Map<String, Object> model) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameIDStr = pathVars.get("gameID");
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      EquipmentCart cart = getUserCartContentsFromDB(connection);
-      updateInventory(connection, cart);
-      stmt.executeUpdate("DROP TABLE cart");
+      EquipmentCart cart = getUserCartContentsFromDB(connection, user);
+      updateInventory(connection, cart, courseNameSC);
+      stmt.executeUpdate("DROP TABLE cart_"+user+"");
 
       // Create table of rentals so employees can keep track
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS LiveRentals (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
-      //TODO: Link user to rental
-      stmt.executeUpdate("INSERT INTO LiveRentals (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals_"+courseNameSC+" (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+
+      // Link rental to booking
+      ResultSet rs = stmt.executeQuery("SELECT * FROM rentals_"+courseNameSC+"");
+      String rentalID = "";
+      while (rs.next()) {
+        rentalID = rs.getString("id");
+      }
+
+      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET (rentalID) = ('"+rentalID+"')");
+      
+      model.put("username", user);
+
+      return "redirect:/tee-rific/rentEquipment/checkout/success/";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
     }
-    model.put("username", user);
-    return "redirect:/tee-rific/rentEquipment/checkout/success/" + user;
   }
 
 
   @GetMapping(
           path="/tee-rific/rentEquipment/checkout/success/{username}"
   )
-  public String rentSuccessPage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
+  public String rentSuccessPage(@PathVariable("username")String user, HttpServletRequest request) {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/rentEquipment/checkout/success/" + request.getSession().getAttribute("username");
@@ -1178,7 +1215,6 @@ public class Main {
       return "redirect:/";
     }
 
-    model.put("username", user);
     return "Rentals/rentEquipmentSuccess";
   }
 
@@ -1188,17 +1224,20 @@ public class Main {
 // TODO: no way to secure IF LOGGED IN ALREADY - kyle
 // TODO: Add style to table in viewInventory page
   @GetMapping(
-          path="/tee-rific/golfCourseDetails/inventory"
+          path="/tee-rific/golfCourseDetails/inventory/{username}"
   )
-  public String viewInventory(Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String viewInventory(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+      String courseName = ownerGetCourseName(connection, user);
+      String courseNameSC = convertToSnakeCase(courseName);
 
+      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseNameSC+"");
       ArrayList<Equipment> eqs = new ArrayList<Equipment>();
+      
       while (rs.next()) {
         Equipment eq = new Equipment();
         eq.setItemName(rs.getString("name"));
@@ -1206,6 +1245,8 @@ public class Main {
 
         eqs.add(eq);
       }
+
+      model.put("username", user);
       model.put("eqsArray", eqs);
       return "Rentals/inventory";
     }
@@ -1214,15 +1255,17 @@ public class Main {
   // TODO: no way to secure - kyle
 // TODO: ensure paths are correct
   @GetMapping(
-          path="/tee-rific/golfCourseDetails/inventory/update"
+          path="/tee-rific/golfCourseDetails/inventory/update/{username}"
   )
-  public String invUpdate(Map<String, Object> model, HttpServletRequest request) {
+  public String invUpdate(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
 
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
     EquipmentCart cart = new EquipmentCart();
+
+    model.put("username", user);
     model.put("ownerCart", cart);
     return "Rentals/inventoryUpdate";
   }
@@ -1230,20 +1273,22 @@ public class Main {
 
   // TODO: ensure paths are correct
   @PostMapping(
-          path="/tee-rific/golfCourseDetails/inventory/update",
+          path="/tee-rific/golfCourseDetails/inventory/update/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleInvUpdate(Map<String, Object> model, EquipmentCart cart) throws Exception {
+  public String handleInvUpdate(@PathVariable("username")String user, Map<String, Object> model, EquipmentCart cart) throws Exception {
     try (Connection connection = dataSource.getConnection()) {
-      ownerUpdateInventory(connection, cart);
+      String courseName = ownerGetCourseName(connection, user);
+      String courseNameSC = convertToSnakeCase(courseName);
+      ownerUpdateInventory(connection, cart, courseNameSC);
     }
-    return "redirect:/tee-rific/golfCourseDetails/inventory";
+    return "redirect:/tee-rific/golfCourseDetails/inventory" + user;
   }
 
 
-  private void updateInventory(Connection connection, EquipmentCart cart) throws Exception {
+  private void updateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
+    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseName+"");
 
     // Calculate updated values for stock
     rs.next();
@@ -1257,15 +1302,15 @@ public class Main {
     int updatedClubStock = clubStock - cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
   }
 
 
-  private EquipmentCart getUserCartContentsFromDB(Connection connection) throws Exception {
+  private EquipmentCart getUserCartContentsFromDB(Connection connection, String username) throws Exception {
     Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM cart");
+    ResultSet rs = stmt.executeQuery("SELECT * FROM cart_"+username+"");
     rs.next();
 
     EquipmentCart ret = new EquipmentCart();
@@ -1277,28 +1322,28 @@ public class Main {
   }
 
 
-  private void ownerCreateInventory(Connection connection) throws Exception {
+  private void ownerCreateInventory(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (name varchar(100), stock integer DEFAULT 0)");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('balls')");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('carts')");
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('clubs')");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory_"+courseName+" (name varchar(100), stock integer DEFAULT 0)");
+    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('balls')");
+    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('carts')");
+    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('clubs')");
   }
 
 
-  private void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("INSERT INTO inventory (name) VALUES ('"+nameOfItem+"')");
-  }
+  // private void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
+  //   Statement stmt = connection.createStatement();
+  //   stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('"+nameOfItem+"')");
+  // }
 
 
-  private void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("DELETE FROM inventory WHERE name='"+nameOfItem+"'");
-  }
+  // private void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
+  //   Statement stmt = connection.createStatement();
+  //   stmt.executeUpdate("DELETE FROM inventory_"+courseName+" WHERE name='"+nameOfItem+"'");
+  // }
 
 
-  private void ownerUpdateInventory(Connection connection, EquipmentCart cart) throws Exception {
+  private void ownerUpdateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
     // ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
 
@@ -1313,11 +1358,19 @@ public class Main {
     // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
+    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
+    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
   }
+  
+  private String ownerGetCourseName(Connection connection, String username) throws Exception {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM owners WHERE username='"+username+"'");
+    rs.next();
+    String courseName = rs.getString("courseName");
 
+    return courseName;
+  }
 
 //**********************
 // BROWSE COURSES
@@ -1546,7 +1599,7 @@ public void userCreateScorecardsTable(Connection connection, String username) th
 
 public void userInsertScorecard(Connection connection, String username, Scorecard scorecard) throws Exception {
   Statement stmt = connection.createStatement();
-  stmt.executeUpdate("INSERT INTO scorecards (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+  stmt.executeUpdate("INSERT INTO scorecards_"+username+" (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
                       "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() +
                       "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() +
                       "', '" + scorecard.getAttestor() + "')");
@@ -1897,9 +1950,20 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String clearUserDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmt = connection.createStatement();
-      String sql = "DROP TABLE users";
-      stmt.executeUpdate(sql);
+      Statement stmtUser = connection.createStatement();
+      Statement stmtOwner = connection.createStatement();
+
+      ResultSet deleteOwners = stmtUser.executeQuery("SELECT * FROM users");          // Delete owner accounts as well
+      while(deleteOwners.next()){
+        String checkPrioirty = deleteOwners.getString("priority");
+        if (checkPrioirty.equals(priorities[1])){
+          String userName = deleteOwners.getString("username");
+          stmtOwner.executeUpdate("DELETE FROM owners WHERE username='"+userName+"'");
+        }
+      }
+
+      stmtUser.executeUpdate("DROP TABLE users");
+
 
       return "redirect:/tee-rific/admin/users";
     } catch (Exception e) {
@@ -1966,7 +2030,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
       model.put("tournamentList",output);
-      return "Tournaments/listOfTournaments";
+      return "Admin/listOfTournaments";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -2061,9 +2125,16 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String clearOwnerDB(Map<String, Object> model){
     try (Connection connection = dataSource.getConnection()){
-      Statement stmt = connection.createStatement();
-      String sql = "DROP TABLE users";
-      stmt.executeUpdate(sql);
+      Statement stmtOwner = connection.createStatement();
+      Statement stmtUser = connection.createStatement();
+      ResultSet deleteOwners = stmtOwner.executeQuery("SELECT * FROM owners");
+      while(deleteOwners.next()){
+        String ownerName = deleteOwners.getString("username");
+        stmtUser.executeUpdate("DELETE FROM users WHERE username='"+ownerName+"'");
+      }
+
+      stmtOwner.executeUpdate("DROP TABLE owners");
+
 
       return "redirect:/tee-rific/admin/owners";
     } catch (Exception e) {

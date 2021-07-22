@@ -28,7 +28,7 @@
                 <div class="sandBackdrop">
                     <img th:src="@{/images/tee-rific.png}">
                 <div class="titleFont dynamicSize">Golf Course Equipment</div>
-                <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + username}" th:object="${cart}">
+                <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">
                     <p class="label"></p>
                     <input type="number" th:field=*{numBalls} class="input">
 
@@ -40,7 +40,7 @@
 
                     <button type="submit" class="button">Checkout</button>
                 </form>
-                <form method="get" th:action="${'/tee-rific/booking/' + username}">
+                <form method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}">
                     <button type="submit" class = "button">Back</button>
                 </form>
                 </div>

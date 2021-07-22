@@ -45,7 +45,10 @@
 
                         <button type="submit" class = "button">Confirm Booking</button>
                     </form>
-    
+
+                    <form method="get" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}">
+                        <button type="submit" class = "button">Rent Equipment</button>
+                    </form>
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
                         <button type="submit" class = "button">Back</button>
                     </form>

@@ -60,13 +60,13 @@
                 </tr>
             </table>
 
-            <form method="get" action="/tee-rific/golfCourseDetails/inventory/update">
+            <form method="get" th:action="${'/tee-rific/golfCourseDetails/inventory/update/' + username}">
                 <button type="submit" class = "button">Update Stock</button>
             </form>
             <form method="get" th:action="${'/tee-rific/golfCourseDetails/' + username}">
                 <button type="submit" class = "button">Back</button>
             </form>
-            <form method="get" action="/tee-rific/home/owner">
+            <form method="get" th:action="${'/tee-rific/home/' + username}">
                 <button type="submit" class = "button">Go to the Home Page</button>
             </form>
         </div>
