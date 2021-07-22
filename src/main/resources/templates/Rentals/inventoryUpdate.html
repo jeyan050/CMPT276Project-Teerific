@@ -24,14 +24,14 @@
             <div class="layer_8">
                 <img th:src="@{/images/teeRificLogo.png}" width="150" height="100"/>
                 <h1>Update Inventory</h1>
-                <form action="#" method="post" th:action="@{/tee-rific/golfCourseDetails/inventory/update}" th:object="${ownerCart}">
+                <form action="#" method="post" th:action="@{/tee-rific/golfCourseDetails/inventory/update/ + username}" th:object="${ownerCart}">
                     <input type="number" th:field="*{numBalls}" placeholder="Quantity Balls">
                     <input type="number" th:field="*{numCarts}" placeholder="Quantity Carts">
                     <input type="number" th:field="*{numClubs}" placeholder="Quantity Clubs">
 
                     <button type="submit" class="button">OK</button>
                 </form>
-                <form method="get" action="/tee-rific/home/owner">
+                <form method="get" th:action="${'/tee-rific/home/' + username}">
                     <button type="submit" class = "button">Go to the Home Page</button>
                 </form>
             </div>

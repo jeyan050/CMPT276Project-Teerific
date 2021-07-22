@@ -34,12 +34,12 @@
                         <tr><td>Quantity Carts:</td><td th:text="${userCart.numCarts}"></td></tr>
                         <tr><td>Quantity Clubs:</td><td th:text="${userCart.numClubs}"></td></tr>
                     </table>
-                    <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/checkout/' + username}">
+                    <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/checkout/' + courseName +'/'+ gameID +'/'+ username}">
                         <button type="submit" class="button">Confirm Selection</button>
                     </form>   
         
                     <div>
-                        <form method="get" th:action="${'/tee-rific/rentEquipment/' + username}">
+                        <form method="get" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}">
                             <button type="submit" class = "button">Back</button>
                         </form>
                     </div>
