@@ -324,8 +324,9 @@ public class Main {
       stmt.executeUpdate(userInfo);
       stmt.executeUpdate(insertUser);
 
-      // Initialize rental inventory of golf course - Chino
+      // Initialize rental inventory and bookings of golf course - Chino
       ownerCreateInventory(connection);
+      ownerCreateBookingsTable(connection, updatedCourseName);
 
       // check if username or course name exists for already existing user
       String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
@@ -371,8 +372,8 @@ public class Main {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
-            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, " +
-            "userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
+            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
+            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
   }
 
 
@@ -966,10 +967,6 @@ public class Main {
       String teetime = booking.getTime();
       teetime = teetime + ":00";
       booking.setTime(teetime);
-
-      System.out.println(booking.getDate());
-      System.out.println(booking.getTime());
-      System.out.println(booking.getNumPlayers());
 
       updateBookingsTable(connection, booking, courseNameSC, gameIDStr);
 
