@@ -45,18 +45,18 @@
                 <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/courses/' + username}">Courses</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/scorecards/' + username}">Scorecards</a>
-                </li>
-                <li class="nav-item">
+                </li> -->
+                <!-- <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/tournament/' + username}">Tournaments</a>
-                  </li>
+                  </li> -->
                   <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account</a>
                   </li>
-                  <li class="nav-item">
+                  <!-- <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/aboutUs/' + username}">About Us</a>
-                  </li>
+                  </li> -->
                   <li class="nav-item">
                     <a class="nav-link" href="/tee-rific/logout">Log Out</a>
                   </li>
@@ -73,21 +73,21 @@
                     <button id="coursesButton" class="homePageButton" type="submit">Browse Courses</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/scorecards/' + username}">
+                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/scorecards/' + username}">
                     <button id="scorecardButton" class="homePageButton" type="submit">Scorecards</button>
-                </form> 
+                </form>  -->
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/tournament/' + username}">
+                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/tournament/' + username}">
                     <button id="tournamentsButton" class="homePageButton" type="submit">Tournaments</button>
-                </form> 
+                </form>  -->
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="accountButton" class="homePageButton" type="submit">My Account</button>
                 </form> 
                 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
+                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                     <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
-                </form> 
+                </form>  -->
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/logout">
                     <button id="logOutButton" class="homePageButton" type="submit" >Log Out</button>
