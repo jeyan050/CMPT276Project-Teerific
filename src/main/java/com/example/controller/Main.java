@@ -1026,6 +1026,7 @@ public class Main {
       model.put("toDisplay", toDisplay);
       model.put("gameID", gameIDStr);
       model.put("courseName", courseName);
+      model.put("courseNameSC", courseNameSC);
       model.put("username", user);
 
       return "Booking&ViewingCourses/bookingSuccessful";
@@ -1101,7 +1102,7 @@ public class Main {
     model.put("username", user);
     model.put("cart", cart);
     return "Rentals/rentEquipment";
-  }
+  } // rentEquipment()
 
 
   @PostMapping(
@@ -1126,7 +1127,7 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleShop()
 
 
 
@@ -1161,7 +1162,7 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleViewCart()
 
 
   @PostMapping(
@@ -1181,7 +1182,7 @@ public class Main {
 
       // Create table of rentals so employees can keep track
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals_"+courseNameSC+" (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
-      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('"+user+"', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
 
       // Link rental to booking
       ResultSet rs = stmt.executeQuery("SELECT * FROM rentals_"+courseNameSC+"");
@@ -1190,16 +1191,16 @@ public class Main {
         rentalID = rs.getString("id");
       }
 
-      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET (rentalID) = ('"+rentalID+"')");
+      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET rentalID = '"+rentalID+"' WHERE gameID='"+gameIDStr+"'");
       
       model.put("username", user);
 
-      return "redirect:/tee-rific/rentEquipment/checkout/success/";
+      return "redirect:/tee-rific/rentEquipment/checkout/success/ + username";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleCheckout()
 
 
   @GetMapping(
