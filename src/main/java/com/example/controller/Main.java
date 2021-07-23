@@ -1501,10 +1501,10 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //TODO: Scorecards -- how to store an arrayList/array in SQL for the users
-      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards_"+user+" (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
       stmt.executeUpdate(sqlScorecardsInit);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards_"+user+"");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
       while(rs.next()) {
         Scorecard scorecard = new Scorecard();
@@ -1547,7 +1547,7 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //get the scorecard info
-      String getScorecardInfo = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+      String getScorecardInfo = "SELECT * FROM scorecards_" +user+" WHERE id='" + gameID + "'";
       ResultSet scoreCardInfo = stmt.executeQuery(getScorecardInfo);
 
       Scorecard scorecard = new Scorecard();
