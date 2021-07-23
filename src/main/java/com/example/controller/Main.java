@@ -1759,10 +1759,10 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       Statement stmt = connection.createStatement();
       model.put("id", tournamentId);
       ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tournamentId);
-      ArrayList<Tournament> output = new ArrayList<Tournament>();
+  
+      Tournament tournament = new Tournament();
       while (rs.next())
       {
-        Tournament tournament = new Tournament();
         tournament.setId(rs.getInt("id"));
         tournament.setName(rs.getString("name"));
         tournament.setDate(rs.getString("date"));
@@ -1775,12 +1775,9 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         tournament.setAgeRequirement(rs.getString("age_requirement"));
         tournament.setGameMode(rs.getString("game_mode"));
         tournament.setClubName(rs.getString("club_name"));
-
-        output.add(tournament);
       }
 
-      model.put("tournaments", output);
-      Tournament tournament = new Tournament();
+  
       model.put("tournament", tournament);
       model.put("username", user);
       model.put("tournamentId", tournamentId);
