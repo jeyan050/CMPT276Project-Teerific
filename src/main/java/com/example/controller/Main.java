@@ -1249,6 +1249,10 @@ public class Main {
       model.put("username", user);
       model.put("eqsArray", eqs);
       return "Rentals/inventory";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
     }
   }
 
@@ -1281,8 +1285,13 @@ public class Main {
       String courseName = ownerGetCourseName(connection, user);
       String courseNameSC = convertToSnakeCase(courseName);
       ownerUpdateInventory(connection, cart, courseNameSC);
+
+      return "redirect:/tee-rific/golfCourseDetails/inventory/" + user;
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
     }
-    return "redirect:/tee-rific/golfCourseDetails/inventory" + user;
   }
 
 
@@ -1358,9 +1367,9 @@ public class Main {
     // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory"+courseName+" SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
+    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
   }
   
   private String ownerGetCourseName(Connection connection, String username) throws Exception {
