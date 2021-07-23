@@ -1742,11 +1742,11 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
 
   @GetMapping(
-          path = "/tee-rific/viewTournament/{tid}/{username}"
+          path = "/tee-rific/viewTournament/{tournamentId}/{username}"
   )
   public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable("tournamentId") String tournamentId, HttpServletRequest request)
   {
-    if(null == (request.getSession().getAttribute("username"))) {
+    if(!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
