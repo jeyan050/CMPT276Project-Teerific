@@ -26,6 +26,7 @@ public class CourseOwner {
     private String weekdayRates;
     private String weekendRates;
     private String gender;
+    private int rating;
 
 
     public String getUsername() {
@@ -188,6 +189,13 @@ public class CourseOwner {
 
     public void setGender(String gender){
         this.gender = gender;
+    }
+
+    public int getRating() {
+        return this.rating;
+    }
+    public void setRating(int f) {
+        this.rating = f;
     }
 
 }

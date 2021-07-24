@@ -373,7 +373,7 @@ public class Main {
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
             "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100))";
+            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating integer)";
   }
 
 
@@ -381,13 +381,13 @@ public class Main {
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
-            "timeClose, userName, password, firstName, lastName, email, yardage, gender) VALUES ('" +
+            "timeClose, userName, password, firstName, lastName, email, yardage, gender, rating) VALUES ('" +
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
             owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
             owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
             owner.getTimeClose() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
-            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "')";
+            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "')";
   }
 
 
@@ -399,7 +399,8 @@ public class Main {
             owner.getDescription() + "' and weekdayRates='" + owner.getWeekdayRates() + "' and weekendRates='" +
             owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() +
             "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
-            "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() + "'";
+            "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() +
+            "' and rating='" + owner.getRating() + "'";
   }
 
 
@@ -1423,6 +1424,7 @@ public class Main {
         course.setEmail(rs.getString("email"));
         course.setYardage(rs.getString("yardage"));
         course.setGender(rs.getString("gender"));
+        course.setRating(rs.getInt("rating"));
 
         output.add(course);
       }
@@ -1599,6 +1601,39 @@ public class Main {
 // public String updateScorecard(@PathVariable("gameID")String gameID, Map<String, Object> model){
 //   return "game";
 // }//updateScorecard()
+
+  @GetMapping(
+          path = "tee-rific/rating/{username}/{courseName}"
+  )
+  public String getRatingPage(@PathVariable("username")String user, @PathVariable("courseName")String course, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String sql = "SELECT rating FROM owners WHERE coursename='" + course + "'";
+      ResultSet courseDetails = stmt.executeQuery(sql);
+      System.out.println(sql);
+      System.out.println(courseDetails);
+
+      return "Booking&ViewingCourses/review";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @PostMapping(
+          path = "tee-rific/rating"
+  )
+
+
 
 // HELPER BOIS (for booking) - Chino
 public void userCreateScorecardsTable(Connection connection, String username) throws Exception{
@@ -2188,7 +2223,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       String searchCourse = convertToSnakeCase(course);
 
       Statement stmt = connection.createStatement();
-      String sql = "SELECT * FROM "+searchCourse;
+      String sql = "SELECT * FROM " + searchCourse;
       ResultSet courseDetails = stmt.executeQuery(sql);
 
       ArrayList<Hole> output = new ArrayList<Hole>();

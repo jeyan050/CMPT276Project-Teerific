@@ -36,7 +36,7 @@
             <th>Address</th>
             <th>City</th>
             <th>Yardage</th>
-            <th>Number of Holes</th>
+            <th>Rating</th>
           </tr>
 
     <tr th:each="course: ${courses}">
@@ -47,7 +47,7 @@
       <td th:text="${course.address}"></td>
       <td th:text="${course.city}"></td>
       <td th:text="${course.yardage}"></td>
-      <td th:text="${course.numHoles}"></td>
+      <td th:text="${course.rating}"></td>
     </tr>
 
   </table><br>
