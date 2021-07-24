@@ -98,6 +98,10 @@ public class Main {
       String error = "Error: Username/Password Doesn't match/exist";
       model.put("failedLogin", error);
       failedLogin = false;
+    } else if (changedUsername == true){
+      String redirectText = "Successfully changed Username!\nSince you changed username, Please relog in with new username.";
+      model.put("failedLogin", redirectText);
+      changedUsername = false;
     }
     return "Login&Signup/login";
   }
@@ -532,8 +536,7 @@ public class Main {
         userPriority = rs.getString("priority");
       }
 
-      if(userPriority.equals(priorities[0])){         // returns golfer edit account
-        //TODO: get the user object and pass the info into the model
+      if(userPriority.equals(priorities[0])){                   // returns golfer edit account
         String getUserDetails= "SELECT * FROM users WHERE username='" + user +"'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
@@ -549,8 +552,7 @@ public class Main {
         
         model.put("userInfo", output);
         return "AccountInfo/editAccount";
-      }else{                                          //returns owner edit account
-        //TODO: get the owner object and pass the info into the model
+      }else{                                                    //returns owner edit account
         String getUserDetails= "SELECT * FROM owners WHERE username='" + user +"'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
@@ -564,7 +566,7 @@ public class Main {
         output.setEmail(details.getString("email"));
         output.setGender(details.getString("gender"));  
         
-        output.setCourseName(details.getString("coursename"));  //Course Basic Info
+        output.setCourseName(details.getString("coursename"));  //Golf Course Info
         output.setAddress(details.getString("address"));
         output.setCity(details.getString("city"));
         output.setCountry(details.getString("country"));
@@ -589,142 +591,198 @@ public class Main {
     }
   }
 
+  boolean changeUsernameError = false;
+  boolean changeValueError = false;
 
   @GetMapping(
     path = "/tee-rific/editAccount/{editColumn}/{username}"
   )
-  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){
+  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){    
     
     if(!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
     
-    // CourseOwner newValue = new CourseOwner();
-    // model.put("value", newValue);
-
+    CourseOwner newValue = new CourseOwner();
+    model.put("value", newValue);
     model.put("column", column);
     model.put("user", user);
 
-    // if (changeUsernameError == true){
-    //   changeUsernameError = false;
-    //   String error = "Username is already taken.";
-    //   model.put("errorMessage", error);
-    // } else if (changeValueError == true){
-    //   changeUsernameError = false;
-    //   String error = "Error Updating value, Retry again.";
-    //   model.put("errorMessage", error);
-    // }
+    //A cleaner version of text for title and to show which value the user is editing
+    String cleanerColumn = column.replaceAll("(.)([A-Z])", "$1 $2");
+    cleanerColumn = cleanerColumn.substring(0,1).toUpperCase() + cleanerColumn.substring(1);
+    model.put("columnName", cleanerColumn);   
 
-    // if (column == "timeopen" || column == "timeclose")                   // Since theres different input fields the owner can update,
-    //   return "editTimeValues";                                           // it should redirect to the appropriate html with the right
-    // else if (column == "description" || column == "directionstocourse")  // input field to fill out.     - Justin
-    //   return "editTextAreas";
-    // else if (column == "gender")
-    //   return "editGender";
-    // else
-    System.out.println("test");
-    return "AccountInfo/editShortStringValues";
+    if (changeUsernameError == true){         //refreshes page with error message
+      changeUsernameError = false;
+      String error = "Username is already taken.";
+      model.put("errorMessage", error);
+    } else if (changeValueError == true){     //if any other error
+      changeUsernameError = false;
+      String error = "Error Updating value, Retry again.";
+      model.put("errorMessage", error);
+    }
+
+    System.out.println(column);
+    if (column.equals("timeOpen") || column.equals("timeClose"))                   // Since theres different input fields the owner can update,
+      return "AccountInfo/changeTimeValues";                                       // it should redirect to the appropriate html with the right
+    else if (column.equals("description") || column.equals("directionsToCourse"))  // input field to fill out.     - Justin
+      return "AccountInfo/changeTextAreas";
+    else if (column.equals("gender"))
+      return "AccountInfo/changeGender";
+    else
+      return "AccountInfo/changeShortStringValues";
   }
 
-  // @PostMapping(
-  //   path = "/tee-rific/editAccount/{editColumn}/{username}",  
-  // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-  // )
-  // public String changeAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, CourseOwner newValue){
-  //   try (Connection connection = dataSource.getConnection())
-  //   {
-  //     Statement stmt = connection.createStatement();
-  //     String selectUser= "SELECT priority FROM users WHERE username='" + user +"'";
-  //     ResultSet userData = stmt.executeQuery(selectUser);
+  boolean changedUsername = false; 
 
-  //     String value = "";
-  //     if (column == "username"){         // To get value, depending on which column
-  //       // check if username is taken        
-  //       ResultSet check = stmt.executeQuery("SELECT username FROM users WHERE username ='"+newValue.getUsername()+"'");
-  //       int checkCount = 0;
-  //       while (check.next()){
-  //         checkCount++;
-  //       }
-  //       if (checkCount > 0){
-  //         changeUsernameError = true;
-  //         return "redirect:/tee-rific/editAccount/username/"+user;  //
-  //       }
+  @PostMapping(
+    path = "/tee-rific/editAccount/changing/{editColumn}/{username}",  
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String changeAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, CourseOwner newValue){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String selectUser= "SELECT priority FROM users WHERE username='" + user +"'";
+      ResultSet userData = stmt.executeQuery(selectUser);
 
-  //       value = newValue.getUsername();
-  //     } else if (column == "password")
-  //       // encrypt password
-  //       value = BCrypt.hashpw(newValue.getPassword(), BCrypt.gensalt());
-  //     else if (column == "fname" || column == "firstname")
-  //       value = newValue.getFname();
-  //     else if (column == "lname" || column == "lastname")
-  //       value = newValue.getLname();
-  //     else if (column == "email")
-  //       value = newValue.getEmail();
-  //     else if (column == "gender")
-  //       value = newValue.getGender();
-  //     else if (column == "address")
-  //       value = newValue.getAddress();
-  //     else if (column == "city")
-  //       value = newValue.getCity();
-  //     else if (column == "country")
-  //       value = newValue.getCountry();
-  //     else if (column == "phonenumber")
-  //       value = newValue.getPhoneNumber();
-  //     else if (column == "website")
-  //       value = newValue.getWebsite();
-  //     else if (column == "timeopen")
-  //       value = newValue.getTimeOpen();
-  //     else if (column == "timeclose")
-  //       value = newValue.getTimeClose();
-  //     else if (column == "weekdayrates")
-  //       value = newValue.getWeekdayRates();
-  //     else if (column == "weekendrates")
-  //       value = newValue.getWeekendRates();
-  //     else if (column == "directionstocourse")
-  //       value = newValue.getDirectionsToCourse();
-  //     else if (column == "description")
-  //       value = newValue.getDescription();
-  //     else {
-  //       changeValueError = true;
-  //       return "redirect:/tee-rific/editAccount/"+column+"/"+user;  //
-  //     }
-      
-  //     String userPriority = "";
-  //     while(userData.next()){
-  //       userPriority = userData.getString("priority");
-  //     }
+      String value = "";
+      switch(column){
+        case "username":         // To get value, depending on which column
+          // check if username is taken  
+          Statement stmtCheck = connection.createStatement();  
+          ResultSet check = stmtCheck.executeQuery("SELECT username FROM users WHERE username ='"+newValue.getUsername()+"'");
+          int checkCount = 0;
+          while (check.next()){
+            checkCount++;
+          }
+          if (checkCount > 0){
+            changeUsernameError = true;
+            return "redirect:/tee-rific/editAccount/"+column+"/"+user;  //
+          }          
+          value = newValue.getUsername();
+          break;
+        case "password":
+          // encrypt password
+          value = BCrypt.hashpw(newValue.getPassword(), BCrypt.gensalt());
+          break;
+        case "fname":
+          value = newValue.getFname();
+          break;
+        case "lname":
+          value = newValue.getLname();
+          break;
+        case "email":
+          value = newValue.getEmail();
+          break;
+        case "gender":
+          value = newValue.getGender();
+          break;
+        case "address":
+          value = newValue.getAddress();
+          break;
+        case "city":
+          value = newValue.getCity();
+          break;
+        case "country":
+          value = newValue.getCountry();
+          break;
+        case "phoneNumber":
+          value = newValue.getPhoneNumber();
+          break;
+        case "website":
+          value = newValue.getWebsite();
+          break;
+        case "timeOpen":
+          value = newValue.getTimeOpen();
+          break;
+        case "timeClose":
+          value = newValue.getTimeClose();
+          break;
+        case "weekdayRates":
+          value = newValue.getWeekdayRates();
+          break;
+        case "weekendRates":
+          value = newValue.getWeekendRates();
+          break;
+        case "directionsToCourse":
+          value = newValue.getDirectionsToCourse();
+          break;
+        case "description":
+          value = newValue.getDescription();
+          break;
+        default:
+          changeValueError = true;        
+          return "redirect:/tee-rific/editAccount/"+column+"/"+user+"";
+      }
 
-  //     if(userPriority.equals(priorities[0])){     //If user/golfer
-  //       String updateColumnValue = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
-  //       stmt.executeUpdate(updateColumnValue);
-  //     } else {
-  //       // Update user part of account
-  //       if (column == "username" || column == "password" || column == "firstname" || column == "lastname" || column == "email" || column == "gender"){
-  //         if (column == "firstname"){         // This if and else if are for first name and last name, since its different name on owner db
-  //           String updateUserInfo = "UPDATE users SET fname='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         } else if (column == "lastname"){
-  //           String updateUserInfo = "UPDATE users SET lname='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         } else {
-  //           String updateUserInfo = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         }
-  //       }
-  //       // Update owner part of account
-  //       String updateOwnerInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user;
-  //       stmt.executeUpdate(updateOwnerInfo);
-  //     }
-    
-  //     model.put("username", user);
-  //     return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully";
-  //   } catch (Exception e) {
-  //     model.put("message", e.getMessage());
-  //     return "error";
-  //   } 
-  // }
+      column = column.toLowerCase();    //lowercase since columns are all lowercase letters
 
+      String userPriority = "";
+      while(userData.next()){
+        userPriority = userData.getString("priority");
+      }
 
+      Statement stmtOwner = connection.createStatement();
+      Statement stmtUser = connection.createStatement();
+
+      if(userPriority.equals(priorities[0])){     //If user/golfer
+        String updateColumnValue = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user + "'";
+        stmtUser.executeUpdate(updateColumnValue);
+      } else {
+        // Update user part of account
+        if (column.equals("username") || column.equals("password") || column.equals("fname") || column.equals("lname") || column.equals("email") || column.equals("gender")){
+          
+          if (column.equals("fname")){         // This if and else if are for first name and last name, since its different label on owner db
+            String updateUserInfo = "UPDATE owners SET firstname='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);
+          } else if (column.equals("lname")){
+            String updateUserInfo = "UPDATE owners SET lastname='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);
+          } else {
+            System.out.println("IN:"+column);
+            String updateUserInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);      
+          }
+          String updateUserInfo = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user + "'";
+          stmtUser.executeUpdate(updateUserInfo);                
+        } else {
+          // Update owner part of account
+          String updateOwnerInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
+          stmtOwner.executeUpdate(updateOwnerInfo);
+        }
+      }
+
+      if(column.equals("username")){
+        changedUsername = true;
+      }
+
+      return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully/"+user+"";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    } 
+  }
+
+  @GetMapping(
+    path = "/tee-rific/editAccount/accountUpdatedSuccessfully/{username}"
+  )
+  public String editSuccessfull(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
+  {
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/tee-rific/editAccount/accountUpdatedSuccessfully/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if (changedUsername == true){
+      return "redirect:/tee-rific/login";
+    }
+    model.put("userName", user);
+    return "AccountInfo/accountUpdatedSuccess";
+  }
 
   @GetMapping(
     path = "/tee-rific/delete/{username}"
