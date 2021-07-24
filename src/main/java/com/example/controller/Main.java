@@ -1296,6 +1296,71 @@ public class Main {
   }
 
 
+  @GetMapping(
+    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel"
+  )
+  public String cancelBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      String user = pathVars.get("username");
+      String courseNameSC = pathVars.get("courseName");
+      String gameID = pathVars.get("gameID");
+      String courseName = convertFromSnakeCase(courseNameSC);
+
+      if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+        return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
+      }
+  
+      if(null == (request.getSession().getAttribute("username"))) {
+        return "redirect:/";
+      }
+
+      TeeTimeBooking toCancel = new TeeTimeBooking();
+
+      Statement stmt = connection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameID+"'");
+      rs.next();
+
+      toCancel.setDate(rs.getString("date"));
+      toCancel.setTime(rs.getString("teetime"));
+      toCancel.setGameID(rs.getInt("gameID"));
+
+      model.put("username", user);
+      model.put("courseName", courseName);
+      model.put("courseNameSC", courseNameSC);
+      model.put("gameID", gameID);
+      model.put("toCancel", toCancel);
+
+      return "Booking&ViewingCourses/bookingCancel";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  } 
+
+  @PostMapping(
+    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel",
+    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String handleCancelBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking toCancel) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      String user = pathVars.get("username");
+      String courseNameSC = pathVars.get("courseName");
+      String gameID = pathVars.get("gameID");
+      String courseName = convertFromSnakeCase(courseNameSC);
+
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("DELETE FROM bookings_"+courseNameSC+" WHERE gameID="+gameID+"");
+      stmt.executeUpdate("DELETE FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'");
+
+      return "redirect:/tee-rific/scorecards/" + user;
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+
   private void updateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseName+"");
@@ -1507,11 +1572,13 @@ public class Main {
 
       ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards_"+user+"");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
+
       while(rs.next()) {
         Scorecard scorecard = new Scorecard();
         scorecard.setGameID(rs.getString("id"));
         scorecard.setDatePlayed(rs.getString("date"));
         scorecard.setCoursePlayed(rs.getString("course"));
+        scorecard.setCoursePlayedSC(convertToSnakeCase(scorecard.getCoursePlayed()));
         scorecard.setTeesPlayed(rs.getString("teesPlayed"));
         scorecard.setHolesPlayed(rs.getString("holesPlayed"));
         scorecard.setFormatPlayed(rs.getString("formatPlayed"));
@@ -1532,9 +1599,13 @@ public class Main {
 
 
   @GetMapping(
-          path = "/tee-rific/scorecards/{username}/{gameID}"
+          path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}"
   )
-  public String getSpecificScorecard(@PathVariable("username")String user, @PathVariable("gameID")String gameID, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String getSpecificScorecard(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameID = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -1548,7 +1619,7 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //get the scorecard info
-      String getScorecardInfo = "SELECT * FROM scorecards_" +user+" WHERE id='" + gameID + "'";
+      String getScorecardInfo = "SELECT * FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'";
       ResultSet scoreCardInfo = stmt.executeQuery(getScorecardInfo);
 
       Scorecard scorecard = new Scorecard();
@@ -1563,11 +1634,7 @@ public class Main {
         //TODO: Scorecards -- store an arrayList/array in SQL for the users
       }
 
-      //get the course info by searching for snakeCase name in DB
-      String courseName = scorecard.getCoursePlayed();
-      String convertedName = convertToSnakeCase(courseName);
-
-      String getCourseInfo = "SELECT * FROM " + convertedName;
+      String getCourseInfo = "SELECT * FROM " + courseNameSC;
       ResultSet courseInfo = stmt.executeQuery(getCourseInfo);
       ArrayList<Hole> courseHoles = new ArrayList<Hole>();
       while(courseInfo.next()){
@@ -1580,9 +1647,11 @@ public class Main {
         courseHoles.add(hole);
       }
 
+      model.put("gameID", gameID);
       model.put("username", user);
       model.put("scorecard", scorecard);
       model.put("course", courseHoles);
+      model.put("courseName", courseNameSC);
 
       return "Scorecard/game";
     } catch (Exception e) {

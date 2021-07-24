@@ -20,7 +20,7 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Scorecards</title>
+    <title>Cancel Booking</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -30,25 +30,22 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Scorecards</div>
-                    <table>
-                        <tr>
-                            <th>Course</th>
-                            <th>Date</th>
-                            <th>Format</th>
-                            <th></th>
-                        </tr>
-                        <tr th:each="scorecard: ${scorecards}">
-                            <td th:text="${scorecard.coursePlayed}"></td>
-                            <td th:text="${scorecard.datePlayed}"></td>
-                            <td th:text="${scorecard.formatPlayed}"></td>
-                            <td>
-                                <form action="#" method="get" th:action="${'/tee-rific/scorecards/' + username + '/' + scorecard.coursePlayedSC + '/' + scorecard.gameID}">
-                                    <button type="Submit">View</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="titleFont dynamicSize">Are you sure?</div>
+                    <form method="post" th:action="${'/tee-rific/scorecards/' + username +'/'+ courseNameSC + '/'+ gameID + '/cancel'}" th:object="${toCancel}">
+                        <label>Booking to cancel:</label>
+                        <table>
+                            <tr>
+                                <td>Course Name</td><td th:text="${courseName}"></td>
+                            </tr>
+                            <tr>
+                                <td>Date</td><td th:text="*{date}"></td>
+                            </tr>
+                            <tr>
+                                <td>Time</td><td th:text="*{time}"></td>
+                            </tr>
+                        </table>
+                        <button type="submit" class="button">Yes I'm sure</button>
+                    </form>
                     <form  method= "get" th:action="${'/tee-rific/home/' + username}">
                         <button type="submit" class="button">Home Page</button>
                     </form>
