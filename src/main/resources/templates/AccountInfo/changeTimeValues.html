@@ -20,35 +20,31 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>New Account Information</title>
+    <title>Edit Value</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap" th:each="userValue : ${user}">
         <div class="content" th:each="columnValue : ${column}">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop border content" th:each="columnN : ${columnName}">
                 <div class="sandBackdrop">
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">SHORT STRING</div>   
-                    <p th:text="${columnValue}"> </p>
-                    <p th:text="${userValue}"> </p>               
-                    <p>test</p>
-                    <!-- <form onsubmit="return checkInput()" action="#" method="post" th:action="@{'/tee-rific/editAccount/'+columnValue+'/'+userValue}" th:object="${value}">
-                        <input type="text" class="inputBox" th:field="*{columnValue}"><p id="error"> </p>
-                            <div th:each="errorText : ${usernameError}">
-                                <p th:text="${errorText}"> </p>
-                            </div>
+                    <div class="titleFont dynamicSize">New Value For: <br><span th:text="${columnN}"></span></div>      
+                    <form onsubmit="return checkNewValue()" action="#" method="post" th:action="@{'/tee-rific/editAccount/changing/'+__${columnValue}__+'/'+__${userValue}__}" th:object="${value}">
+                        <input type="time" class="inputBox" id="value" th:field="*{__${columnValue}__}"></textarea><p id="error"> </p>
+                        <div th:each="error : ${errorMessage}">
+                            <p th:text="${error}"> </p>
+                        </div>
                         <button type="submit" id="submitData" class="button">Submit</button>
                     </form>
-
-                    <form method= "get" th:action="${'/tee-rific/account/' + userValue}">
+                    <form method= "get" th:action="${'/tee-rific/editAccount/'+ __${userValue}__}">
                         <button type="submit" class="button">Go Back</button>
-                    </form> -->
+                    </form>
                 </div>
              </div>
         </div>
-        <footer>
+        <footer>            
             <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f"></i>
                 <i class="socialIcon fab fa-twitter"></i>
@@ -56,9 +52,9 @@
                 <i class="socialIcon fas fa-envelope"></i>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
-              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+              <!-- <script src="/js/buttonEffect.js" type="text/javascript"> </script> -->
         </footer>
     </div>
 </body>
-<script src="/js/editInfo.js" type="text/javascript"> </script>
+<script th:src="@{/js/editAccount.js}" type="text/javascript"> </script> <!-- Add button sound in here -->
 </html>

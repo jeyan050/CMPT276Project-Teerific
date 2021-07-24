@@ -20,7 +20,7 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Edit Account Information</title>
+    <title>Account Information</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -30,7 +30,7 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Edit Account Infomation</div>   
+                    <div class="titleFont dynamicSize">Account Infomation</div>   
 
                      <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
                      <div style="font-size:40px" class="titleFont dynamicSize">Account Details</div>   
@@ -124,7 +124,7 @@
                             <td class="title">Phone Number</td>
                             <td class="value" th:text="${owner.phoneNumber}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/phonenumber/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/phoneNumber/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -142,7 +142,7 @@
                             <td class="title">Time Open</td>
                             <td class="value" th:text="${owner.timeOpen}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeopen/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeOpen/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -151,7 +151,7 @@
                             <td class="title">Time Closed</td>
                             <td class="value" th:text="${owner.timeClose}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeclose/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeClose/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -160,7 +160,7 @@
                             <td class="title">Weekday Rates</td>
                             <td class="value" th:text="${owner.weekdayRates}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekdayrates/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekdayRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -169,7 +169,7 @@
                             <td class="title">Weekend Rates</td>
                             <td class="value" th:text="${owner.weekendRates}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekendrates/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekendRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -178,7 +178,7 @@
                             <td class="title">Directions to Course</td>
                             <td class="value" th:text="${owner.directionsToCourse}"></td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/directionstocourse/'+ owner.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/directionsToCourse/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
@@ -213,5 +213,4 @@
         </footer>
     </div>
 </body>
-<script src="/js/signup.js" type="text/javascript"> </script>
 </html>
