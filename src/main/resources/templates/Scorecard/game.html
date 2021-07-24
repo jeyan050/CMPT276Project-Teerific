@@ -96,6 +96,10 @@
                             <td>JS</td>
                         </tr>
                     </table>
+                    <form  method= "get" th:action="${'/tee-rific/scorecards/' + username +'/'+ courseName + '/'+ gameID + '/cancel'}">
+                        <button type="submit" class="button">Cancel Booking</button>
+                    </form>
+
                     <form  method= "get" th:action="${'/tee-rific/scorecards/' + username}">
                         <button type="submit" class="button">Scorecards</button>
                     </form>

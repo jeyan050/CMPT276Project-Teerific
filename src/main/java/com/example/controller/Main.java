@@ -98,6 +98,10 @@ public class Main {
       String error = "Error: Username/Password Doesn't match/exist";
       model.put("failedLogin", error);
       failedLogin = false;
+    } else if (changedUsername == true){
+      String redirectText = "Successfully changed Username!\nSince you changed username, Please relog in with new username.";
+      model.put("failedLogin", redirectText);
+      changedUsername = false;
     }
     return "Login&Signup/login";
   }
@@ -533,8 +537,7 @@ public class Main {
         userPriority = rs.getString("priority");
       }
 
-      if(userPriority.equals(priorities[0])){         // returns golfer edit account
-        //TODO: get the user object and pass the info into the model
+      if(userPriority.equals(priorities[0])){                   // returns golfer edit account
         String getUserDetails= "SELECT * FROM users WHERE username='" + user +"'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
@@ -550,8 +553,7 @@ public class Main {
         
         model.put("userInfo", output);
         return "AccountInfo/editAccount";
-      }else{                                          //returns owner edit account
-        //TODO: get the owner object and pass the info into the model
+      }else{                                                    //returns owner edit account
         String getUserDetails= "SELECT * FROM owners WHERE username='" + user +"'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
@@ -565,7 +567,7 @@ public class Main {
         output.setEmail(details.getString("email"));
         output.setGender(details.getString("gender"));  
         
-        output.setCourseName(details.getString("coursename"));  //Course Basic Info
+        output.setCourseName(details.getString("coursename"));  //Golf Course Info
         output.setAddress(details.getString("address"));
         output.setCity(details.getString("city"));
         output.setCountry(details.getString("country"));
@@ -590,142 +592,198 @@ public class Main {
     }
   }
 
+  boolean changeUsernameError = false;
+  boolean changeValueError = false;
 
   @GetMapping(
     path = "/tee-rific/editAccount/{editColumn}/{username}"
   )
-  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){
+  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){    
     
     if(!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
     
-    // CourseOwner newValue = new CourseOwner();
-    // model.put("value", newValue);
-
+    CourseOwner newValue = new CourseOwner();
+    model.put("value", newValue);
     model.put("column", column);
     model.put("user", user);
 
-    // if (changeUsernameError == true){
-    //   changeUsernameError = false;
-    //   String error = "Username is already taken.";
-    //   model.put("errorMessage", error);
-    // } else if (changeValueError == true){
-    //   changeUsernameError = false;
-    //   String error = "Error Updating value, Retry again.";
-    //   model.put("errorMessage", error);
-    // }
+    //A cleaner version of text for title and to show which value the user is editing
+    String cleanerColumn = column.replaceAll("(.)([A-Z])", "$1 $2");
+    cleanerColumn = cleanerColumn.substring(0,1).toUpperCase() + cleanerColumn.substring(1);
+    model.put("columnName", cleanerColumn);   
 
-    // if (column == "timeopen" || column == "timeclose")                   // Since theres different input fields the owner can update,
-    //   return "editTimeValues";                                           // it should redirect to the appropriate html with the right
-    // else if (column == "description" || column == "directionstocourse")  // input field to fill out.     - Justin
-    //   return "editTextAreas";
-    // else if (column == "gender")
-    //   return "editGender";
-    // else
-    System.out.println("test");
-    return "AccountInfo/editShortStringValues";
+    if (changeUsernameError == true){         //refreshes page with error message
+      changeUsernameError = false;
+      String error = "Username is already taken.";
+      model.put("errorMessage", error);
+    } else if (changeValueError == true){     //if any other error
+      changeUsernameError = false;
+      String error = "Error Updating value, Retry again.";
+      model.put("errorMessage", error);
+    }
+
+    System.out.println(column);
+    if (column.equals("timeOpen") || column.equals("timeClose"))                   // Since theres different input fields the owner can update,
+      return "AccountInfo/changeTimeValues";                                       // it should redirect to the appropriate html with the right
+    else if (column.equals("description") || column.equals("directionsToCourse"))  // input field to fill out.     - Justin
+      return "AccountInfo/changeTextAreas";
+    else if (column.equals("gender"))
+      return "AccountInfo/changeGender";
+    else
+      return "AccountInfo/changeShortStringValues";
   }
 
-  // @PostMapping(
-  //   path = "/tee-rific/editAccount/{editColumn}/{username}",  
-  // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-  // )
-  // public String changeAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, CourseOwner newValue){
-  //   try (Connection connection = dataSource.getConnection())
-  //   {
-  //     Statement stmt = connection.createStatement();
-  //     String selectUser= "SELECT priority FROM users WHERE username='" + user +"'";
-  //     ResultSet userData = stmt.executeQuery(selectUser);
+  boolean changedUsername = false; 
 
-  //     String value = "";
-  //     if (column == "username"){         // To get value, depending on which column
-  //       // check if username is taken        
-  //       ResultSet check = stmt.executeQuery("SELECT username FROM users WHERE username ='"+newValue.getUsername()+"'");
-  //       int checkCount = 0;
-  //       while (check.next()){
-  //         checkCount++;
-  //       }
-  //       if (checkCount > 0){
-  //         changeUsernameError = true;
-  //         return "redirect:/tee-rific/editAccount/username/"+user;  //
-  //       }
+  @PostMapping(
+    path = "/tee-rific/editAccount/changing/{editColumn}/{username}",  
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String changeAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, CourseOwner newValue){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String selectUser= "SELECT priority FROM users WHERE username='" + user +"'";
+      ResultSet userData = stmt.executeQuery(selectUser);
 
-  //       value = newValue.getUsername();
-  //     } else if (column == "password")
-  //       // encrypt password
-  //       value = BCrypt.hashpw(newValue.getPassword(), BCrypt.gensalt());
-  //     else if (column == "fname" || column == "firstname")
-  //       value = newValue.getFname();
-  //     else if (column == "lname" || column == "lastname")
-  //       value = newValue.getLname();
-  //     else if (column == "email")
-  //       value = newValue.getEmail();
-  //     else if (column == "gender")
-  //       value = newValue.getGender();
-  //     else if (column == "address")
-  //       value = newValue.getAddress();
-  //     else if (column == "city")
-  //       value = newValue.getCity();
-  //     else if (column == "country")
-  //       value = newValue.getCountry();
-  //     else if (column == "phonenumber")
-  //       value = newValue.getPhoneNumber();
-  //     else if (column == "website")
-  //       value = newValue.getWebsite();
-  //     else if (column == "timeopen")
-  //       value = newValue.getTimeOpen();
-  //     else if (column == "timeclose")
-  //       value = newValue.getTimeClose();
-  //     else if (column == "weekdayrates")
-  //       value = newValue.getWeekdayRates();
-  //     else if (column == "weekendrates")
-  //       value = newValue.getWeekendRates();
-  //     else if (column == "directionstocourse")
-  //       value = newValue.getDirectionsToCourse();
-  //     else if (column == "description")
-  //       value = newValue.getDescription();
-  //     else {
-  //       changeValueError = true;
-  //       return "redirect:/tee-rific/editAccount/"+column+"/"+user;  //
-  //     }
-      
-  //     String userPriority = "";
-  //     while(userData.next()){
-  //       userPriority = userData.getString("priority");
-  //     }
+      String value = "";
+      switch(column){
+        case "username":         // To get value, depending on which column
+          // check if username is taken  
+          Statement stmtCheck = connection.createStatement();  
+          ResultSet check = stmtCheck.executeQuery("SELECT username FROM users WHERE username ='"+newValue.getUsername()+"'");
+          int checkCount = 0;
+          while (check.next()){
+            checkCount++;
+          }
+          if (checkCount > 0){
+            changeUsernameError = true;
+            return "redirect:/tee-rific/editAccount/"+column+"/"+user;  //
+          }          
+          value = newValue.getUsername();
+          break;
+        case "password":
+          // encrypt password
+          value = BCrypt.hashpw(newValue.getPassword(), BCrypt.gensalt());
+          break;
+        case "fname":
+          value = newValue.getFname();
+          break;
+        case "lname":
+          value = newValue.getLname();
+          break;
+        case "email":
+          value = newValue.getEmail();
+          break;
+        case "gender":
+          value = newValue.getGender();
+          break;
+        case "address":
+          value = newValue.getAddress();
+          break;
+        case "city":
+          value = newValue.getCity();
+          break;
+        case "country":
+          value = newValue.getCountry();
+          break;
+        case "phoneNumber":
+          value = newValue.getPhoneNumber();
+          break;
+        case "website":
+          value = newValue.getWebsite();
+          break;
+        case "timeOpen":
+          value = newValue.getTimeOpen();
+          break;
+        case "timeClose":
+          value = newValue.getTimeClose();
+          break;
+        case "weekdayRates":
+          value = newValue.getWeekdayRates();
+          break;
+        case "weekendRates":
+          value = newValue.getWeekendRates();
+          break;
+        case "directionsToCourse":
+          value = newValue.getDirectionsToCourse();
+          break;
+        case "description":
+          value = newValue.getDescription();
+          break;
+        default:
+          changeValueError = true;        
+          return "redirect:/tee-rific/editAccount/"+column+"/"+user+"";
+      }
 
-  //     if(userPriority.equals(priorities[0])){     //If user/golfer
-  //       String updateColumnValue = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
-  //       stmt.executeUpdate(updateColumnValue);
-  //     } else {
-  //       // Update user part of account
-  //       if (column == "username" || column == "password" || column == "firstname" || column == "lastname" || column == "email" || column == "gender"){
-  //         if (column == "firstname"){         // This if and else if are for first name and last name, since its different name on owner db
-  //           String updateUserInfo = "UPDATE users SET fname='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         } else if (column == "lastname"){
-  //           String updateUserInfo = "UPDATE users SET lname='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         } else {
-  //           String updateUserInfo = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user;
-  //           stmt.executeUpdate(updateUserInfo);
-  //         }
-  //       }
-  //       // Update owner part of account
-  //       String updateOwnerInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user;
-  //       stmt.executeUpdate(updateOwnerInfo);
-  //     }
-    
-  //     model.put("username", user);
-  //     return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully";
-  //   } catch (Exception e) {
-  //     model.put("message", e.getMessage());
-  //     return "error";
-  //   } 
-  // }
+      column = column.toLowerCase();    //lowercase since columns are all lowercase letters
 
+      String userPriority = "";
+      while(userData.next()){
+        userPriority = userData.getString("priority");
+      }
 
+      Statement stmtOwner = connection.createStatement();
+      Statement stmtUser = connection.createStatement();
+
+      if(userPriority.equals(priorities[0])){     //If user/golfer
+        String updateColumnValue = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user + "'";
+        stmtUser.executeUpdate(updateColumnValue);
+      } else {
+        // Update user part of account
+        if (column.equals("username") || column.equals("password") || column.equals("fname") || column.equals("lname") || column.equals("email") || column.equals("gender")){
+          
+          if (column.equals("fname")){         // This if and else if are for first name and last name, since its different label on owner db
+            String updateUserInfo = "UPDATE owners SET firstname='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);
+          } else if (column.equals("lname")){
+            String updateUserInfo = "UPDATE owners SET lastname='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);
+          } else {
+            System.out.println("IN:"+column);
+            String updateUserInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
+            stmtOwner.executeUpdate(updateUserInfo);      
+          }
+          String updateUserInfo = "UPDATE users SET " + column + "='" + value + "' WHERE username='" + user + "'";
+          stmtUser.executeUpdate(updateUserInfo);                
+        } else {
+          // Update owner part of account
+          String updateOwnerInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
+          stmtOwner.executeUpdate(updateOwnerInfo);
+        }
+      }
+
+      if(column.equals("username")){
+        changedUsername = true;
+      }
+
+      return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully/"+user+"";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    } 
+  }
+
+  @GetMapping(
+    path = "/tee-rific/editAccount/accountUpdatedSuccessfully/{username}"
+  )
+  public String editSuccessfull(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
+  {
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/tee-rific/editAccount/accountUpdatedSuccessfully/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if (changedUsername == true){
+      return "redirect:/tee-rific/login";
+    }
+    model.put("userName", user);
+    return "AccountInfo/accountUpdatedSuccess";
+  }
 
   @GetMapping(
     path = "/tee-rific/delete/{username}"
@@ -1027,6 +1085,7 @@ public class Main {
       model.put("toDisplay", toDisplay);
       model.put("gameID", gameIDStr);
       model.put("courseName", courseName);
+      model.put("courseNameSC", courseNameSC);
       model.put("username", user);
 
       return "Booking&ViewingCourses/bookingSuccessful";
@@ -1102,7 +1161,7 @@ public class Main {
     model.put("username", user);
     model.put("cart", cart);
     return "Rentals/rentEquipment";
-  }
+  } // rentEquipment()
 
 
   @PostMapping(
@@ -1127,7 +1186,7 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleShop()
 
 
 
@@ -1162,7 +1221,7 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleViewCart()
 
 
   @PostMapping(
@@ -1182,7 +1241,7 @@ public class Main {
 
       // Create table of rentals so employees can keep track
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals_"+courseNameSC+" (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
-      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('temp', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('"+user+"', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
 
       // Link rental to booking
       ResultSet rs = stmt.executeQuery("SELECT * FROM rentals_"+courseNameSC+"");
@@ -1191,16 +1250,16 @@ public class Main {
         rentalID = rs.getString("id");
       }
 
-      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET (rentalID) = ('"+rentalID+"')");
+      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET rentalID = '"+rentalID+"' WHERE gameID='"+gameIDStr+"'");
       
       model.put("username", user);
 
-      return "redirect:/tee-rific/rentEquipment/checkout/success/";
+      return "redirect:/tee-rific/rentEquipment/checkout/success/ + username";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  } // handleCheckout()
 
 
   @GetMapping(
@@ -1289,6 +1348,71 @@ public class Main {
 
       return "redirect:/tee-rific/golfCourseDetails/inventory/" + user;
 
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+
+  @GetMapping(
+    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel"
+  )
+  public String cancelBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      String user = pathVars.get("username");
+      String courseNameSC = pathVars.get("courseName");
+      String gameID = pathVars.get("gameID");
+      String courseName = convertFromSnakeCase(courseNameSC);
+
+      if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+        return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
+      }
+  
+      if(null == (request.getSession().getAttribute("username"))) {
+        return "redirect:/";
+      }
+
+      TeeTimeBooking toCancel = new TeeTimeBooking();
+
+      Statement stmt = connection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameID+"'");
+      rs.next();
+
+      toCancel.setDate(rs.getString("date"));
+      toCancel.setTime(rs.getString("teetime"));
+      toCancel.setGameID(rs.getInt("gameID"));
+
+      model.put("username", user);
+      model.put("courseName", courseName);
+      model.put("courseNameSC", courseNameSC);
+      model.put("gameID", gameID);
+      model.put("toCancel", toCancel);
+
+      return "Booking&ViewingCourses/bookingCancel";
+
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  } 
+
+  @PostMapping(
+    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel",
+    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String handleCancelBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking toCancel) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      String user = pathVars.get("username");
+      String courseNameSC = pathVars.get("courseName");
+      String gameID = pathVars.get("gameID");
+      String courseName = convertFromSnakeCase(courseNameSC);
+
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("DELETE FROM bookings_"+courseNameSC+" WHERE gameID="+gameID+"");
+      stmt.executeUpdate("DELETE FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'");
+
+      return "redirect:/tee-rific/scorecards/" + user;
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -1503,16 +1627,18 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //TODO: Scorecards -- how to store an arrayList/array in SQL for the users
-      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards_"+user+" (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
       stmt.executeUpdate(sqlScorecardsInit);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards_"+user+"");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
+
       while(rs.next()) {
         Scorecard scorecard = new Scorecard();
         scorecard.setGameID(rs.getString("id"));
         scorecard.setDatePlayed(rs.getString("date"));
         scorecard.setCoursePlayed(rs.getString("course"));
+        scorecard.setCoursePlayedSC(convertToSnakeCase(scorecard.getCoursePlayed()));
         scorecard.setTeesPlayed(rs.getString("teesPlayed"));
         scorecard.setHolesPlayed(rs.getString("holesPlayed"));
         scorecard.setFormatPlayed(rs.getString("formatPlayed"));
@@ -1533,9 +1659,13 @@ public class Main {
 
 
   @GetMapping(
-          path = "/tee-rific/scorecards/{username}/{gameID}"
+          path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}"
   )
-  public String getSpecificScorecard(@PathVariable("username")String user, @PathVariable("gameID")String gameID, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String getSpecificScorecard(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    String gameID = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -1549,7 +1679,7 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //get the scorecard info
-      String getScorecardInfo = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+      String getScorecardInfo = "SELECT * FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'";
       ResultSet scoreCardInfo = stmt.executeQuery(getScorecardInfo);
 
       Scorecard scorecard = new Scorecard();
@@ -1564,11 +1694,7 @@ public class Main {
         //TODO: Scorecards -- store an arrayList/array in SQL for the users
       }
 
-      //get the course info by searching for snakeCase name in DB
-      String courseName = scorecard.getCoursePlayed();
-      String convertedName = convertToSnakeCase(courseName);
-
-      String getCourseInfo = "SELECT * FROM " + convertedName;
+      String getCourseInfo = "SELECT * FROM " + courseNameSC;
       ResultSet courseInfo = stmt.executeQuery(getCourseInfo);
       ArrayList<Hole> courseHoles = new ArrayList<Hole>();
       while(courseInfo.next()){
@@ -1581,9 +1707,11 @@ public class Main {
         courseHoles.add(hole);
       }
 
+      model.put("gameID", gameID);
       model.put("username", user);
       model.put("scorecard", scorecard);
       model.put("course", courseHoles);
+      model.put("courseName", courseNameSC);
 
       return "Scorecard/game";
     } catch (Exception e) {
@@ -1777,11 +1905,11 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
 
   @GetMapping(
-          path = "/tee-rific/viewTournament/{tid}/{username}"
+          path = "/tee-rific/viewTournament/{tournamentId}/{username}"
   )
   public String viewSelectedTournament(@PathVariable("username")String user, Map<String, Object> model, @PathVariable("tournamentId") String tournamentId, HttpServletRequest request)
   {
-    if(null == (request.getSession().getAttribute("username"))) {
+    if(!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
@@ -1794,10 +1922,10 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       Statement stmt = connection.createStatement();
       model.put("id", tournamentId);
       ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id =" + tournamentId);
-      ArrayList<Tournament> output = new ArrayList<Tournament>();
+  
+      Tournament tournament = new Tournament();
       while (rs.next())
       {
-        Tournament tournament = new Tournament();
         tournament.setId(rs.getInt("id"));
         tournament.setName(rs.getString("name"));
         tournament.setDate(rs.getString("date"));
@@ -1810,12 +1938,9 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         tournament.setAgeRequirement(rs.getString("age_requirement"));
         tournament.setGameMode(rs.getString("game_mode"));
         tournament.setClubName(rs.getString("club_name"));
-
-        output.add(tournament);
       }
 
-      model.put("tournaments", output);
-      Tournament tournament = new Tournament();
+  
       model.put("tournament", tournament);
       model.put("username", user);
       model.put("tournamentId", tournamentId);

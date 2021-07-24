@@ -16,8 +16,8 @@
                     <h1>Successfully signed up for <span th:text="${tournament.name}"></span> ?</h1>
                 </th:block>
                 <p>But not really, have not implimented that  yet</p>
-                <form method="get" action="/tee-rific/home">
-                    <button type="submit" class = "button">Home Page</button>
+                <form method="get" th:action="${'/tee-rific/tournament/' + username}">
+                    <button type="submit" class = "button">Back to Tournaments</button>
                 </form>
             </div>
         </div>

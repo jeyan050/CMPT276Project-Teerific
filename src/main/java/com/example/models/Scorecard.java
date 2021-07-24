@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Scorecard {
     private String datePlayed;
     private String coursePlayed;
+    private String coursePlayedSC;
     private String teesPlayed;
     private String holesPlayed;
     private String formatPlayed;
@@ -24,6 +25,14 @@ public class Scorecard {
     }
     public void setCoursePlayed(String f) {
         this.coursePlayed = f;
+    }
+
+    public String getCoursePlayedSC() {
+        return this.coursePlayedSC;
+    }
+
+    public void setCoursePlayedSC(String f) {
+        this.coursePlayedSC = f;
     }
 
     public String getTeesPlayed() {
