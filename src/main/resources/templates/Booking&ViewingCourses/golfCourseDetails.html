@@ -45,17 +45,17 @@
                                 </td>
                                 <td class="ownerTableCell editYardage">
                                     <div th:text="${hole.yardage}" class="ownerTableDisplayCell"></div>
-                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].yardage}">
+                                    <input type="text" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].yardage}">
                                 
                                 </td>
                                 <td class="ownerTableCell editPar">
                                     <div th:text="${hole.par}" class="ownerTableDisplayCell"></div>
-                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].par}">
+                                    <input type="text" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].par}">
                                     
                                 </td>
                                 <td class="ownerTableCell editHandicap">
                                     <div th:text="${hole.handicap}"></div>
-                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].handicap}">
+                                    <input type="text" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].handicap}">
                                 </td>
                             </tr>
                             <tr>
