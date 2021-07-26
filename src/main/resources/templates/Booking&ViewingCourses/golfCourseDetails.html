@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +19,7 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Login</title>
+    <title>Course Details</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -31,18 +30,50 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Course Details</div>
-                    <form action="#" method="post" th:action="@{/tee-rific/home}" th:object="${Hole}">
-                        <p>*Holes Information here*</p>
-                        <!-- run a for-each loop cycling through 18 holes -->
-
-                        <button type="submit" class="button">Update</button>
+                    <form action="#" method="post" th:action="${'/tee-rific/golfCourseDetails/' + username}" th:object="${WrapperHoles}">
+                        <table class="ownerTable">
+                            <tr>
+                                <th class="ownerTableCell">Number</th>
+                                <th class="ownerTableCell">Yardage</th>
+                                <th class="ownerTableCell">Par</th>
+                                <th class="ownerTableCell">Handicap</th>
+                            </tr>
+                            <tr th:each="hole, i: ${WrapperHoles.holes}">
+                                <td class="ownerTableCell">
+                                    <div th:text="${hole.holeNumber}" class="ownerTableDisplayCell"></div>
+                                    <input type="hidden" th:field="*{holes[__${i.index}__].holeNumber}" >
+                                </td>
+                                <td class="ownerTableCell editYardage">
+                                    <div th:text="${hole.yardage}" class="ownerTableDisplayCell"></div>
+                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].yardage}">
+                                
+                                </td>
+                                <td class="ownerTableCell editPar">
+                                    <div th:text="${hole.par}" class="ownerTableDisplayCell"></div>
+                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].par}">
+                                    
+                                </td>
+                                <td class="ownerTableCell editHandicap">
+                                    <div th:text="${hole.handicap}"></div>
+                                    <input type="number" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].handicap}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <td class="yardageSum"></td>
+                                <td class="parSum"></td>
+                                <td class="handicapSum"></td>
+                            </tr>  
+                        </table>
+                        <span id="ownerErrorMessage"></span>
+                        <button type="submit" id="validate" class="button ownerValidateChanges">Update</button>
                     </form>
                     <form method="get" action="#" th:action="${'/tee-rific/golfCourseDetails/inventory/' + username}">
                         <button  type="submit" class="button">View Rental Inventory</button>
                     </form>
-                    <!-- <form method= "get" action="/tee-rific/ownerHome">
-                        <button  type="submit" class="button">Go Back</button>
-                    </form> -->
+                    <form  method= "get" th:action="${'/tee-rific/home/' + username}">
+                        <button type="submit" class="button">Home Page</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -54,7 +85,7 @@
                 <i class="socialIcon fas fa-envelope"></i>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
-              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+              <script src="/js/ownerChangeHoleInformation.js"></script>
         </footer>
     </div>
     

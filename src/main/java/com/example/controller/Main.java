@@ -832,9 +832,9 @@ public class Main {
 //********************************
 
   @GetMapping(
-          path = "/tee-rific/golfCourseDetails/{username}"
+      path = "/tee-rific/golfCourseDetails/{username}"
   )
-  public String getCourseDetails(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
+  public String getCourseDetails(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
@@ -844,14 +844,94 @@ public class Main {
       return "redirect:/";
     }
 
-    //TODO: get the course details here and insert into the model
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
 
-    model.put("username", user);
-    return "Booking&ViewingCourses/golfCourseDetails";
+      //get the course name from user
+      String getCourseName = "SELECT courseName FROM owners WHERE username='" + user + "'";
+      ResultSet rs = stmt.executeQuery(getCourseName);
+
+      while(rs.next()){
+        getCourseName = rs.getString("courseName");
+      }
+
+      String convertedName = convertToSnakeCase(getCourseName);
+      ArrayList<Hole> courseHoles = new ArrayList<Hole>();
+
+      String getCourseHoles = "SELECT * FROM " + convertedName + " ORDER BY holenumber asc";
+      rs = stmt.executeQuery(getCourseHoles);
+
+      //get the current hole information from DB
+      while(rs.next()){
+        Hole hole = new Hole();
+        hole.setHoleNumber(rs.getInt("holeNumber"));
+        hole.setYardage(rs.getInt("yardage"));
+        hole.setPar(rs.getInt("par"));
+        hole.setHandicap(rs.getInt("handicap"));
+
+        courseHoles.add(hole);
+      }
+
+      //wrap the arrayList in an object so that it can be binded in 'view'
+      WrapperHoles wrapper = new WrapperHoles();
+      wrapper.setHoles(courseHoles);
+    
+      model.put("WrapperHoles", wrapper);
+      model.put("username", user);
+      return "Booking&ViewingCourses/golfCourseDetails";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }//getCourseDetails()
+
+
+  @PostMapping(
+    path = "/tee-rific/golfCourseDetails/{username}",
+    consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String updateCourseDetails(@PathVariable("username")String user, Map<String, Object> model, WrapperHoles wrapper) throws Exception{
+    //TODO: methods to update the database
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      //get the course name from user
+      String getCourseName = "SELECT courseName FROM owners WHERE username='" + user + "'";
+      ResultSet rs = stmt.executeQuery(getCourseName);
+
+      while(rs.next()){
+        getCourseName = rs.getString("courseName");
+      }
+
+      String convertedName = convertToSnakeCase(getCourseName);
+      int totalYardage = 0;
+
+      //loop through wrapper object, gets the hole, updates the DB
+      for(int i = 0; i < wrapper.getHoles().size(); i++){
+        Hole hole = wrapper.getHoles().get(i);
+        totalYardage += hole.getYardage();
+
+        String yardage = "UPDATE " + convertedName + " SET yardage='" + hole.getYardage() + "' WHERE holeNumber='" + hole.getHoleNumber() + "'"; 
+        String par = "UPDATE " + convertedName + " SET par='" + hole.getPar() + "' WHERE holeNumber='" + hole.getHoleNumber() + "'";
+        String handicap = "UPDATE " + convertedName + " SET handicap='" + hole.getHandicap() + "' WHERE holeNumber='" + hole.getHoleNumber() + "'";
+
+        stmt.executeUpdate(yardage);
+        stmt.executeUpdate(par);
+        stmt.executeUpdate(handicap);
+      }
+
+      //update totalYardage Field in owners table
+      String ownerTotalYardage = "UPDATE owners SET yardage='" + totalYardage + "' WHERE username='" + user + "'";
+      stmt.executeUpdate(ownerTotalYardage); 
+
+      model.put("username", user);
+      return "redirect:/tee-rific/golfCourseDetails/" + user;
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
   }
+}//updateCourseDetails()
 
-
-//TODO: add a post-method to modify the golf course details
 
 
   //**********************

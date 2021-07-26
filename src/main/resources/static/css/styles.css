@@ -147,7 +147,11 @@ table input {
     background-size: cover;
 }
 
-
+#ownerErrorMessage {
+    display: none;
+    color: red;
+    font-weight: bold;
+}
 
 
 
@@ -155,6 +159,23 @@ table input {
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.ownerTable {
+    width: 80%;
+}
+
+.ownerTableCell{
+    width: 25%;
+}
+
+.ownerTableDisplayCell{
+    width: 100%;
+}
+
+.ownerTableInputCell{
+    width: 90%;
+    display: none;
+    border-radius: 10%;
+}
 
 /* source: https://dev.to/akshay_rajput/keep-footer-at-bottom-of-page-using-flexbox-4a6f */
 .pageWrap {
