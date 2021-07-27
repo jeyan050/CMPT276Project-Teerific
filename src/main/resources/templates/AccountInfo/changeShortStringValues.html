@@ -32,7 +32,7 @@
                     </div>
                     <div class="titleFont dynamicSize">New Value For: <br><span th:text="${columnN}"></span></div>      
                     <form onsubmit="return checkNewValue()" action="#" method="post" th:action="@{'/tee-rific/editAccount/changing/'+__${columnValue}__+'/'+__${userValue}__}" th:object="${value}">
-                        <input type="text" class="inputBox" id="value" th:field="*{__${columnValue}__}"></textarea><p id="error"> </p>
+                        <input type="text" class="inputBox" id="value" th:field="*{__${columnValue}__}" placeholder="Type Here"></textarea><p id="error"> </p>
                         <div th:each="error : ${errorMessage}">
                             <p th:text="${error}"> </p>
                         </div>

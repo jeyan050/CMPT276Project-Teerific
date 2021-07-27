@@ -573,7 +573,7 @@ public class Main {
         output.setCountry(details.getString("country"));
         output.setPhoneNumber(details.getString("phonenumber"));  
         output.setWebsite(details.getString("website"));
-        // output.setCourseLogo(details.getString("courselogo"));  
+        output.setCourseLogo(details.getString("courselogo"));  
         // output.setYardage(details.getString("yardage"));  
         
         output.setTimeOpen(details.getString("timeopen"));   
@@ -620,19 +620,24 @@ public class Main {
       model.put("errorMessage", error);
     } else if (changeValueError == true){     //if any other error
       changeUsernameError = false;
-      String error = "Error Updating value, Retry again.";
+      String error = "Error Updating value, Go back and retry again.";
       model.put("errorMessage", error);
     }
 
-    System.out.println(column);
-    if (column.equals("timeOpen") || column.equals("timeClose"))                   // Since theres different input fields the owner can update,
-      return "AccountInfo/changeTimeValues";                                       // it should redirect to the appropriate html with the right
-    else if (column.equals("description") || column.equals("directionsToCourse"))  // input field to fill out.     - Justin
-      return "AccountInfo/changeTextAreas";
-    else if (column.equals("gender"))
-      return "AccountInfo/changeGender";
-    else
-      return "AccountInfo/changeShortStringValues";
+    switch (column){     
+      case "timeOpen":
+      case "timeClose":                               // Since theres different input fields the owner can update,
+        return "AccountInfo/changeTimeValues";        // it should redirect to the appropriate html with the right
+      case "description":
+      case "directionsToCourse":                      // input field to fill out.     - Justin
+        return "AccountInfo/changeTextAreas";
+      case "gender":
+        return "AccountInfo/changeGender";
+      case "courseLogo":
+        return "AccountInfo/changeLogo";
+      default:
+        return "AccountInfo/changeShortStringValues";
+    }
   }
 
   boolean changedUsername = false; 
@@ -705,6 +710,9 @@ public class Main {
           break;
         case "weekendRates":
           value = newValue.getWeekendRates();
+          break;
+        case "courseLogo":
+          value = newValue.getCourseLogo();
           break;
         case "directionsToCourse":
           value = newValue.getDirectionsToCourse();
