@@ -373,9 +373,8 @@ public class Main {
   String getSQLNewTableOwner() {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
-            "courseLogo varchar(800), " + 
-            "directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
+            "courseLogo varchar(800), directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
+            "timeClose varchar(10), bookingInterval integer, userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
@@ -383,12 +382,12 @@ public class Main {
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
-            "timeClose, userName, password, firstName, lastName, email, yardage, gender, rating, numberRatings) VALUES ('" +
+            "timeClose, bookingInterval, userName, password, firstName, lastName, email, yardage, gender, rating, numberRatings) VALUES ('" +
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
             owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
             owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
-            owner.getTimeClose() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
+            owner.getTimeClose() + "','" + owner.getBookingInterval() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
             owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "', '" + owner.getNumberRatings() + "')";
   }
 
@@ -399,7 +398,8 @@ public class Main {
             owner.getWebsite() + "' and phoneNumber='" + owner.getPhoneNumber() + "' and courseLogo='" +
             owner.getCourseLogo() + "' and directionsToCourse='" + owner.getDirectionsToCourse() + "' and description='" +
             owner.getDescription() + "' and weekdayRates='" + owner.getWeekdayRates() + "' and weekendRates='" +
-            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() +
+            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and timeOpen='" + owner.getTimeOpen() + 
+            "' and timeClose='" + owner.getTimeClose() +  "' and bookingInterval='" + owner.getBookingInterval() + "' and userName='" + owner.getUsername() +
             "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
             "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() +
             "' and rating='" + owner.getRating() + "'and numberRatings='" + owner.getNumberRatings() + "'";

@@ -7,6 +7,7 @@ function checkInput(event) {
     var checkCountry = document.getElementById("country").value;
     var checkOpenTime = document.getElementById("timeOpen").value;
     var checkCloseTime = document.getElementById("timeClose").value;
+    var checkBookInterval = document.getElementById("bookingInterval").value;
 
     var checkUsername = document.getElementById("username").value;
     var checkPassword1 = document.getElementById("passw1").value;
@@ -37,6 +38,10 @@ function checkInput(event) {
     }
     else if (checkCloseTime == ""){
         document.getElementById("errorTC").innerHTML = "Close time is empty: Please enter a time";
+        return false;
+    }
+    else if (checkBookInterval == ""){
+        document.getElementById("errorBO").innerHTML = "Booking Interval is empty: Please enter a time";
         return false;
     }
     else if (checkUsername == ""){
