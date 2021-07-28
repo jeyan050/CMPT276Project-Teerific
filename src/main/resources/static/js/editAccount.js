@@ -11,6 +11,11 @@ function checkNewValue(event) {
         return true;
 }
 
+function displayImage(event) {
+    var image = document.getElementById("image");
+    image.src = document.getElementById("value").value;
+}
+
 // insert golf sound
 var golfSwingSound = new Audio("http://freesoundeffect.net/sites/default/files/golf-driver-3-sound-effect-62710572.mp3");
 var numButtons = document.querySelectorAll("button").length;
@@ -23,9 +28,10 @@ function submitForm(target){
         if(submit){
             target.parentElement.submit();
         }
-    } else {
+    } else if (target.id == "testImage")
+        displayImage();
+    else 
         target.parentElement.submit();
-    }
 }
 
 var numberOfButtons = document.querySelectorAll("button").length;
