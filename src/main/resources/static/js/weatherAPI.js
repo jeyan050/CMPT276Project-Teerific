@@ -2,33 +2,36 @@
 //change to http://api.openweathermap.org/data/2.5/weather?q=" + golfCourseCity + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7
 
 var offset;
+var city = document.getElementById("city").innerHTML;
+var opening_time = parseInt(document.getElementById("open_hours").innerHTML);
+var closing_time = parseInt(document.getElementById("close_hours").innerHTML);
 
 window.addEventListener("load", function()
 {
-    $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=vancouver&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
+    $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
     {
         var first_data = new Date((data.list[0].dt)*1000);
         offset = Math.floor((first_data.getHours())/3);
         // console.log(first_data.getHours());
         // console.log(offset);
         const days = [];
-        for (let i = 0; i < 40; i++)
+        for (let i = 0; i < 40; i++)  //goes through each eentry and assigns unique days to an array
         {
             var info_date = new Date((data.list[i].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
             date = info_date.toDateString();
-            if (days.indexOf(date) == -1)
+            if (days.indexOf(date) == -1) //checks if the day is already in the list
             {
                 days.push(date);
             } 
         }
-        console.log(days);
-
+        // console.log(days);
+        //assign the buttons the values of the dates
         $("#date1").html(days[0]);
         $("#date2").html(days[1]);
         $("#date3").html(days[2]);
         $("#date4").html(days[3]);
         $("#date5").html(days[4]);
-        if (days.length > 5)
+        if (days.length > 5) //if there is an entry for the 6th day, display it, else, hide the button
         {
             $("#date6").html(days[5]);
         }
@@ -37,17 +40,21 @@ window.addEventListener("load", function()
             $("#date6").hide();
         }
         
-        for (let i = 1; i <= 6; i++)
+        for (let i = 1; i <= 6; i++)//for each day
         {
-            for (let j = 1; j <= 8; j++)
+            for (let j = 1; j <= 8; j++) //for each 3hour block
             {
                 // console.log(((i-2)*8) + j-1 + (8 - offset));
                 if (((i-2)*8) + j-1 + (8 - offset) > 0 && ((i-2)*8) + j-1 + (8 - offset) < 40)
                 {
                     var hour = new Date((data.list[((i-2)*8) + j-1 + (8 - offset)].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
-                    //if .getHours is less then opening time or greater then opening time, .hide the button
+                    
                     // console.log("date" + i.toString() + "_" + j.toString());
                     // console.log(hour.getHours() + ":00");
+                    if (hour.getHours() < opening_time || hour.getHours() > closing_time) //hides the button if the time is outside hours of opperation
+                    {
+                        $("#date" + i.toString() + "_" + j.toString()).hide();
+                    }
                     $("#date" + i.toString() + "_" + j.toString()).html(hour.getHours() + ":00");
                 }
                 else
@@ -120,10 +127,7 @@ document.getElementById("date6_8").onclick = function () {getWeatherData(47 - of
 
 function getWeatherData(i)
 {
-    //console.log(i);
-    //change to http://api.openweathermap.org/data/2.5/weather?q=" + golfCourseCity + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7
-
-    $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=vancouver&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
+    $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
     {
         console.log(i);
         var info_date = new Date((data.list[i].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
@@ -148,27 +152,8 @@ function getWeatherData(i)
         $('.temp').text("Temperature:" + temp +  '\u00B0C');
         $('.temp_feels_like').text("Feels like:" + temp_feel +  '\u00B0C');
         $('.wind').text("Wind speed: " + wind + "  m/s");
-        $('.gust').text("Gusts of: " + gust + "  m/s");
+        $('.gust').text("Gusts up to: " + gust + "  m/s");
         $('.prob_rain').text(prob_rain + "% chance of Rain");
     }
     );
 }
-
-
-
-// <h2 class ="forcast_title"></h2>
-// <img class="icon">
-// <p class="weather"></p>
-// <p class="weather_description"></p>
-// <p class="temp"> </p>
-// <p class="temp_feels_like"></p>
-// <p class="wind"></p>
-// <p class="gust"></p>
-// <p class="prob_rain"></p>
-// <p class="rain_vol"></p>
-// <p class="snow_vol"></p>
-
-// $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=vancouver&appid=96bf787bdb96400f9a642360f1e901d7")
-// {
-    
-// }

@@ -35,6 +35,9 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize" th:text="${courseName}"></div>
+                    <h1 id="city">Vancouver</h1>
+                    <h2 id= "open_hours">9</h2>
+                    <h2 id= "close_hours">20</h2>
                     <table>
                         <tr>
                             <th>Hole #</th>
@@ -49,6 +52,9 @@
                             <td th:text="${hole.par}"></td>
                         </tr>
                     </table>
+
+
+                    <!-- weather API stuff -->
 
                     <h2>5 Day Weather Forcast</h2>
                     <div class = "dropdown">
@@ -144,6 +150,8 @@
                        <p class="snow_vol"></p> -->
                       </div>
                     </p>
+
+                    <!-- end of weather API stuff -->
 
                     <form  method= "get" th:action="${'/tee-rific/courses/' + username}">
                         <button type="submit" class="button">All Courses</button>
