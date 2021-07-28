@@ -2,6 +2,7 @@ package com.example.models;
 
 public class TeeTimeBooking {
     private int gameID;
+    private String courseName;
     private String username;
     private String date; //will be input in dd/MM/yyyy format https://www.w3schools.com/java/java_date.asp
     private int numPlayers;
@@ -15,6 +16,14 @@ public class TeeTimeBooking {
 
     public void setGameID(int n) {
         this.gameID = n;
+    }
+
+    public String getCourseName(){
+        return this.courseName;
+    }
+
+    public void setCourseName(String courseName){
+        this.courseName = courseName;
     }
 
     public String getUsername() {

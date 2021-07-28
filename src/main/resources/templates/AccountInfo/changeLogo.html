@@ -32,10 +32,18 @@
                     </div>
                     <div class="titleFont dynamicSize">New Value For: <br><span th:text="${columnN}"></span></div>      
                     <form onsubmit="return checkNewValue()" action="#" method="post" th:action="@{'/tee-rific/editAccount/changing/'+__${columnValue}__+'/'+__${userValue}__}" th:object="${value}">
-                        <textarea class="inputBox" id="value" th:field="*{__${columnValue}__}" placeholder="Type Here"></textarea><p id="error"> </p>
+                        <p>Instructions: Please open image in a new tab and use that URL for below</p>
+                        <p>NOTE: Posting Inappropriate Pictures will lead to course being deleted and blacklisted if account is recreated</p>
+                        <input type="text" class="inputBox newLogo" id="value" th:field="*{__${columnValue}__}" placeholder="Post URL to Course Logo Here"></textarea><p id="error"> </p>
                         <div th:each="error : ${errorMessage}">
                             <p th:text="${error}"> </p>
                         </div>
+                        <button type="button" onclick="displayImage()" id="testImage" class="button">Display Image</button>
+                        <table class="testImage">
+                            <td class="imageCell">
+                                <img src="" id="image">
+                            </td>
+                        </table><br>
                         <button type="submit" id="submitData" class="button">Submit</button>
                     </form>
 

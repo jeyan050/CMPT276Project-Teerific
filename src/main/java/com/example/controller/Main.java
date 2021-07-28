@@ -271,8 +271,6 @@ public class Main {
 
       String encryptedPassword = BCrypt.hashpw(owner.getPassword(), BCrypt.gensalt());
 
-      //TODO: will need to figure out way to store image into sql later - Mike
-
       owner.setNumHoles(18);
       String ownerInfo = getSQLNewTableOwner();
       String insertOwners = getSQLInsertOwner(owner, encryptedPassword);
@@ -330,7 +328,7 @@ public class Main {
 
       // Initialize rental inventory and bookings of golf course - Chino
       ownerCreateInventory(connection, updatedCourseName);
-      ownerCreateBookingsTable(connection, updatedCourseName);
+      ownerCreateBookingsTable(connection);
 
       // check if username or course name exists for already existing user
       String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
@@ -375,8 +373,8 @@ public class Main {
   String getSQLNewTableOwner() {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
-            "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
-            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
+            "courseLogo varchar(800), " + 
+            "directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
             "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
@@ -573,7 +571,7 @@ public class Main {
         output.setCountry(details.getString("country"));
         output.setPhoneNumber(details.getString("phonenumber"));  
         output.setWebsite(details.getString("website"));
-        // output.setCourseLogo(details.getString("courselogo"));  
+        output.setCourseLogo(details.getString("courselogo"));  
         // output.setYardage(details.getString("yardage"));  
         
         output.setTimeOpen(details.getString("timeopen"));   
@@ -620,19 +618,24 @@ public class Main {
       model.put("errorMessage", error);
     } else if (changeValueError == true){     //if any other error
       changeUsernameError = false;
-      String error = "Error Updating value, Retry again.";
+      String error = "Error Updating value, Go back and retry again.";
       model.put("errorMessage", error);
     }
 
-    System.out.println(column);
-    if (column.equals("timeOpen") || column.equals("timeClose"))                   // Since theres different input fields the owner can update,
-      return "AccountInfo/changeTimeValues";                                       // it should redirect to the appropriate html with the right
-    else if (column.equals("description") || column.equals("directionsToCourse"))  // input field to fill out.     - Justin
-      return "AccountInfo/changeTextAreas";
-    else if (column.equals("gender"))
-      return "AccountInfo/changeGender";
-    else
-      return "AccountInfo/changeShortStringValues";
+    switch (column){     
+      case "timeOpen":
+      case "timeClose":                               // Since theres different input fields the owner can update,
+        return "AccountInfo/changeTimeValues";        // it should redirect to the appropriate html with the right
+      case "description":
+      case "directionsToCourse":                      // input field to fill out.     - Justin
+        return "AccountInfo/changeTextAreas";
+      case "gender":
+        return "AccountInfo/changeGender";
+      case "courseLogo":
+        return "AccountInfo/changeLogo";
+      default:
+        return "AccountInfo/changeShortStringValues";
+    }
   }
 
   boolean changedUsername = false; 
@@ -705,6 +708,9 @@ public class Main {
           break;
         case "weekendRates":
           value = newValue.getWeekendRates();
+          break;
+        case "courseLogo":
+          value = newValue.getCourseLogo();
           break;
         case "directionsToCourse":
           value = newValue.getDirectionsToCourse();
@@ -1002,7 +1008,6 @@ public class Main {
     path = "/tee-rific/booking/{courseName}/{gameID}/{username}"
   )
   public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
-    // Kyle's shit
     String user = pathVars.get("username");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
@@ -1019,7 +1024,6 @@ public class Main {
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      // ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseName+" where gameID='"+gameID+"'");
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE courseName='"+courseName+"'");
       courseInfo.next();
 
@@ -1107,7 +1111,7 @@ public class Main {
       teetime = teetime + ":00";
       booking.setTime(teetime);
 
-      updateBookingsTable(connection, booking, courseNameSC, gameIDStr);
+      updateBookingsTable(connection, booking, courseName, gameIDStr);
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
@@ -1119,7 +1123,7 @@ public class Main {
       scorecard.setHolesPlayed("");
       scorecard.setTeesPlayed("");
 
-      userCreateScorecardsTable(connection, user);
+      userCreateScorecardsTable(connection);
       userInsertScorecard(connection, user, scorecard);
       courseName = convertToSnakeCase(courseNameSC);
 
@@ -1151,7 +1155,7 @@ public class Main {
     // Confirmation / Success page, display booking info
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameIDStr+"'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings WHERE gameID='"+gameIDStr+"'");
       rs.next();
 
       TeeTimeBooking toDisplay = new TeeTimeBooking();
@@ -1177,17 +1181,17 @@ public class Main {
 
 
   // HELPER BOIS
-  public void ownerCreateBookingsTable(Connection connection, String courseName) throws Exception {
+  public void ownerCreateBookingsTable(Connection connection) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings_"+courseName+" (gameID serial, username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings (gameID serial, courseName varchar(100), username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
   } //ownerCreateBookingsTable
 
   public String createNewBooking(Connection connection, String user, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("INSERT INTO bookings_"+courseName+" (username) VALUES ('"+user+"')");
+    stmt.executeUpdate("INSERT INTO bookings (username, courseName) VALUES ('" + user + "' , '" + courseName + "')");
 
     // Go to very bottom of table since we just inserted there
-    ResultSet rs = stmt.executeQuery("SELECT gameID FROM bookings_"+courseName+"");
+    ResultSet rs = stmt.executeQuery("SELECT gameID FROM bookings");
     String id = "";
     while (rs.next()) {
       id = rs.getString("gameID");
@@ -1208,7 +1212,7 @@ public class Main {
 
   public void updateBookingsTable(Connection connection, TeeTimeBooking booking, String courseName, String gameID) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("UPDATE bookings_"+courseName+" SET (date, teetime, numplayers) = ('"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"') WHERE gameID='"+gameID+"'");
+    stmt.executeUpdate("UPDATE bookings SET (date, teetime, numplayers) = ('"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"') WHERE gameID='"+gameID+"'");
   } //updateBookingsTable()
 
 
@@ -1311,6 +1315,8 @@ public class Main {
   public String handleCheckout(@PathVariable Map<String, String> pathVars, Map<String, Object> model) throws Exception {
     String user = pathVars.get("username");
     String courseNameSC = pathVars.get("courseName");
+    String courseName = convertFromSnakeCase(courseNameSC);
+
     String gameIDStr = pathVars.get("gameID");
 
     try (Connection connection = dataSource.getConnection()) {
@@ -1320,17 +1326,11 @@ public class Main {
       stmt.executeUpdate("DROP TABLE cart_"+user+"");
 
       // Create table of rentals so employees can keep track
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals_"+courseNameSC+" (id serial, username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
-      stmt.executeUpdate("INSERT INTO rentals_"+courseNameSC+" (username, numBalls, numCarts, numClubs) VALUES ('"+user+"', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals (id integer, courseName varchar(100), username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+      stmt.executeUpdate("INSERT INTO rentals (id, courseName, username, numBalls, numCarts, numClubs) VALUES ('" + gameIDStr + "','" + courseName + "' , '" +user+"', '"+cart.getNumBalls()+"', '"+cart.getNumCarts()+"', '"+cart.getNumClubs()+"')");
 
       // Link rental to booking
-      ResultSet rs = stmt.executeQuery("SELECT * FROM rentals_"+courseNameSC+"");
-      String rentalID = "";
-      while (rs.next()) {
-        rentalID = rs.getString("id");
-      }
-
-      stmt.executeUpdate("UPDATE bookings_"+courseNameSC+" SET rentalID = '"+rentalID+"' WHERE gameID='"+gameIDStr+"'");
+      stmt.executeUpdate("UPDATE bookings SET rentalID = '"+gameIDStr+"' WHERE gameID='"+gameIDStr+"'");
       
       model.put("username", user);
 
@@ -1456,7 +1456,7 @@ public class Main {
       TeeTimeBooking toCancel = new TeeTimeBooking();
 
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings_"+courseNameSC+" WHERE gameID='"+gameID+"'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM bookings WHERE gameID='"+gameID+"'");
       rs.next();
 
       toCancel.setDate(rs.getString("date"));
@@ -1478,7 +1478,7 @@ public class Main {
   } 
 
   @PostMapping(
-    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel",
+    path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}/cancel", 
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
   public String handleCancelBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking toCancel) throws Exception {
@@ -1488,9 +1488,39 @@ public class Main {
       String gameID = pathVars.get("gameID");
       String courseName = convertFromSnakeCase(courseNameSC);
 
+
+      //TODO: get the gameID, update stock and delete rental reservation
+    
+
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("DELETE FROM bookings_"+courseNameSC+" WHERE gameID="+gameID+"");
-      stmt.executeUpdate("DELETE FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'");
+      
+      EquipmentCart updateInv = new EquipmentCart();
+
+      //get the rental quantities
+      int balls = 0;
+      int clubs = 0;
+      int carts = 0;
+      ResultSet removeStock = stmt.executeQuery("SELECT * FROM rentals WHERE id=" + gameID);
+      while(removeStock.next()){
+        balls = removeStock.getInt("numballs");
+        carts = removeStock.getInt("numcarts");
+        clubs = removeStock.getInt("numclubs");
+      }
+
+      //negate cart values
+      balls = 0 - balls;
+      carts = 0 - carts;
+      clubs = 0 - clubs;
+
+      updateInv.setNumBalls(balls);
+      updateInv.setNumCarts(carts);
+      updateInv.setNumClubs(clubs);
+
+      //subtract from inventory
+      updateInventory(connection, updateInv, courseNameSC); //TODO: CHINO -- you know what to do!
+
+      stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
 
       return "redirect:/tee-rific/scorecards/" + user;
     } catch (Exception e) {
@@ -1708,15 +1738,16 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //TODO: Scorecards -- how to store an arrayList/array in SQL for the users
-      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards_"+user+" (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
+      String sqlScorecardsInit = "CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), userName varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))";
       stmt.executeUpdate(sqlScorecardsInit);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards_"+user+"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards WHERE userName='" + user + "'");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
 
       while(rs.next()) {
         Scorecard scorecard = new Scorecard();
         scorecard.setGameID(rs.getString("id"));
+        scorecard.setUserName(rs.getString("userName"));
         scorecard.setDatePlayed(rs.getString("date"));
         scorecard.setCoursePlayed(rs.getString("course"));
         scorecard.setCoursePlayedSC(convertToSnakeCase(scorecard.getCoursePlayed()));
@@ -1760,7 +1791,7 @@ public class Main {
       Statement stmt = connection.createStatement();
 
       //get the scorecard info
-      String getScorecardInfo = "SELECT * FROM scorecards_"+user+" WHERE id='"+gameID+"' AND course='"+courseName+"'";
+      String getScorecardInfo = "SELECT * FROM scorecards WHERE id='"+gameID+"' AND course='"+courseName+"' AND username='" + user + "'";
       ResultSet scoreCardInfo = stmt.executeQuery(getScorecardInfo);
 
       Scorecard scorecard = new Scorecard();
@@ -1772,7 +1803,6 @@ public class Main {
         scorecard.setHolesPlayed(scoreCardInfo.getString("holesPlayed"));
         scorecard.setFormatPlayed(scoreCardInfo.getString("formatPlayed"));
         scorecard.setAttestor(scoreCardInfo.getString("attestor"));
-        //TODO: Scorecards -- store an arrayList/array in SQL for the users
       }
 
       String getCourseInfo = "SELECT * FROM " + courseNameSC;
@@ -1892,17 +1922,16 @@ public class Main {
   }
 
 
-
 // HELPER BOIS (for booking) - Chino
-public void userCreateScorecardsTable(Connection connection, String username) throws Exception{
+public void userCreateScorecardsTable(Connection connection) throws Exception{
   Statement stmt = connection.createStatement();
-  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS scorecards_"+username+" (id varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))");
+  stmt.executeUpdate("CREATE TABLE IF NOT EXISTS scorecards (id varchar(100), userName varchar(100), date varchar(100), course varchar(100), teesPlayed varchar(100), holesPlayed varchar(100), formatPlayed varchar(100), attestor varchar(100))");
 }
 
 public void userInsertScorecard(Connection connection, String username, Scorecard scorecard) throws Exception {
   Statement stmt = connection.createStatement();
-  stmt.executeUpdate("INSERT INTO scorecards_"+username+" (id, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
-                      "'" + scorecard.getGameID() + "', '" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() +
+  stmt.executeUpdate("INSERT INTO scorecards (id, userName, date, course, teesPlayed, holesPlayed, formatPlayed, attestor) VALUES (" +
+                      "'" + scorecard.getGameID() + "', '" + username + "','" + scorecard.getDatePlayed() + "', '" + scorecard.getCoursePlayed() +
                       "', '" + scorecard.getTeesPlayed() + "', '" + scorecard.getHolesPlayed() + "', '" + scorecard.getFormatPlayed() +
                       "', '" + scorecard.getAttestor() + "')");
 }

@@ -74,7 +74,7 @@ function checkInput(event) {
 }
 
 // insert golf sound
-var golfSwingSound = new Audio("http://sfxcontent.s3.amazonaws.com/soundfx/GolfSwing.mp3");
+var golfSwingSound = new Audio("http://freesoundeffect.net/sites/default/files/golf-driver-3-sound-effect-62710572.mp3");
 var numButtons = document.querySelectorAll("button").length;
 var timeoutLength = 350; // in milliseconds (perfect timing for above mp3)
     
