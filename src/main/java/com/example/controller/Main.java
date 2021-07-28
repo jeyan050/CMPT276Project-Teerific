@@ -327,7 +327,7 @@ public class Main {
       stmt.executeUpdate(insertUser);
 
       // Initialize rental inventory and bookings of golf course - Chino
-      ownerCreateInventory(connection, updatedCourseName);
+      ownerCreateInventory(connection, owner.getCourseName());
       ownerCreateBookingsTable(connection);
 
       // check if username or course name exists for already existing user
@@ -1322,7 +1322,7 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       EquipmentCart cart = getUserCartContentsFromDB(connection, user);
-      updateInventory(connection, cart, courseNameSC);
+      updateInventory(connection, cart, courseName);
       stmt.executeUpdate("DROP TABLE cart_"+user+"");
 
       // Create table of rentals so employees can keep track
@@ -1375,12 +1375,12 @@ public class Main {
       String courseName = ownerGetCourseName(connection, user);
       String courseNameSC = convertToSnakeCase(courseName);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseNameSC+"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory WHERE courseName = '"+courseName+"'");
       ArrayList<Equipment> eqs = new ArrayList<Equipment>();
       
       while (rs.next()) {
         Equipment eq = new Equipment();
-        eq.setItemName(rs.getString("name"));
+        eq.setItemName(rs.getString("itemName"));
         eq.setStock(rs.getInt("stock"));
 
         eqs.add(eq);
@@ -1424,7 +1424,7 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       String courseName = ownerGetCourseName(connection, user);
       String courseNameSC = convertToSnakeCase(courseName);
-      ownerUpdateInventory(connection, cart, courseNameSC);
+      ownerUpdateInventory(connection, cart, courseName);
 
       return "redirect:/tee-rific/golfCourseDetails/inventory/" + user;
 
@@ -1517,7 +1517,7 @@ public class Main {
       updateInv.setNumClubs(clubs);
 
       //subtract from inventory
-      updateInventory(connection, updateInv, courseNameSC); //TODO: CHINO -- you know what to do!
+      updateInventory(connection, updateInv, courseName);
 
       stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
       stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
@@ -1532,7 +1532,7 @@ public class Main {
 
   private void updateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseName+"");
+    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory WHERE courseName = '"+courseName+"'");
 
     // Calculate updated values for stock
     rs.next();
@@ -1546,9 +1546,9 @@ public class Main {
     int updatedClubStock = clubStock - cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE itemName = 'carts' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE itemName = 'clubs' AND courseName = '"+courseName+"'");
   }
 
 
@@ -1568,10 +1568,10 @@ public class Main {
 
   private void ownerCreateInventory(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory_"+courseName+" (name varchar(100), stock integer DEFAULT 0)");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('balls')");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('carts')");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('clubs')");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (courseName varchar(100), itemName varchar(100), stock integer DEFAULT 0)");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'balls')");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'carts')");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'clubs')");
   }
 
 
@@ -1602,9 +1602,9 @@ public class Main {
     // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE itemName = 'carts' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE itemName = 'clubs' AND courseName = '"+courseName+"'");
   }
   
   private String ownerGetCourseName(Connection connection, String username) throws Exception {
