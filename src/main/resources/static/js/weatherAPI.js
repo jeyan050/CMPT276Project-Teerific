@@ -1,10 +1,16 @@
 
 //change to http://api.openweathermap.org/data/2.5/weather?q=" + golfCourseCity + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7
 
+var offset;
+
 window.addEventListener("load", function()
 {
     $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=vancouver&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
     {
+        var first_data = new Date((data.list[0].dt)*1000);
+        offset = Math.floor((first_data.getHours())/3);
+        console.log(first_data.getHours());
+        console.log(offset);
         const days = [];
         for (let i = 0; i < 40; i++)
         {
@@ -31,15 +37,24 @@ window.addEventListener("load", function()
             $("#date6").hide();
         }
         
-        for (let i = 1; i <= 5; i++) //change the 5 to a 6?
+        for (let i = 1; i <= 6; i++)
         {
             for (let j = 1; j <= 8; j++)
             {
-                var hour = new Date((data.list[((i-1)*8) + j-1].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
-                //if .getHours is less then opening time or greater then opening time, .hide the button
-                // console.log("date" + i.toString() + "_" + j.toString());
-                // console.log(hour.getHours() + ":00");
-                $("#date" + i.toString() + "_" + j.toString()).html(hour.getHours() + ":00");
+                console.log(((i-2)*8) + j-1 + (8 - offset));
+                if (((i-2)*8) + j-1 + (8 - offset) > 0 && ((i-2)*8) + j-1 + (8 - offset) < 40)
+                {
+                    var hour = new Date((data.list[((i-2)*8) + j-1 + (8 - offset)].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
+                    //if .getHours is less then opening time or greater then opening time, .hide the button
+                    // console.log("date" + i.toString() + "_" + j.toString());
+                    // console.log(hour.getHours() + ":00");
+                    $("#date" + i.toString() + "_" + j.toString()).html(hour.getHours() + ":00");
+                }
+                else
+                {
+                    $("#date" + i.toString() + "_" + j.toString()).hide();
+                }
+
 
             }
         }
@@ -48,59 +63,59 @@ window.addEventListener("load", function()
 });
 
 
-document.getElementById("date1_1").onclick = function () {getWeatherData(0)};
-document.getElementById("date1_2").onclick = function () {getWeatherData(1)};
-document.getElementById("date1_3").onclick = function () {getWeatherData(2)};
-document.getElementById("date1_4").onclick = function () {getWeatherData(3)};
-document.getElementById("date1_5").onclick = function () {getWeatherData(4)};
-document.getElementById("date1_6").onclick = function () {getWeatherData(5)};
-document.getElementById("date1_7").onclick = function () {getWeatherData(6)};
-document.getElementById("date1_8").onclick = function () {getWeatherData(7)};
+document.getElementById("date1_1").onclick = function () {getWeatherData(0 - offset)};
+document.getElementById("date1_2").onclick = function () {getWeatherData(1 - offset)};
+document.getElementById("date1_3").onclick = function () {getWeatherData(2 - offset)};
+document.getElementById("date1_4").onclick = function () {getWeatherData(3 - offset)};
+document.getElementById("date1_5").onclick = function () {getWeatherData(4 - offset)};
+document.getElementById("date1_6").onclick = function () {getWeatherData(5 - offset)};
+document.getElementById("date1_7").onclick = function () {getWeatherData(6 - offset)};
+document.getElementById("date1_8").onclick = function () {getWeatherData(7 - offset)};
 
-document.getElementById("date2_1").onclick = function () {getWeatherData(8)};
-document.getElementById("date2_2").onclick = function () {getWeatherData(9)};
-document.getElementById("date2_3").onclick = function () {getWeatherData(10)};
-document.getElementById("date2_4").onclick = function () {getWeatherData(11)};
-document.getElementById("date2_5").onclick = function () {getWeatherData(12)};
-document.getElementById("date2_6").onclick = function () {getWeatherData(13)};
-document.getElementById("date2_7").onclick = function () {getWeatherData(14)};
-document.getElementById("date2_8").onclick = function () {getWeatherData(15)};
+document.getElementById("date2_1").onclick = function () {getWeatherData(8 - offset)};
+document.getElementById("date2_2").onclick = function () {getWeatherData(9 - offset)};
+document.getElementById("date2_3").onclick = function () {getWeatherData(10 - offset)};
+document.getElementById("date2_4").onclick = function () {getWeatherData(11 - offset)};
+document.getElementById("date2_5").onclick = function () {getWeatherData(12 - offset)};
+document.getElementById("date2_6").onclick = function () {getWeatherData(13 - offset)};
+document.getElementById("date2_7").onclick = function () {getWeatherData(14 - offset)};
+document.getElementById("date2_8").onclick = function () {getWeatherData(15 - offset)};
 
-document.getElementById("date3_1").onclick = function () {getWeatherData(16)};
-document.getElementById("date3_2").onclick = function () {getWeatherData(17)};
-document.getElementById("date3_3").onclick = function () {getWeatherData(18)};
-document.getElementById("date3_4").onclick = function () {getWeatherData(19)};
-document.getElementById("date3_5").onclick = function () {getWeatherData(20)};
-document.getElementById("date3_6").onclick = function () {getWeatherData(21)};
-document.getElementById("date3_7").onclick = function () {getWeatherData(22)};
-document.getElementById("date3_8").onclick = function () {getWeatherData(23)};
+document.getElementById("date3_1").onclick = function () {getWeatherData(16 - offset)};
+document.getElementById("date3_2").onclick = function () {getWeatherData(17 - offset)};
+document.getElementById("date3_3").onclick = function () {getWeatherData(18 - offset)};
+document.getElementById("date3_4").onclick = function () {getWeatherData(19 - offset)};
+document.getElementById("date3_5").onclick = function () {getWeatherData(20 - offset)};
+document.getElementById("date3_6").onclick = function () {getWeatherData(21 - offset)};
+document.getElementById("date3_7").onclick = function () {getWeatherData(22 - offset)};
+document.getElementById("date3_8").onclick = function () {getWeatherData(23 - offset)};
 
-document.getElementById("date4_1").onclick = function () {getWeatherData(24)};
-document.getElementById("date4_2").onclick = function () {getWeatherData(25)};
-document.getElementById("date4_3").onclick = function () {getWeatherData(26)};
-document.getElementById("date4_4").onclick = function () {getWeatherData(27)};
-document.getElementById("date4_5").onclick = function () {getWeatherData(28)};
-document.getElementById("date4_6").onclick = function () {getWeatherData(29)};
-document.getElementById("date4_7").onclick = function () {getWeatherData(30)};
-document.getElementById("date4_8").onclick = function () {getWeatherData(31)};
+document.getElementById("date4_1").onclick = function () {getWeatherData(24 - offset)};
+document.getElementById("date4_2").onclick = function () {getWeatherData(25 - offset)};
+document.getElementById("date4_3").onclick = function () {getWeatherData(26 - offset)};
+document.getElementById("date4_4").onclick = function () {getWeatherData(27 - offset)};
+document.getElementById("date4_5").onclick = function () {getWeatherData(28 - offset)};
+document.getElementById("date4_6").onclick = function () {getWeatherData(29 - offset)};
+document.getElementById("date4_7").onclick = function () {getWeatherData(30 - offset)};
+document.getElementById("date4_8").onclick = function () {getWeatherData(31 - offset)};
 
-document.getElementById("date5_1").onclick = function () {getWeatherData(32)};
-document.getElementById("date5_2").onclick = function () {getWeatherData(33)};
-document.getElementById("date5_3").onclick = function () {getWeatherData(34)};
-document.getElementById("date5_4").onclick = function () {getWeatherData(35)};
-document.getElementById("date5_5").onclick = function () {getWeatherData(36)};
-document.getElementById("date5_6").onclick = function () {getWeatherData(37)};
-document.getElementById("date5_7").onclick = function () {getWeatherData(38)};
-document.getElementById("date5_8").onclick = function () {getWeatherData(39)};
+document.getElementById("date5_1").onclick = function () {getWeatherData(32 - offset)};
+document.getElementById("date5_2").onclick = function () {getWeatherData(33 - offset)};
+document.getElementById("date5_3").onclick = function () {getWeatherData(34 - offset)};
+document.getElementById("date5_4").onclick = function () {getWeatherData(35 - offset)};
+document.getElementById("date5_5").onclick = function () {getWeatherData(36 - offset)};
+document.getElementById("date5_6").onclick = function () {getWeatherData(37 - offset)};
+document.getElementById("date5_7").onclick = function () {getWeatherData(38 - offset)};
+document.getElementById("date5_8").onclick = function () {getWeatherData(39 - offset)};
 
-// document.getElementById("date6_1").onclick = function () {getWeatherData(39)};
-// document.getElementById("date6_2").onclick = function () {getWeatherData(1)};
-// document.getElementById("date6_3").onclick = function () {getWeatherData(2)};
-// document.getElementById("date6_4").onclick = function () {getWeatherData(3)};
-// document.getElementById("date6_5").onclick = function () {getWeatherData(4)};
-// document.getElementById("date6_6").onclick = function () {getWeatherData(5)};
-// document.getElementById("date6_7").onclick = function () {getWeatherData(6)};
-// document.getElementById("date6_8").onclick = function () {getWeatherData(7)};
+document.getElementById("date6_1").onclick = function () {getWeatherData(40 - offset)};
+document.getElementById("date6_2").onclick = function () {getWeatherData(41 - offset)};
+document.getElementById("date6_3").onclick = function () {getWeatherData(42 - offset)};
+document.getElementById("date6_4").onclick = function () {getWeatherData(43 - offset)};
+document.getElementById("date6_5").onclick = function () {getWeatherData(44 - offset)};
+document.getElementById("date6_6").onclick = function () {getWeatherData(45 - offset)};
+document.getElementById("date6_7").onclick = function () {getWeatherData(46 - offset)};
+document.getElementById("date6_8").onclick = function () {getWeatherData(47 - offset)};
 
 
 function getWeatherData(i)
