@@ -9,8 +9,8 @@ window.addEventListener("load", function()
     {
         var first_data = new Date((data.list[0].dt)*1000);
         offset = Math.floor((first_data.getHours())/3);
-        console.log(first_data.getHours());
-        console.log(offset);
+        // console.log(first_data.getHours());
+        // console.log(offset);
         const days = [];
         for (let i = 0; i < 40; i++)
         {
@@ -41,7 +41,7 @@ window.addEventListener("load", function()
         {
             for (let j = 1; j <= 8; j++)
             {
-                console.log(((i-2)*8) + j-1 + (8 - offset));
+                // console.log(((i-2)*8) + j-1 + (8 - offset));
                 if (((i-2)*8) + j-1 + (8 - offset) > 0 && ((i-2)*8) + j-1 + (8 - offset) < 40)
                 {
                     var hour = new Date((data.list[((i-2)*8) + j-1 + (8 - offset)].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem
@@ -131,21 +131,42 @@ function getWeatherData(i)
         var icon = "http://openweathermap.org/img/w/" + data.list[i].weather[0].icon + ".png";
 
         var temp = Math.floor(data.list[i].main.temp);
+        var temp_feel = Math.floor(data.list[i].main.feels_like);
         var weather = data.list[i].weather[0].main; 
         var weather_desc = data.list[i].weather[0].description;
         var wind = data.list[i].wind.speed;
+        var gust = data.list[i].wind.gust;
+        var prob_rain = data.list[i].pop;
+        // var rain_vol = data.list[i].rain.3h;
 
         $('.forcast_title').text(info_date.toDateString() + ", " + info_date.getHours() + ":00");
         // console.log(info_date.toDateString() + ", " + info_date.getHours() + ":00");
         // console.log(data.list[i].dt_txt);
         $('.icon').attr('src',icon);
         $('.weather').text(weather);
+        $('.weather_description').text(weather_desc);
         $('.temp').text("Temperature:" + temp +  '\u00B0C');
-        $('.wind').text(" Wind speed: " + wind + "  m/s");
+        $('.temp_feels_like').text("Feels like:" + temp_feel +  '\u00B0C');
+        $('.wind').text("Wind speed: " + wind + "  m/s");
+        $('.gust').text("Gusts of: " + gust + "  m/s");
+        $('.prob_rain').text(prob_rain + "% chance of Rain");
     }
     );
 }
 
+
+
+// <h2 class ="forcast_title"></h2>
+// <img class="icon">
+// <p class="weather"></p>
+// <p class="weather_description"></p>
+// <p class="temp"> </p>
+// <p class="temp_feels_like"></p>
+// <p class="wind"></p>
+// <p class="gust"></p>
+// <p class="prob_rain"></p>
+// <p class="rain_vol"></p>
+// <p class="snow_vol"></p>
 
 // $.getJSON("http://api.openweathermap.org/data/2.5/forecast?q=vancouver&appid=96bf787bdb96400f9a642360f1e901d7")
 // {
