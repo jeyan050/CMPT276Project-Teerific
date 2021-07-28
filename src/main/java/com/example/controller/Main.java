@@ -271,8 +271,6 @@ public class Main {
 
       String encryptedPassword = BCrypt.hashpw(owner.getPassword(), BCrypt.gensalt());
 
-      //TODO: will need to figure out way to store image into sql later - Mike
-
       owner.setNumHoles(18);
       String ownerInfo = getSQLNewTableOwner();
       String insertOwners = getSQLInsertOwner(owner, encryptedPassword);
@@ -375,8 +373,8 @@ public class Main {
   String getSQLNewTableOwner() {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
-            "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
-            "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
+            "courseLogo varchar(800), " + 
+            "directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
             "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating integer)";
   }
 

@@ -2,13 +2,39 @@ var submit = false;
 
 function checkNewValue(event) {
     var checkValue = document.getElementById("value").value;
-    console.log("Value:'" + checkValue +"'");
     if (checkValue == ""){
         document.getElementById("error").innerHTML = "Field is Empty";
         return false;
-    } else
-        submit = true;
-        return true;
+    } else {
+        var checkSize = document.getElementById("value").tagName;
+        switch (checkSize){
+            case "TEXTAREA":
+                if (checkValue.length > 1000){
+                    var error = "Value is too long, the character limit is 1000 and your new value is of length: " + checkValue.length;
+                    document.getElementById("error").innerHTML = error;
+                    return false;
+                }
+                break;
+            case "INPUT":
+                if (document.getElementById("value").className == "inputBox newLogo"){
+                    if (checkValue.length > 800){   // For logo URL
+                        var error = "Value is too long, the character limit is 800 and your new value is of length: " + checkValue.length;
+                        document.getElementById("error").innerHTML = error;
+                        return false;
+                    }
+                } else {
+                    if (checkValue.length > 150){   // For weekday/weekend Rates, and website (everything else should be less than 100 already)
+                        var error = "Value is too long, the character limit is 150 and your new value is of length: " + checkValue.length;
+                        document.getElementById("error").innerHTML = error;
+                        return false;
+                    }
+                }
+            default:
+                break;
+        }
+    }
+    submit = true;
+    return true;
 }
 
 function displayImage(event) {
