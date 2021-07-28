@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Scorecard {
     private String datePlayed;
+    private String userName;
     private String coursePlayed;
     private String coursePlayedSC;
     private String teesPlayed;
@@ -18,6 +19,14 @@ public class Scorecard {
     }
     public void setDatePlayed(String f) {
         this.datePlayed = f;
+    }
+
+    public String getUserName(){
+        return this.userName;
+    }
+
+    public void setUserName(String userName){
+        this.userName = userName;
     }
 
     public String getCoursePlayed() {
