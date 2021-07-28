@@ -377,7 +377,7 @@ public class Main {
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(150), " +               //TODO: will need to fix this one image storage is figured out - MIKE
             "directionsToCourse varchar(500), description varchar(500), weekdayRates varchar(100), weekendRates varchar(100), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating integer)";
+            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
@@ -385,13 +385,13 @@ public class Main {
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
-            "timeClose, userName, password, firstName, lastName, email, yardage, gender, rating) VALUES ('" +
+            "timeClose, userName, password, firstName, lastName, email, yardage, gender, rating, numberRatings) VALUES ('" +
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
             owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
             owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
             owner.getTimeClose() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
-            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "')";
+            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "', '" + owner.getNumberRatings() + "')";
   }
 
 
@@ -404,7 +404,7 @@ public class Main {
             owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() +
             "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
             "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() +
-            "' and rating='" + owner.getRating() + "'";
+            "' and rating='" + owner.getRating() + "'and numberRatings='" + owner.getNumberRatings() + "'";
   }
 
 
@@ -1605,7 +1605,7 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       stmt.executeUpdate(getSQLNewTableOwner());
-      ResultSet rs = stmt.executeQuery("SELECT * FROM owners");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM owners ORDER BY courseName ASC");
       ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
       while(rs.next()) {
         CourseOwner course = new CourseOwner();
@@ -1628,7 +1628,8 @@ public class Main {
         course.setEmail(rs.getString("email"));
         course.setYardage(rs.getString("yardage"));
         course.setGender(rs.getString("gender"));
-        course.setRating(rs.getInt("rating"));
+        course.setRating(rs.getDouble("rating"));
+        course.setNumberRatings(rs.getDouble("numberRatings"));
 
         output.add(course);
       }
@@ -1810,25 +1811,57 @@ public class Main {
 //   return "game";
 // }//updateScorecard()
 
+
+
   @GetMapping(
           path = "tee-rific/rating/{username}/{courseName}"
   )
-  public String getRatingPage(@PathVariable("username")String user, @PathVariable("courseName")String course, Map<String, Object> model, HttpServletRequest request) throws Exception {
-    if(null == (request.getSession().getAttribute("username"))) {
+  public String getRatingPage(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    String user = pathVars.get("username");
+    String courseNameSC = pathVars.get("courseName");
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
-    if(!user.equals(request.getSession().getAttribute("username"))) {
+    if (!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
+    try (Connection connection = dataSource.getConnection()) {
 
-    try (Connection connection = dataSource.getConnection()){
       Statement stmt = connection.createStatement();
-      String sql = "SELECT rating FROM owners WHERE coursename='" + course + "'";
-      ResultSet courseDetails = stmt.executeQuery(sql);
-      System.out.println(sql);
-      System.out.println(courseDetails);
+      stmt.executeUpdate(getSQLNewTableOwner());
+      ResultSet rs = stmt.executeQuery("SELECT * FROM owners WHERE courseName='" + courseNameSC + "'");
+      CourseOwner course1 = new CourseOwner();
+      while (rs.next()) {
 
+        course1.setCourseName(rs.getString("courseName"));
+        course1.setAddress(rs.getString("address"));
+        course1.setCity(rs.getString("city"));
+        course1.setCountry(rs.getString("country"));
+        course1.setWebsite(rs.getString("website"));
+        course1.setPhoneNumber(rs.getString("phoneNumber"));
+        course1.setCourseLogo(rs.getString("courseLogo"));
+        course1.setDirectionsToCourse(rs.getString("directionsToCourse"));
+        course1.setDescription(rs.getString("description"));
+        course1.setWeekdayRates(rs.getString("weekdayRates"));
+        course1.setWeekendRates(rs.getString("weekendRates"));
+        course1.setNumHoles(rs.getInt("numHoles"));
+        course1.setUsername(rs.getString("userName"));
+        course1.setPassword(rs.getString("password"));
+        course1.setFname(rs.getString("firstName"));
+        course1.setLname(rs.getString("lastName"));
+        course1.setEmail(rs.getString("email"));
+        course1.setYardage(rs.getString("yardage"));
+        course1.setGender(rs.getString("gender"));
+        course1.setRating(rs.getDouble("rating"));
+        course1.setNumberRatings(rs.getDouble("numberRatings"));
+      }
+      double tempRating = (course1.getRating()*course1.getNumberRatings());
+      double numberReviewsBefore = course1.getNumberRatings();
+      model.put("oldRating", tempRating);
+      model.put("courseRating", course1);
+      model.put("nameCourse", courseNameSC);
+      model.put("numReviews", numberReviewsBefore);
       return "Booking&ViewingCourses/review";
 
     } catch (Exception e) {
@@ -1838,8 +1871,25 @@ public class Main {
   }
 
   @PostMapping(
-          path = "tee-rific/rating"
+          path = "tee-rific/rating/{courseName}/{oldRating}/{oldNumberReviews}"
   )
+  public String handleReviewSubmission(Map<String, Object> model, HttpServletRequest request, CourseOwner course1, @PathVariable("courseName") String course, @PathVariable("oldRating") double tempRating, @PathVariable("oldNumberReviews") double numReviews) throws Exception{
+    try(Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      numReviews++;
+      double newRating = (course1.getRating() + tempRating)/numReviews;
+
+      double roundedRating = Math.round(newRating*100.0)/100.0;
+
+      stmt.executeUpdate("UPDATE owners SET rating = '" + roundedRating + "' WHERE courseName = '" + course + "'");
+      stmt.executeUpdate("UPDATE owners SET numberRatings = '" + numReviews + "' WHERE courseName = '" + course + "'");
+    }catch (Exception e){
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+    return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+  }
 
 
 
@@ -2356,10 +2406,11 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         temp.setLname(listO.getString("lastname"));
         temp.setEmail(listO.getString("email"));
         temp.setGender(listO.getString("gender"));
+        temp.setRating(listO.getDouble("rating"));
+        temp.setNumberRatings(listO.getDouble("numberRatings"));
 
         output.add(temp);
       }
-
       model.put("ownerList",output);
       return "Admin/listOfOwners";
     } catch (Exception e) {

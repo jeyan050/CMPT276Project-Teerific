@@ -31,6 +31,9 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize" th:text="${courseName}"></div>
+                    <form  method= "get" th:action="${'/tee-rific/rating/' + username + '/' + courseName}">
+                        <button type="submit" class="button">Give Rating</button>
+                    </form> <br>
                     <table>
                         <tr>
                             <th>Hole #</th>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Star Rating System</title>
+    <title>Rate the Course</title>
     <meta name="viewport" content="width=device-width">
     <style>
         .star{
@@ -31,20 +31,58 @@
             content: counter(rateme) '/5';
         }
     </style>
-</head>
-<body>
-<h1>Rating</h1>
-<div class="stars" data-rating="3">
-    <span class="star">&nbsp;</span>
-    <span class="star">&nbsp;</span>
-    <span class="star">&nbsp;</span>
-    <span class="star">&nbsp;</span>
-    <span class="star">&nbsp;</span>
-</div>
-<form action="#" method="post" th:action="@{/tee-rific/rating}" th:object="${newUser}">
-    <input id="testing" name = "testing" value = "">
-</form>
 
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body class="grassBackdrop">
+<div class="pageWrap">
+    <div class="content">
+        <div class="woodBackdrop border content">
+            <div class="sandBackdrop">
+                <div>
+                    <img th:src="@{/images/tee-rific.png}">
+                </div>
+                <div class="titleFont dynamicSize">Rate the Course</div>
+                    <div class="stars" data-rating="3">
+                        <span class="star">&nbsp;</span>
+                        <span class="star">&nbsp;</span>
+                        <span class="star">&nbsp;</span>
+                        <span class="star">&nbsp;</span>
+                        <span class="star">&nbsp;</span>
+                    </div>
+                <form action="#" method="post" th:action="${'/tee-rific/rating/' + nameCourse + '/' + oldRating + '/' + numReviews}" th:object="${courseRating}">
+                    <input id="testing" name = "testing" type = "hidden" th:field = "*{rating}">
+                    <button type="submit" id="submitReview" class="button">Submit Review</button>
+                </form>
+                <form method= "get" th:action="${'/tee-rific/home/' + username}">
+                    <button type="submit" class="button">Skip</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class= "woodBackdrop footer">
+            <i class="socialIcon fab fa-facebook-f"></i>
+            <i class="socialIcon fab fa-twitter"></i>
+            <i class="socialIcon fab fa-instagram"></i>
+            <i class="socialIcon fas fa-envelope"></i>
+            <p>© Copyright 2021 Tee-rific</p>
+        </div>
+    </footer>
+</div>
+<script th:src="@{/js/signup.js}" type="text/javascript"> </script>
 <script>
         document.addEventListener('DOMContentLoaded', function(){
             let stars = document.querySelectorAll('.star');
