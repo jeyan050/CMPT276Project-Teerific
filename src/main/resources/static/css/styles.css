@@ -121,6 +121,11 @@ table input {
     background-size: cover;
 }
 
+#editSchedule {
+    background-image: url("https://media3.giphy.com/media/uO6zp1QekCPhFUj2of/giphy.gif?cid=ecf05e47793x140zin48j0tszz16666jn71effscrpm2e2ud&rid=giphy.gif&ct=g");
+    background-size: cover;
+}
+
 #editOwnerButton {
     background-image: url("https://media4.giphy.com/media/l2Je43vWtWb3aGX9S/giphy.gif?cid=ecf05e470aqr6js7ia5n7mto7fduh9bpyia69vjrb6hai0bk&rid=giphy.gif&ct=g");
     background-size: cover;
@@ -400,7 +405,6 @@ table input {
     background:#F90;
     color:#FFF;
 }
-<<<<<<< HEAD
 
 
 .courseScorecardLogo {
@@ -411,7 +415,6 @@ table input {
     margin: 25px;
 }
 
-=======
   .weather-container  {
     text-align: center;
   }
@@ -455,4 +458,3 @@ table input {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .drop_button {background-color: #3e8e41;}
->>>>>>> dd180cd523f8ca0e0da185965e0317a34499f044
