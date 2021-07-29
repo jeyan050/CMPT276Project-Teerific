@@ -1,3 +1,0 @@
-http://api.openweathermap.org/data/2.5/weather?q=vancouver&units=metric&mode=xml&appid=96bf787bdb96400f9a642360f1e901d7
-
-https://openweathermap.org/current#data

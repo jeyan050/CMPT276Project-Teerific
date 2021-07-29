@@ -20,6 +20,10 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+      <!-- API Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script th:src="@{/js/weatherAPI.js}" type="text/javascript" defer> </script>
+
     <title>Course Information</title>
 </head>
 <body class="grassBackdrop">
@@ -34,6 +38,10 @@
                     <form  method= "get" th:action="${'/tee-rific/rating/' + username + '/' + courseName}">
                         <button type="submit" class="button">Give Rating</button>
                     </form> <br>
+                    <!-- make this stuff depend on the course -->
+                    <h1 id="city">Vancouver</h1>
+                    <h2 id= "open_hours">9</h2>
+                    <h2 id= "close_hours">20</h2>
                     <table>
                         <tr>
                             <th>Hole #</th>
@@ -48,6 +56,107 @@
                             <td th:text="${hole.par}"></td>
                         </tr>
                     </table>
+
+
+                    <!-- weather API stuff -->
+
+                    <h2>5 Day Weather Forcast</h2>
+                    <div class = "dropdown">
+                      <button class="drop_button" id="date1"></button>
+                      <div class="dropdown_content">
+                        <button id="date1_1" class="button"></button>
+                        <button id="date1_2" class="button"></button>
+                        <button id="date1_3" class="button"></button>
+                        <button id="date1_4" class="button"></button>
+                        <button id="date1_5" class="button"></button>
+                        <button id="date1_6" class="button"></button>
+                        <button id="date1_7" class="button"></button>
+                        <button id="date1_8" class="button"></button>
+                      </div>
+                    </div>
+                    <div class = "dropdown">
+                      <button class="drop_button"id="date2"></button>
+                      <div class="dropdown_content">
+                        <button id="date2_1" class="button"></button>
+                        <button id="date2_2" class="button"></button>
+                        <button id="date2_3" class="button"></button>
+                        <button id="date2_4" class="button"></button>
+                        <button id="date2_5" class="button"></button>
+                        <button id="date2_6" class="button"></button>
+                        <button id="date2_7" class="button"></button>
+                        <button id="date2_8" class="button"></button>
+                      </div>
+                    </div>
+                    <div class = "dropdown">
+                      <button class="drop_button" id="date3"></button>
+                      <div class="dropdown_content">
+                        <button id="date3_1" class="button"></button>
+                        <button id="date3_2" class="button"></button>
+                        <button id="date3_3" class="button"></button>
+                        <button id="date3_4" class="button"></button>
+                        <button id="date3_5" class="button"></button>
+                        <button id="date3_6" class="button"></button>
+                        <button id="date3_7" class="button"></button>
+                        <button id="date3_8" class="button"></button>
+                      </div>
+                    </div>
+                    <div class = "dropdown">
+                      <button class="drop_button" id="date4"></button>
+                      <div class="dropdown_content">
+                        <button id="date4_1" class="button"></button>
+                        <button id="date4_2" class="button"></button>
+                        <button id="date4_3" class="button"></button>
+                        <button id="date4_4" class="button"></button>
+                        <button id="date4_5" class="button"></button>
+                        <button id="date4_6" class="button"></button>
+                        <button id="date4_7" class="button"></button>
+                        <button id="date4_8" class="button"></button>
+                      </div>
+                    </div>
+                    <div class = "dropdown">
+                      <button class="drop_button" id="date5"></button>
+                      <div class="dropdown_content">
+                        <button id="date5_1" class="button"></button>
+                        <button id="date5_2" class="button"></button>
+                        <button id="date5_3" class="button"></button>
+                        <button id="date5_4" class="button"></button>
+                        <button id="date5_5" class="button"></button>
+                        <button id="date5_6" class="button"></button>
+                        <button id="date5_7" class="button"></button>
+                        <button id="date5_8" class="button"></button>
+                      </div>
+                    </div>
+                    <div class = "dropdown">
+                      <button class="drop_button" id="date6"></button>
+                      <div class="dropdown_content">
+                        <button id="date6_1" class="button"></button>
+                        <button id="date6_2" class="button"></button>
+                        <button id="date6_3" class="button"></button>
+                        <button id="date6_4" class="button"></button>
+                        <button id="date6_5" class="button"></button>
+                        <button id="date6_6" class="button"></button>
+                        <button id="date6_7" class="button"></button>
+                        <button id="date6_8" class="button"></button>
+                      </div>
+                    </div>
+                    <p id = "selected_forcast">
+                      <div class="weather-container">
+                        <h2 class ="forcast_title"></h2>
+                        <img class="icon">
+                        <p class="weather"></p>
+                        <p class="weather_description"></p>
+                        <p class="temp"> </p>
+                        <p class="temp_feels_like"></p>
+                       <p class="wind"></p>
+                       <p class="gust"></p>
+                       <p class="prob_rain"></p>
+                       <!-- <p class="rain_vol"></p>
+                       <p class="snow_vol"></p> -->
+                      </div>
+                    </p>
+
+                    <!-- end of weather API stuff -->
+
                     <form  method= "get" th:action="${'/tee-rific/courses/' + username}">
                         <button type="submit" class="button">All Courses</button>
                     </form>

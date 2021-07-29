@@ -2678,18 +2678,20 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   //       inline += scanner.nextLine();
   //     }
   //     scanner.close();
-  
-  //   JSONParser parse = new JSONParser();
-  //   JSONObject data_obj = (JSONObject) parse.parse(inline);
+    //   JSONParser parse = new JSONParser();
+  //     JSONObject data_obj = (JSONObject) parse.parse(inline);
+
+  //     JSONObject objects = (JSONObject) data_obj.get("data I want here");
+
+// for (int i = 0; i < objects.size(); i++)
+// {
+//   JSONObject x = (JSONObject) objects.get(i);
+
+// }
   //   }
+  
+
   // }
-
-
-
-  //read the weather data I want
-
-  // JSONObject object = (JSONObject) data_obj.get("data I want here");
-
 
 
 }
