@@ -1849,23 +1849,21 @@ public class Main {
           path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}"
   )
   public String getSpecificScorecard(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
-    
-    //TODO: uncomment
-    // if(null == (request.getSession().getAttribute("username"))) {
-    //   return "redirect:/";
-    // }
-
-    // if(!user.equals(request.getSession().getAttribute("username"))) {
-    //   return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
-    // }
-
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-
-      String user = pathVars.get("username");
+    String user = pathVars.get("username");
       String courseNameSC = pathVars.get("courseName");
       String gameID = pathVars.get("gameID");
       String courseName = convertFromSnakeCase(courseNameSC);
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
 
       //get the scorecard info
       String getScorecardInfo = "SELECT * FROM scorecards WHERE id='"+gameID+"' AND course='"+courseName+"' AND username='" + user + "'";
@@ -1951,10 +1949,9 @@ public class Main {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }
+  }//getSpecificScorecard()
 
 
-//TODO: postMapping for scorecard updating
 @PostMapping(
   path = "/tee-rific/scorecards/{username}/{courseName}/{gameID}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -1962,10 +1959,6 @@ public class Main {
 public String updateScorecard(@PathVariable("gameID")String gameID, @PathVariable("courseName")String course, @PathVariable("username")String user, WrapperScorecardHoles scoreWrapper, Map<String, Object> model){
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
-
-
-    //update DB
-    System.out.println("UPDATING DB for scorecard");
 
     boolean isActive = scoreWrapper.isActive();
     String updateStatus = "UPDATE scorecards SET active='" + isActive + "' WHERE id='" + gameID + "' AND username='" + user + "'";
