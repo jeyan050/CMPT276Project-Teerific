@@ -15,7 +15,7 @@ public class CourseOwner {
     private String phoneNumber;
     private String timeOpen;
     private String timeClose;
-    private int bookingInterval;
+    private String bookingInterval;
     private String website;
     private int numHoles;
     private ArrayList<Hole> holes;
@@ -114,11 +114,11 @@ public class CourseOwner {
         this.timeClose = t;
     }
 
-    public int getBookingInterval() {
+    public String getBookingInterval() {
         return this.bookingInterval;
     }
 
-    public void setBookingInterval(int t) {
+    public void setBookingInterval(String t) {
         this.bookingInterval = t;
     }
 

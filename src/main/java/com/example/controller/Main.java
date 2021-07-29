@@ -374,7 +374,7 @@ public class Main {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(800), directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), bookingInterval integer, userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
+            "timeClose varchar(10), bookingInterval varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
@@ -832,6 +832,82 @@ public class Main {
     }
   }
 
+//********************************
+// BROWSE TEE-SHEET -- OWNER
+//********************************
+
+  // @GetMapping(
+  //     path = "/tee-rific/teeSheet/{username}"
+  // )
+  // public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+  //   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+  //     return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+  //   }
+
+  //   if(null == (request.getSession().getAttribute("username"))) {
+  //     return "redirect:/";
+  //   }
+
+  // try (Connection connection = dataSource.getConnection()) {
+  //   Statement stmt = connection.createStatement();
+  //   ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+  //   courseInfo.next();
+
+  //   // Convert DB data into ints for comparison
+  //   String timeOpenStr = courseInfo.getString("timeOpen");
+  //   // timeOpenStr = timeOpenStr + ":00";
+  //   String timeOpenSegments[] = timeOpenStr.split(":");
+  //   String timeOpenHrStr = timeOpenSegments[0];
+  //   String timeOpenMinStr = timeOpenSegments[1];
+
+  //   String timeCloseStr = courseInfo.getString("timeClose");
+  //   // timeCloseStr = timeCloseStr + ":00";
+  //   String timeCloseSegments[] = timeCloseStr.split(":");
+  //   String timeCloseHrStr = timeCloseSegments[0];
+  //   String timeCloseMinStr = timeCloseSegments[1];
+
+  //   Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+  //   Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
+  //   Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+  //   Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+
+  //   ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
+  //   Integer hour = 0;
+  //   Integer min = 0;
+
+  //   // whiel hr is less than 25/midnight
+  //   for (int i = 0; i < 48; i++) { //48 30 min increments
+  //     if (hour >= timeOpenHr && hour < timeCloseHr) {
+  //       if (hour == timeOpenHr && min < timeOpenMin) {
+  //         min = 30;
+  //       }
+  //       if (hour == timeOpenHr && min < timeOpenMin) {
+  //         min = 0;
+  //         hour++;
+  //       }
+
+  //       String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+  //       Timeslot ts = new Timeslot();
+  //       ts.setTime(time);
+
+  //       validTimeSlots.add(ts);
+  //     }
+
+  //     if (min > 60) {
+  //       min = 30;
+  //     } else {
+  //       hour++;
+  //       min = 0;
+  //     }
+  //   }
+
+  //   return "Booking&ViewingCourses/teeSheetOwner";
+  // }catch (Exception e) {
+  //   model.put("message", e.getMessage());
+  //   return "LandingPages/error";
+  // }
+  // }
 
 //********************************
 // MODIFY COURSE DETAILS -- OWNER
@@ -1521,6 +1597,7 @@ public class Main {
 
       stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
       stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
 
       return "redirect:/tee-rific/scorecards/" + user;
     } catch (Exception e) {
