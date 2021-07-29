@@ -35,10 +35,9 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
 
-                    <h1 id="city">Vancouver</h1>
-                    <h2 id= "open_hours">9</h2>
-                    <h2 id= "close_hours">20</h2>
-                    
+                    <h1> City: <span id="city" th:text="${city}"></span></h1>
+                    <h2> Open from <span id= "open_hours" th:text="${OpenTime}"></span>:00 to <span id= "close_hours" th:text="${CloseTime}"></span>:00</h2>
+
                     <div class="titleFont dynamicSize">Available Times</div>
 
                     <form method="post" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}" th:object="${booking}">

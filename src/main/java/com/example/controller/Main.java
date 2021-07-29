@@ -1093,7 +1093,7 @@ public class Main {
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
-
+    
     String courseName = convertFromSnakeCase(pathVars.get("courseName"));
     String gameIDStr = pathVars.get("gameID");
     Integer gameID = Integer.parseInt(gameIDStr);
@@ -1101,7 +1101,13 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE courseName='"+courseName+"'");
+
+      
+
+      
+
       courseInfo.next();
+
 
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
@@ -1125,7 +1131,7 @@ public class Main {
       // Time timeClose = Time.valueOf(timeCloseStr);
 
       // Create array of valid teetimes based on open / closing times of specified course
-      // TODO: (if we have time) extend so to consider gold course capacity
+      // TODO: (if we have time) extend so to consider golf course capacity
       ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
       Integer hour = 0;
       Integer min = 0;
@@ -1155,15 +1161,20 @@ public class Main {
         }
       }
 
+      String city = courseInfo.getString("city");
+
       TeeTimeBooking booking = new TeeTimeBooking();
       booking.setUsername(user);
       courseName = convertToSnakeCase(courseName);
-
       model.put("timeSlots", validTimeSlots);
       model.put("courseName", courseName);
       model.put("gameID", gameID);
       model.put("username", user);
       model.put("booking", booking);
+      model.put("city", city);
+      model.put("OpenTime", timeOpenHr);
+      model.put("CloseTime", timeCloseHr);
+      
       return "Booking&ViewingCourses/bookingTimes"; 
 
     } catch (Exception e) {
@@ -1783,9 +1794,30 @@ public class Main {
         courseHoles.add(hole);
       }
 
+            // // I copied this, trim it down
+            // String timeOpenStr = courseInfo.getString("timeOpen");
+            // // timeOpenStr = timeOpenStr + ":00";
+            // String timeOpenSegments[] = timeOpenStr.split(":");
+            // String timeOpenHrStr = timeOpenSegments[0];
+      
+            // String timeCloseStr = courseInfo.getString("timeClose");
+            // // timeCloseStr = timeCloseStr + ":00";
+            // String timeCloseSegments[] = timeCloseStr.split(":");
+            // String timeCloseHrStr = timeCloseSegments[0];
+      
+            // Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+            // Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+
+
+      // String city = courseInfo.getString("city");
+
       model.put("courseName", courseID);
       model.put("username", user);
       model.put("course", courseHoles);
+      // model.put("city", city);
+      // model.put("OpenTime", timeOpenHr);
+      // model.put("CloseTime", timeCloseHr);
+      
 
       return "Booking&ViewingCourses/courseInformation";
     }catch (Exception e) {
