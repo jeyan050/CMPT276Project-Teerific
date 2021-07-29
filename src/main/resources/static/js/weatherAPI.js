@@ -1,6 +1,3 @@
-
-//change to http://api.openweathermap.org/data/2.5/weather?q=" + golfCourseCity + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7
-
 var offset;
 var city = document.getElementById("city").innerHTML;
 var opening_time = parseInt(document.getElementById("open_hours").innerHTML);
