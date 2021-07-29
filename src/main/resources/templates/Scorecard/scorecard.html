@@ -33,15 +33,15 @@
                     <div class="titleFont dynamicSize">Scorecards</div>
                     <table>
                         <tr>
-                            <th>Course</th>
                             <th>Date</th>
-                            <th>Format</th>
+                            <th>Course</th>
+                            <th>Game ID</th>
                             <th></th>
                         </tr>
                         <tr th:each="scorecard: ${scorecards}">
-                            <td th:text="${scorecard.coursePlayed}"></td>
                             <td th:text="${scorecard.datePlayed}"></td>
-                            <td th:text="${scorecard.formatPlayed}"></td>
+                            <td th:text="${scorecard.coursePlayed}"></td>
+                            <td th:text="${scorecard.gameID}"></td>
                             <td>
                                 <form action="#" method="get" th:action="${'/tee-rific/scorecards/' + username + '/' + scorecard.coursePlayedSC + '/' + scorecard.gameID}">
                                     <button type="Submit">View</button>

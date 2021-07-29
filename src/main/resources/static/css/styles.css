@@ -151,19 +151,25 @@ table input {
     background-size: cover;
 }
 
-#ownerErrorMessage {
+#completeGame {
     display: none;
-    color: red;
-    font-weight: bold;
+    margin: 30px;
 }
-
 
 
 /**************************/
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.instruction {
+    padding: 20px;
+}
 
+.errorMessage {
+    display: none;
+    color: red;
+    font-weight: bold;
+}
 
 .ownerTable {
     width: 80%;
@@ -173,15 +179,24 @@ table input {
     width: 25%;
 }
 
-.ownerTableDisplayCell{
+.ownerTableDisplayCell, .scoredcardDisplayCell{
     width: 100%;
 }
 
-.ownerTableInputCell{
+.ownerTableInputCell, .scorecardTableInputCell {
     width: 90%;
     display: none;
     border-radius: 10%;
 }
+
+.scorecardTable {
+    width: 90%;
+}
+
+.scorecardTableCell {
+    width: 15%;
+}
+
 
 /* source: https://dev.to/akshay_rajput/keep-footer-at-bottom-of-page-using-flexbox-4a6f */
 .pageWrap {
@@ -385,3 +400,13 @@ table input {
     background:#F90;
     color:#FFF;
 }
+
+
+.courseScorecardLogo {
+    width: 50%;
+    border-radius: 50%;
+    border: 0.25px solid black;
+    background-size: cover;
+    margin: 25px;
+}
+

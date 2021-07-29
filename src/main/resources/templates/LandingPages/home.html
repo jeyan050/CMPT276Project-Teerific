@@ -45,9 +45,9 @@
                 <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/courses/' + username}">Courses</a>
                 </li>
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/scorecards/' + username}">Scorecards</a>
-                </li> -->
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/tournament/' + username}">Tournaments</a>
                   </li>
@@ -73,9 +73,9 @@
                     <button id="coursesButton" class="homePageButton" type="submit">Browse Courses</button>
                 </form> 
 
-                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/scorecards/' + username}">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/scorecards/' + username}">
                     <button id="scorecardButton" class="homePageButton" type="submit">Scorecards</button>
-                </form>  -->
+                </form> 
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/tournament/' + username}">
                     <button id="tournamentsButton" class="homePageButton" type="submit">Tournaments</button>

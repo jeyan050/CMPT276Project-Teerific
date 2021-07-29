@@ -3,6 +3,7 @@ package com.example.models;
 import java.util.ArrayList;
 
 public class Scorecard {
+    private boolean active;
     private String datePlayed;
     private String userName;
     private String coursePlayed;
@@ -13,6 +14,15 @@ public class Scorecard {
     private String attestor;
     private ArrayList groupMembers;
     private String gameID;
+
+    public boolean isActive(){
+        return this.active;
+    }
+
+    public void setActive(boolean active){
+        this.active = active;
+    }
+
 
     public String getDatePlayed() {
         return this.datePlayed;

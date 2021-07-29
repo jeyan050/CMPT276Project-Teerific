@@ -43,9 +43,9 @@ function displayImage(event) {
 }
 
 // insert golf sound
-var golfSwingSound = new Audio("http://freesoundeffect.net/sites/default/files/golf-driver-3-sound-effect-62710572.mp3");
+var golfSwingSound = new Audio("https://ringtons.s3.eu-west-2.amazonaws.com/th5s43yk.mp3");
 var numButtons = document.querySelectorAll("button").length;
-var timeoutLength = 350; // in milliseconds (perfect timing for above mp3)
+var timeoutLength = 500; // in milliseconds (perfect timing for above mp3)
     
 
 function submitForm(target){
