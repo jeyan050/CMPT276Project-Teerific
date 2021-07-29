@@ -166,6 +166,17 @@ table input {
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.bannerText {
+    color: #eae2b6;
+    font-family: 'Indie Flower', cursive;
+}
+
+.carousel-inner {
+    margin: 0px;
+    padding: 0px;
+}
+
+
 .instruction {
     padding: 20px;
 }
@@ -299,6 +310,13 @@ table input {
 .sandBackdrop {
     background-color: #eae2b6;
     background-image: url("https://www.transparenttextures.com/patterns/grey-sandbag.png");
+}
+
+.bannerBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/snow.png");
+    border-top: 1px solid #EAE2B6;
+    border-bottom: 1px solid #EAE2B6; 
 }
 
 .socialIcon {
