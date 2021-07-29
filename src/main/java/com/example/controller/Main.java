@@ -327,7 +327,7 @@ public class Main {
       stmt.executeUpdate(insertUser);
 
       // Initialize rental inventory and bookings of golf course - Chino
-      ownerCreateInventory(connection, updatedCourseName);
+      ownerCreateInventory(connection, owner.getCourseName());
       ownerCreateBookingsTable(connection);
 
       // check if username or course name exists for already existing user
@@ -373,9 +373,8 @@ public class Main {
   String getSQLNewTableOwner() {
     return  "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
-            "courseLogo varchar(800), " + 
-            "directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
+            "courseLogo varchar(800), directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
+            "timeClose varchar(10), bookingInterval varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
@@ -383,12 +382,12 @@ public class Main {
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
-            "timeClose, userName, password, firstName, lastName, email, yardage, gender, rating, numberRatings) VALUES ('" +
+            "timeClose, bookingInterval, userName, password, firstName, lastName, email, yardage, gender, rating, numberRatings) VALUES ('" +
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
             owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
             owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
-            owner.getTimeClose() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
+            owner.getTimeClose() + "','" + owner.getBookingInterval() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
             owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "', '" + owner.getNumberRatings() + "')";
   }
 
@@ -399,7 +398,8 @@ public class Main {
             owner.getWebsite() + "' and phoneNumber='" + owner.getPhoneNumber() + "' and courseLogo='" +
             owner.getCourseLogo() + "' and directionsToCourse='" + owner.getDirectionsToCourse() + "' and description='" +
             owner.getDescription() + "' and weekdayRates='" + owner.getWeekdayRates() + "' and weekendRates='" +
-            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and userName='" + owner.getUsername() +
+            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and timeOpen='" + owner.getTimeOpen() + 
+            "' and timeClose='" + owner.getTimeClose() +  "' and bookingInterval='" + owner.getBookingInterval() + "' and userName='" + owner.getUsername() +
             "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
             "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() +
             "' and rating='" + owner.getRating() + "'and numberRatings='" + owner.getNumberRatings() + "'";
@@ -832,6 +832,82 @@ public class Main {
     }
   }
 
+//********************************
+// BROWSE TEE-SHEET -- OWNER
+//********************************
+
+  // @GetMapping(
+  //     path = "/tee-rific/teeSheet/{username}"
+  // )
+  // public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+  //   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+  //     return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+  //   }
+
+  //   if(null == (request.getSession().getAttribute("username"))) {
+  //     return "redirect:/";
+  //   }
+
+  // try (Connection connection = dataSource.getConnection()) {
+  //   Statement stmt = connection.createStatement();
+  //   ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+  //   courseInfo.next();
+
+  //   // Convert DB data into ints for comparison
+  //   String timeOpenStr = courseInfo.getString("timeOpen");
+  //   // timeOpenStr = timeOpenStr + ":00";
+  //   String timeOpenSegments[] = timeOpenStr.split(":");
+  //   String timeOpenHrStr = timeOpenSegments[0];
+  //   String timeOpenMinStr = timeOpenSegments[1];
+
+  //   String timeCloseStr = courseInfo.getString("timeClose");
+  //   // timeCloseStr = timeCloseStr + ":00";
+  //   String timeCloseSegments[] = timeCloseStr.split(":");
+  //   String timeCloseHrStr = timeCloseSegments[0];
+  //   String timeCloseMinStr = timeCloseSegments[1];
+
+  //   Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+  //   Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
+  //   Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+  //   Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+
+  //   ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
+  //   Integer hour = 0;
+  //   Integer min = 0;
+
+  //   // whiel hr is less than 25/midnight
+  //   for (int i = 0; i < 48; i++) { //48 30 min increments
+  //     if (hour >= timeOpenHr && hour < timeCloseHr) {
+  //       if (hour == timeOpenHr && min < timeOpenMin) {
+  //         min = 30;
+  //       }
+  //       if (hour == timeOpenHr && min < timeOpenMin) {
+  //         min = 0;
+  //         hour++;
+  //       }
+
+  //       String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+  //       Timeslot ts = new Timeslot();
+  //       ts.setTime(time);
+
+  //       validTimeSlots.add(ts);
+  //     }
+
+  //     if (min > 60) {
+  //       min = 30;
+  //     } else {
+  //       hour++;
+  //       min = 0;
+  //     }
+  //   }
+
+  //   return "Booking&ViewingCourses/teeSheetOwner";
+  // }catch (Exception e) {
+  //   model.put("message", e.getMessage());
+  //   return "LandingPages/error";
+  // }
+  // }
 
 //********************************
 // MODIFY COURSE DETAILS -- OWNER
@@ -1323,7 +1399,7 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       EquipmentCart cart = getUserCartContentsFromDB(connection, user);
-      updateInventory(connection, cart, courseNameSC);
+      updateInventory(connection, cart, courseName);
       stmt.executeUpdate("DROP TABLE cart_"+user+"");
 
       // Create table of rentals so employees can keep track
@@ -1376,12 +1452,12 @@ public class Main {
       String courseName = ownerGetCourseName(connection, user);
       String courseNameSC = convertToSnakeCase(courseName);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseNameSC+"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory WHERE courseName = '"+courseName+"'");
       ArrayList<Equipment> eqs = new ArrayList<Equipment>();
       
       while (rs.next()) {
         Equipment eq = new Equipment();
-        eq.setItemName(rs.getString("name"));
+        eq.setItemName(rs.getString("itemName"));
         eq.setStock(rs.getInt("stock"));
 
         eqs.add(eq);
@@ -1425,7 +1501,7 @@ public class Main {
     try (Connection connection = dataSource.getConnection()) {
       String courseName = ownerGetCourseName(connection, user);
       String courseNameSC = convertToSnakeCase(courseName);
-      ownerUpdateInventory(connection, cart, courseNameSC);
+      ownerUpdateInventory(connection, cart, courseName);
 
       return "redirect:/tee-rific/golfCourseDetails/inventory/" + user;
 
@@ -1518,10 +1594,11 @@ public class Main {
       updateInv.setNumClubs(clubs);
 
       //subtract from inventory
-      updateInventory(connection, updateInv, courseNameSC); //TODO: CHINO -- you know what to do!
+      updateInventory(connection, updateInv, courseName);
 
       stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
       stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
 
       return "redirect:/tee-rific/scorecards/" + user;
     } catch (Exception e) {
@@ -1533,7 +1610,7 @@ public class Main {
 
   private void updateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory_"+courseName+"");
+    ResultSet rs = stmt.executeQuery("SELECT * FROM inventory WHERE courseName = '"+courseName+"'");
 
     // Calculate updated values for stock
     rs.next();
@@ -1547,9 +1624,9 @@ public class Main {
     int updatedClubStock = clubStock - cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedBallStock+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedGolfCartStock+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+updatedClubStock+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedBallStock+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedGolfCartStock+"' WHERE itemName = 'carts' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+updatedClubStock+"' WHERE itemName = 'clubs' AND courseName = '"+courseName+"'");
   }
 
 
@@ -1569,10 +1646,10 @@ public class Main {
 
   private void ownerCreateInventory(Connection connection, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory_"+courseName+" (name varchar(100), stock integer DEFAULT 0)");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('balls')");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('carts')");
-    stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('clubs')");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS inventory (courseName varchar(100), itemName varchar(100), stock integer DEFAULT 0)");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'balls')");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'carts')");
+    stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'clubs')");
   }
 
 
@@ -1603,9 +1680,9 @@ public class Main {
     // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumBalls()+"' WHERE name = 'balls'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumCarts()+"' WHERE name = 'carts'");
-    stmt.executeUpdate("UPDATE inventory_"+courseName+" SET stock ='"+cart.getNumClubs()+"' WHERE name = 'clubs'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE itemName = 'carts' AND courseName = '"+courseName+"'");
+    stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE itemName = 'clubs' AND courseName = '"+courseName+"'");
   }
   
   private String ownerGetCourseName(Connection connection, String username) throws Exception {
@@ -2677,18 +2754,20 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   //       inline += scanner.nextLine();
   //     }
   //     scanner.close();
-  
-  //   JSONParser parse = new JSONParser();
-  //   JSONObject data_obj = (JSONObject) parse.parse(inline);
+    //   JSONParser parse = new JSONParser();
+  //     JSONObject data_obj = (JSONObject) parse.parse(inline);
+
+  //     JSONObject objects = (JSONObject) data_obj.get("data I want here");
+
+// for (int i = 0; i < objects.size(); i++)
+// {
+//   JSONObject x = (JSONObject) objects.get(i);
+
+// }
   //   }
+  
+
   // }
-
-
-
-  //read the weather data I want
-
-  // JSONObject object = (JSONObject) data_obj.get("data I want here");
-
 
 
 }

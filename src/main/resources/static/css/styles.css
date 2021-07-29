@@ -400,6 +400,7 @@ table input {
     background:#F90;
     color:#FFF;
 }
+<<<<<<< HEAD
 
 
 .courseScorecardLogo {
@@ -410,3 +411,48 @@ table input {
     margin: 25px;
 }
 
+=======
+  .weather-container  {
+    text-align: center;
+  }
+  .weather{
+    font-size: 22px;
+    margin: 0;
+  }
+  .temp
+  {
+      font-size: 40;
+      margin: 0;
+      font-weight: bold;
+  }
+
+  .drop_button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+  }
+
+  /* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown_content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown_content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .drop_button {background-color: #3e8e41;}
+>>>>>>> dd180cd523f8ca0e0da185965e0317a34499f044
