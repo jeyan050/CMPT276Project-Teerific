@@ -30,7 +30,6 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Create Tournament</div>
-                    <h1>later this page should only be accessable to the owner account, ill change it after implimentation and testing is finished</h1>
                     <form action="#" method="post" th:action="${'/tee-rific/createTournament/' + username}" th:object="${newTournament}">
                         <input type="text" class="inputBox" th:field="*{name}" placeholder="Tournament Name"> <br>
                         Date: <input type="date" class="inputBox" th:field="*{date}" placeholder="Date"> <br>

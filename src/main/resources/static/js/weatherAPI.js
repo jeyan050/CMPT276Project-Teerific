@@ -137,7 +137,7 @@ function getWeatherData(i)
         var weather_desc = data.list[i].weather[0].description;
         var wind = data.list[i].wind.speed;
         var gust = data.list[i].wind.gust;
-        var prob_rain = data.list[i].pop;
+        var prob_rain = (data.list[i].pop)*100;
         // var rain_vol = data.list[i].rain.3h;
 
         $('.forcast_title').text(info_date.toDateString() + ", " + info_date.getHours() + ":00");
@@ -146,8 +146,8 @@ function getWeatherData(i)
         $('.icon').attr('src',icon);
         $('.weather').text(weather);
         $('.weather_description').text(weather_desc);
-        $('.temp').text("Temperature:" + temp +  '\u00B0C');
-        $('.temp_feels_like').text("Feels like:" + temp_feel +  '\u00B0C');
+        $('.temp').text("Temperature: " + temp +  '\u00B0C');
+        $('.temp_feels_like').text("Feels like: " + temp_feel +  '\u00B0C');
         $('.wind').text("Wind speed: " + wind + "  m/s");
         $('.gust').text("Gusts up to: " + gust + "  m/s");
         $('.prob_rain').text(prob_rain + "% chance of Rain");
