@@ -1796,29 +1796,35 @@ public class Main {
         courseHoles.add(hole);
       }
 
-            // // I copied this, trim it down
-            // String timeOpenStr = courseInfo.getString("timeOpen");
-            // // timeOpenStr = timeOpenStr + ":00";
-            // String timeOpenSegments[] = timeOpenStr.split(":");
-            // String timeOpenHrStr = timeOpenSegments[0];
-      
-            // String timeCloseStr = courseInfo.getString("timeClose");
-            // // timeCloseStr = timeCloseStr + ":00";
-            // String timeCloseSegments[] = timeCloseStr.split(":");
-            // String timeCloseHrStr = timeCloseSegments[0];
-      
-            // Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-            // Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      String getOwnerInfo = "SELECT * FROM  owners WHERE courseName='"+ convertFromSnakeCase(convertedName) + "'";
 
+      ResultSet info = stmt.executeQuery(getOwnerInfo);
 
-      // String city = courseInfo.getString("city");
+      info.next();
+
+      String timeOpenStr = info.getString("timeOpen");
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      
+      String timeCloseStr = info.getString("timeClose");
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      
+      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+
+      String city = info.getString("city");
+      String country = info.getString("country");
+
+      //ERROR: ResultSet not positioned properly, perhaps you need to call next.
 
       model.put("courseName", courseID);
       model.put("username", user);
       model.put("course", courseHoles);
-      // model.put("city", city);
-      // model.put("OpenTime", timeOpenHr);
-      // model.put("CloseTime", timeCloseHr);
+      model.put("city", city);
+      model.put("country", country);
+      model.put("OpenTime", timeOpenHr);
+      model.put("CloseTime", timeCloseHr);
       
 
       return "Booking&ViewingCourses/courseInformation";

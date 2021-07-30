@@ -41,9 +41,9 @@
                         <button type="submit" class="button">Give Rating</button>
                     </form> <br>
                     <!-- make this stuff depend on the course -->
-                    <h1 id="city" th:text="${city}"></h1>
-                    <h2 id= "open_hours" th:text="${OpenTime}"></h2>
-                    <h2 id= "close_hours" th:text="${CloseTime}"></h2>
+                    <h1> City: <span id="city" th:text="${city}"></span></h1>
+                    <h2> Country: <span id="country" th:text="${country}"></span></h2>
+                    <h2> Open from <span id= "open_hours" th:text="${OpenTime}"></span>:00 to <span id= "close_hours" th:text="${CloseTime}"></span>:00</h2>
                     <table>
                         <tr>
                             <th>Hole #</th>
