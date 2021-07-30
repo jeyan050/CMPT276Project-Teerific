@@ -1162,6 +1162,7 @@ public class Main {
       }
 
       String city = courseInfo.getString("city");
+      String country = courseInfo.getString("country");
 
       TeeTimeBooking booking = new TeeTimeBooking();
       booking.setUsername(user);
@@ -1172,6 +1173,7 @@ public class Main {
       model.put("username", user);
       model.put("booking", booking);
       model.put("city", city);
+      model.put("country", country);
       model.put("OpenTime", timeOpenHr);
       model.put("CloseTime", timeCloseHr);
       
