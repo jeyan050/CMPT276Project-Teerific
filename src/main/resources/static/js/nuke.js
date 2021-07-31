@@ -1,5 +1,5 @@
 var nukeSound = new Audio("https://www.myinstants.com/media/sounds/tactical-nuke.mp3");
-var timeoutLength = 12000; // in milliseconds (perfect timing for above mp3)
+// var timeoutLength = 12000; // in milliseconds (perfect timing for above mp3)
 
 
 function nextNum(count){
