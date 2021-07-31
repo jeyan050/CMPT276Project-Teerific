@@ -450,7 +450,7 @@ public class Main {
           path = "/tee-rific/home/{username}"
   )
   public String getHomePage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception{
-
+    
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
@@ -2765,6 +2765,68 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     request.getSession().invalidate();
     return "redirect:/";
   }
+
+
+  @GetMapping(
+    path = "/tee-rific/nuke/{user}"
+  )
+  public String nukeCompleted(@PathVariable("user")String user, HttpServletRequest request){
+
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
+    }
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+      System.out.println("System Database Has Been Nuked!");
+      return "LandingPages/nuked";
+  }//nukeCompleted()
+
+
+  @PostMapping(
+    path = "/tee-rific/nuke/{user}"
+  )
+  public String nukeDB(@PathVariable("user")String user, Map<String, Object> model){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+
+      //delete course tables
+      String getOwners = getSQLNewTableOwner();     //create new owner table if it does not already exist
+      stmt.executeUpdate(getOwners);
+
+      getOwners = "SELECT * From owners";
+      ResultSet courseDetails = stmt.executeQuery(getOwners);
+      
+
+      ArrayList<String> courses = new ArrayList<String>();
+
+      while(courseDetails.next()){
+        courses.add(convertToSnakeCase(courseDetails.getString("courseName")));
+      }
+
+      for(int i = 0; i < courses.size(); i++){
+        String removeCourseTable = "DROP TABLE IF EXISTS " + courses.get(i);
+        stmt.executeUpdate(removeCourseTable);
+        System.out.println("Removed Course Table: " + courses.get(i));
+      }
+
+      stmt.executeUpdate("DROP TABLE IF EXISTS owners");       //delete owners
+      stmt.executeUpdate("DROP TABLE IF EXISTS bookings");     //delete bookings
+      stmt.executeUpdate("DROP TABLE IF EXISTS scorecards");   //delete scorecards
+      stmt.executeUpdate("DROP TABLE IF EXISTS inventory");    //delete inventory
+      stmt.executeUpdate("DROP TABLE IF EXISTS rentals");      //delete rentals
+      stmt.executeUpdate("DROP TABLE IF EXISTS tournaments");  //delete tournaments
+      stmt.executeUpdate("DROP TABLE IF EXISTS users");        //delete users
+    
+      System.out.println("System Is In Process Of Deletion");
+      return "redirect:/tee-rific/nuke/" + user;
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }//
 
   // try 
   // {

@@ -161,6 +161,37 @@ table input {
     margin: 30px;
 }
 
+#nukeButton {
+    height: 100px;
+    width: 100px;
+    position: relative;
+    bottom: 20px;
+    background-image: url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/072fa096-b852-4161-ae5d-8f42f037c051/d3j18qt-a114f4ca-2263-4413-8553-a0b283d6f232.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzA3MmZhMDk2LWI4NTItNDE2MS1hZTVkLThmNDJmMDM3YzA1MVwvZDNqMThxdC1hMTE0ZjRjYS0yMjYzLTQ0MTMtODU1My1hMGIyODNkNmYyMzIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.8KDAfYu6uAdbwJirM1LteNtnELRHSTQpy2uIa1QUnFU");
+    background-size: cover;
+    border-radius: 100%;
+}
+
+#nukeButton:hover {
+    border: 3px solid #A21010;
+}
+
+#countdown {
+    display: none;
+    position: fixed;
+    font-size: 50vh;
+    width: 100vw;
+    font-weight: bold;
+    background-color: yellow;
+    background-image: url("https://www.transparenttextures.com/patterns/black-felt.png");
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-repeat: repeat;
+}
+
+.nukeBackdrop {
+    background-image: url("https://c.wallhere.com/photos/91/e3/background_tapes_radiation_hazard_wall-734011.jpg!d");
+    background-size: cover;
+}
 
 /**************************/
 /* CLASSES (MULTIPLE USE) */
@@ -318,6 +349,8 @@ table input {
     border-top: 1px solid #EAE2B6;
     border-bottom: 1px solid #EAE2B6; 
 }
+
+
 
 .socialIcon {
     margin: 20px 10px;
