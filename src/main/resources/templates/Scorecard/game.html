@@ -76,11 +76,6 @@
                     </table>
 
                     <h4 class="instruction" id="strokeInstruction"> Click On A 'Stroke' Cell To Edit </h4>
-                    <div>
-                        <h4 class="instruction">Handicap Score:
-                            <input type="checkbox" id="handicapCheckbox">
-                        </h4>
-                    </div>
 
                     <form action="#" method="post" th:action="${'/tee-rific/scorecards/' + username + '/' + courseName + '/' + gameID}" th:object="${scoresWrapper}">
                         <!-- status of scorecard -->

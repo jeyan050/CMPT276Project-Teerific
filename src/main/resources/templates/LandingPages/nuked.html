@@ -27,7 +27,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     
-    <title>Admin Home</title>
+    <title>Nuked</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -40,54 +40,51 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/admin/users">Users</a>
+                  <a class="nav-link">Users</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/admin/owners">Owners & Courses</a>
+                  <a class="nav-link">Owners & Courses</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/tee-rific/admin/tournaments">Tournaments</a>
+                  <a class="nav-link" >Tournaments</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/tee-rific/login">Log Out</a>
+                    <a class="nav-link">Log Out</a>
                   </li>
               </ul>
             </div>
           </nav>
          
         <div class="homePageContainer">
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/admin/users}">
-                    <button id="adminUsersButton" class="homePageButton" type="submit">Users</button>
+                <form class="homePageButtonBorder woodBackdrop">
+                    <button id="adminUsersButton" class="homePageButton">Users</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/admin/owners}">
-                    <button id="adminOwnersCoursesButton" class="homePageButton" type="submit">Owners & Courses</button>
+                <form class="homePageButtonBorder woodBackdrop">
+                    <button id="adminOwnersCoursesButton" class="homePageButton">Owners & Courses</button>
                 </form> 
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/admin/tournaments}">
-                    <button id="adminTournamentsButton" class="homePageButton" type="submit">Tournaments</button>
+                <form class="homePageButtonBorder woodBackdrop">
+                    <button id="adminTournamentsButton" class="homePageButton">Tournaments</button>
                 </form>
 
-                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/login}">
-                    <button id="logoutAdminButton" class="homePageButton" type="submit">Log Out</button>
+                <form class="homePageButtonBorder woodBackdrop">
+                    <button id="logoutAdminButton" class="homePageButton">Log Out</button>
                 </form>
         </div>
         <footer>
-          <form class="active" method="post" th:action="@{/tee-rific/nuke/admin}">
-            <button id="nukeButton"></button>
-          </form>
-          <form>
-            <button class="notActive" id="nukeButton"></button>
-        </form>
-            <div class= "woodBackdrop footer">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
-                <p>© Copyright 2021 Tee-rific</p>
-              </div>
-              <script src="/js/nuke.js" type="text/javascript"> </script>
-            </footer>
+            <form method="post" th:action="@{/tee-rific/logout}">
+              <button id="nukeButton"></button>
+            </form>
+              <div class= "woodBackdrop footer">
+                  <i class="socialIcon fab fa-facebook-f"></i>
+                  <i class="socialIcon fab fa-twitter"></i>
+                  <i class="socialIcon fab fa-instagram"></i>
+                  <i class="socialIcon fas fa-envelope"></i>
+                  <p>© Copyright 2021 Tee-rific</p>
+                </div>
+                <script src="/js/nuked.js" type="text/javascript"> </script>
+              </footer>
     </div>
 </body>
 </html>

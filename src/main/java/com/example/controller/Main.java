@@ -449,6 +449,7 @@ public class Main {
   @GetMapping(
           path = "/tee-rific/home/{username}"
   )
+
   public String getHomePage(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
 
     if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
@@ -1205,6 +1206,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       }
 
       String city = courseInfo.getString("city");
+      String country = courseInfo.getString("country");
 
       TeeTimeBooking booking = new TeeTimeBooking();
       booking.setUsername(user);
@@ -1215,6 +1217,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       model.put("username", user);
       model.put("booking", booking);
       model.put("city", city);
+      model.put("country", country);
       model.put("OpenTime", timeOpenHr);
       model.put("CloseTime", timeCloseHr);
       
@@ -1835,29 +1838,35 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         courseHoles.add(hole);
       }
 
-            // // I copied this, trim it down
-            // String timeOpenStr = courseInfo.getString("timeOpen");
-            // // timeOpenStr = timeOpenStr + ":00";
-            // String timeOpenSegments[] = timeOpenStr.split(":");
-            // String timeOpenHrStr = timeOpenSegments[0];
-      
-            // String timeCloseStr = courseInfo.getString("timeClose");
-            // // timeCloseStr = timeCloseStr + ":00";
-            // String timeCloseSegments[] = timeCloseStr.split(":");
-            // String timeCloseHrStr = timeCloseSegments[0];
-      
-            // Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-            // Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      String getOwnerInfo = "SELECT * FROM  owners WHERE courseName='"+ convertFromSnakeCase(convertedName) + "'";
 
+      ResultSet info = stmt.executeQuery(getOwnerInfo);
 
-      // String city = courseInfo.getString("city");
+      info.next();
+
+      String timeOpenStr = info.getString("timeOpen");
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      
+      String timeCloseStr = info.getString("timeClose");
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      
+      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+
+      String city = info.getString("city");
+      String country = info.getString("country");
+
+      //ERROR: ResultSet not positioned properly, perhaps you need to call next.
 
       model.put("courseName", courseID);
       model.put("username", user);
       model.put("course", courseHoles);
-      // model.put("city", city);
-      // model.put("OpenTime", timeOpenHr);
-      // model.put("CloseTime", timeCloseHr);
+      model.put("city", city);
+      model.put("country", country);
+      model.put("OpenTime", timeOpenHr);
+      model.put("CloseTime", timeCloseHr);
       
 
       return "Booking&ViewingCourses/courseInformation";
@@ -2798,6 +2807,68 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     request.getSession().invalidate();
     return "redirect:/";
   }
+
+
+  @GetMapping(
+    path = "/tee-rific/nuke/{user}"
+  )
+  public String nukeCompleted(@PathVariable("user")String user, HttpServletRequest request){
+
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
+    }
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+      System.out.println("System Database Has Been Nuked!");
+      return "LandingPages/nuked";
+  }//nukeCompleted()
+
+
+  @PostMapping(
+    path = "/tee-rific/nuke/{user}"
+  )
+  public String nukeDB(@PathVariable("user")String user, Map<String, Object> model){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+
+      //delete course tables
+      String getOwners = getSQLNewTableOwner();     //create new owner table if it does not already exist
+      stmt.executeUpdate(getOwners);
+
+      getOwners = "SELECT * From owners";
+      ResultSet courseDetails = stmt.executeQuery(getOwners);
+      
+
+      ArrayList<String> courses = new ArrayList<String>();
+
+      while(courseDetails.next()){
+        courses.add(convertToSnakeCase(courseDetails.getString("courseName")));
+      }
+
+      for(int i = 0; i < courses.size(); i++){
+        String removeCourseTable = "DROP TABLE IF EXISTS " + courses.get(i);
+        stmt.executeUpdate(removeCourseTable);
+        System.out.println("Removed Course Table: " + courses.get(i));
+      }
+
+      stmt.executeUpdate("DROP TABLE IF EXISTS owners");       //delete owners
+      stmt.executeUpdate("DROP TABLE IF EXISTS bookings");     //delete bookings
+      stmt.executeUpdate("DROP TABLE IF EXISTS scorecards");   //delete scorecards
+      stmt.executeUpdate("DROP TABLE IF EXISTS inventory");    //delete inventory
+      stmt.executeUpdate("DROP TABLE IF EXISTS rentals");      //delete rentals
+      stmt.executeUpdate("DROP TABLE IF EXISTS tournaments");  //delete tournaments
+      stmt.executeUpdate("DROP TABLE IF EXISTS users");        //delete users
+    
+      System.out.println("System Is In Process Of Deletion");
+      return "redirect:/tee-rific/nuke/" + user;
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }//
 
   // try 
   // {

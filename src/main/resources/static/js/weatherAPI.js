@@ -5,7 +5,7 @@ var closing_time = parseInt(document.getElementById("close_hours").innerHTML);
 
 window.addEventListener("load", function()
 {
-    $.getJSON("https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
+    $.getJSON("https://api.openweathermap.org/data/2.5/forecast?q=" + city + "," + country + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
     {
         var first_data = new Date((data.list[0].dt)*1000);
         offset = Math.floor((first_data.getHours())/3);
@@ -124,7 +124,7 @@ document.getElementById("date6_8").onclick = function () {getWeatherData(47 - of
 
 function getWeatherData(i)
 {
-    $.getJSON("https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
+    $.getJSON("https://api.openweathermap.org/data/2.5/forecast?q=" + city + "," + country + "&units=metric&appid=96bf787bdb96400f9a642360f1e901d7", function(data)
     {
         console.log(i);
         var info_date = new Date((data.list[i].dt)*1000); //it automatically adjusts for some dumb ass reason even though the documentatino says it does not, I spent 3 hours trying to fix that problem

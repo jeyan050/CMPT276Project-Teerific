@@ -87,7 +87,6 @@ function sumColumns(){
 
 
 function calculateScore(){
-    var handicap = document.querySelectorAll("#handicapCheckbox")[0].checked;
     var holesPlayed = 0;
     for(var i = 0; i < document.querySelectorAll(".scoreCell").length; i++){
         var scoreCell = document.querySelectorAll(".scoreCell")[i];
@@ -95,12 +94,7 @@ function calculateScore(){
         var par = document.querySelectorAll(".parCell")[i].lastElementChild.value;
 
         if(strokes > 0){
-            if(handicap){
-                var handicapCell = document.querySelectorAll(".handicapCell")[i].lastElementChild.value;
-                scoreCell.value = Number(strokes) - Number(par) - Number(handicapCell);
-            }else{
-                scoreCell.value = Number(strokes) - Number(par);
-            }
+            scoreCell.value = Number(strokes) - Number(par);
             scoreCell.innerText = scoreCell.value;
             holesPlayed++;
         }else{
