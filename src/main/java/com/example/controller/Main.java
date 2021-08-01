@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.lang.Integer;
 
+import java.time.LocalDate;
+
 @Controller
 @SpringBootApplication
 public class Main {
@@ -937,8 +939,25 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       if (newDate.getDate() == null){
         Statement getDate = connection.createStatement();
         ResultSet date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
-        date.next();
-        dates = date.getString("date");
+        
+        int checkIfEmpty = 0;
+        while (date.next()){
+          checkIfEmpty++;
+        }
+        
+        if (checkIfEmpty > 0){
+          date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+          date.next();
+          dates = date.getString("date");
+        } else {
+          LocalDate currentDate = LocalDate.now();
+          dates = currentDate.toString();
+        }
+
+        if (dates == null || dates.isEmpty()){
+          LocalDate currentDate = LocalDate.now();
+          dates = currentDate.toString();
+        }
       } else {
         dates = newDate.getDate();
       }
@@ -964,6 +983,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
           String teeTime = time + ":00";
 
+          ts.setStatus("EMPTY");
           Statement checkOccupency = connection.createStatement();
           ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
           
@@ -977,7 +997,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
             String newStatus = countBookings + " Bookings";
             ts.setStatus(newStatus);
           }
-
           teeSheet.add(ts);
         }
 
