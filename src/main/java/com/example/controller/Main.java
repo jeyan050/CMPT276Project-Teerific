@@ -795,7 +795,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
             String updateUserInfo = "UPDATE owners SET lastname='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);
           } else {
-            System.out.println("IN:"+column);
             String updateUserInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);      
           }
@@ -807,6 +806,11 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           stmtOwner.executeUpdate(updateOwnerInfo);
         }
       }
+
+      // Update scorecards
+      Statement updateScoreCards = connection.createStatement();
+      String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
+      updateScoreCards.executeUpdate(changeScorecard);  
 
       if(column.equals("username")){
         changedUsername = true;
@@ -881,80 +885,145 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   }
 
 //********************************
-// BROWSE TEE-SHEET -- OWNER
+// BROWSE BOOKING SCHEDULE -- OWNER
 //********************************
 
-  // @GetMapping(
-  //     path = "/tee-rific/teeSheet/{username}"
-  // )
-  // public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  @GetMapping(
+      path = "/tee-rific/teeSheet/{username}"
+  )
+  public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, WrapperDate newDate, HttpServletRequest request) throws Exception {
     
-  //   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-  //     return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+      courseInfo.next();
+
+      String course = courseInfo.getString("courseName");
+      // Convert DB data into ints for comparison
+      String timeOpenStr = courseInfo.getString("timeOpen");
+      // timeOpenStr = timeOpenStr + ":00";
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      String timeOpenMinStr = timeOpenSegments[1];
+
+      String timeCloseStr = courseInfo.getString("timeClose");
+      // timeCloseStr = timeCloseStr + ":00";
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      String timeCloseMinStr = timeCloseSegments[1];
+
+      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
+
+      ArrayList<StatusTeeTime> teeSheet = new ArrayList<StatusTeeTime>();
+      Integer hour = 0;
+      Integer min = 0;
+
+      Integer numIntervals = 0;
+
+      String dates = "";
+      if (newDate.getDate() == null){
+        Statement getDate = connection.createStatement();
+        ResultSet date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+        date.next();
+        dates = date.getString("date");
+      } else {
+        dates = newDate.getDate();
+      }
+
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+
+          String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+          StatusTeeTime ts = new StatusTeeTime();
+          ts.setTeeTime(time);
+
+          String teeTime = time + ":00";
+
+          Statement checkOccupency = connection.createStatement();
+          ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
+          
+          ts.setStatus("EMPTY");
+          int countBookings = 0;
+          while(checkTeeTime.next()){
+            countBookings++;
+          }
+
+          if (countBookings > 0){
+            String newStatus = countBookings + " Bookings";
+            ts.setStatus(newStatus);
+          }
+
+          teeSheet.add(ts);
+        }
+
+        if (min < (60-increments)) {         //to set up to TimeOpen value/hour
+          min += increments;
+        } else {
+          hour++;
+          min = 0;
+        }
+
+        numIntervals++;
+      }
+
+      WrapperDate changeDate = new WrapperDate();
+      model.put("newDate", changeDate);
+      model.put("currentDate", dates);
+      model.put("teeTimes", teeSheet);
+      return "OwnerSchedule/courseSchedule";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  // HELPERS
+  public Integer getDateToCompare(String date){
+    String splitDate[] = date.split("-");
+    String combineDate = splitDate[0] + splitDate[1] + splitDate[2];
+    Integer intDate = Integer.parseInt(combineDate);
+    return intDate;
+  }
+
+  // @GetMapping(
+  //       path = "/tee-rific/teeSheet/{date}/{time}/{username}"
+  // )
+
+  // public String changeDateRedirect(@PathVariable("username")String user, @PathVariable("date")String date, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  //   try (Connection connection = dataSource.getConnection()) {
+  //     Statement stmt = connection.createStatement();
+  //     return "redirect:/tee-rific/teeSheet"+changeDate+"/"+user;
+
+  //   }catch (Exception e) {
+  //     model.put("message", e.getMessage());
+  //     return "LandingPages/error";
   //   }
-
-  //   if(null == (request.getSession().getAttribute("username"))) {
-  //     return "redirect:/";
-  //   }
-
-  // try (Connection connection = dataSource.getConnection()) {
-  //   Statement stmt = connection.createStatement();
-  //   ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
-  //   courseInfo.next();
-
-  //   // Convert DB data into ints for comparison
-  //   String timeOpenStr = courseInfo.getString("timeOpen");
-  //   // timeOpenStr = timeOpenStr + ":00";
-  //   String timeOpenSegments[] = timeOpenStr.split(":");
-  //   String timeOpenHrStr = timeOpenSegments[0];
-  //   String timeOpenMinStr = timeOpenSegments[1];
-
-  //   String timeCloseStr = courseInfo.getString("timeClose");
-  //   // timeCloseStr = timeCloseStr + ":00";
-  //   String timeCloseSegments[] = timeCloseStr.split(":");
-  //   String timeCloseHrStr = timeCloseSegments[0];
-  //   String timeCloseMinStr = timeCloseSegments[1];
-
-  //   Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-  //   Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
-  //   Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
-  //   Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
-
-  //   ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
-  //   Integer hour = 0;
-  //   Integer min = 0;
-
-  //   // whiel hr is less than 25/midnight
-  //   for (int i = 0; i < 48; i++) { //48 30 min increments
-  //     if (hour >= timeOpenHr && hour < timeCloseHr) {
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 30;
-  //       }
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 0;
-  //         hour++;
-  //       }
-
-  //       String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
-  //       Timeslot ts = new Timeslot();
-  //       ts.setTime(time);
-
-  //       validTimeSlots.add(ts);
-  //     }
-
-  //     if (min > 60) {
-  //       min = 30;
-  //     } else {
-  //       hour++;
-  //       min = 0;
-  //     }
-  //   }
-
-  //   return "Booking&ViewingCourses/teeSheetOwner";
-  // }catch (Exception e) {
-  //   model.put("message", e.getMessage());
-  //   return "LandingPages/error";
-  // }
+  //   return "OwnerSchedule/test";
   // }
 
 //********************************
@@ -1184,30 +1253,66 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       Integer hour = 0;
       Integer min = 0;
 
-      for (int i = 0; i < 48; i++) {
-        if (hour >= timeOpenHr && hour < timeCloseHr) {
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 30;
-          }
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 0;
-            hour++;
-          }
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            // min += increments;
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+          // if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:45 - start at 1:00
+          //   min = 0;
+          //   hour++;
+          // }
+  
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
           Timeslot ts = new Timeslot();
           ts.setTime(time);
-
+  
           validTimeSlots.add(ts);
         }
-
-        if (min == 0) {
-          min = 30;
+  
+        if (min < (60-increments)) {         //to set up before it 
+          min += increments;
         } else {
           hour++;
           min = 0;
         }
       }
+      // for (int i = 0; i < 48; i++) {
+      //   if (hour >= timeOpenHr && hour < timeCloseHr) {
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 30;
+      //     }
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 0;
+      //       hour++;
+      //     }
+
+      //     String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+      //     Timeslot ts = new Timeslot();
+      //     ts.setTime(time);
+
+      //     validTimeSlots.add(ts);
+      //   }
+
+      //   if (min == 0) {
+      //     min = 30;
+      //   } else {
+      //     hour++;
+      //     min = 0;
+      //   }
+      // }
 
       String city = courseInfo.getString("city");
       String country = courseInfo.getString("country");

@@ -456,16 +456,6 @@ table input {
     background:#F90;
     color:#FFF;
 }
-
-
-.courseScorecardLogo {
-    width: 50%;
-    border-radius: 50%;
-    border: 0.25px solid black;
-    background-size: cover;
-    margin: 25px;
-}
-
   .weather-container  {
     text-align: center;
   }
