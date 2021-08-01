@@ -71,3 +71,5 @@ for(var i = 0; i < numberOfButtons; i++) {
         setTimeout(submitForm, timeoutLength, event.target);
     });
 }
+
+function checkPasswordSecurity

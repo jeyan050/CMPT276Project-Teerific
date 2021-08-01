@@ -89,16 +89,16 @@ public class Main {
   @GetMapping(
           path = "/tee-rific/login"
   )
-  public String getLoginPage(Map<String, Object> model){
+  public String getLoginPage(Map<String, Object> model) {
 
     User user = new User();
     model.put("loginUser", user);
 
-    if (failedLogin == true){
+    if (failedLogin == true) {
       String error = "Error: Username/Password Doesn't match/exist";
       model.put("failedLogin", error);
       failedLogin = false;
-    } else if (changedUsername == true){
+    } else if (changedUsername == true) {
       String redirectText = "Successfully changed Username!\nSince you changed username, Please relog in with new username.";
       model.put("failedLogin", redirectText);
       changedUsername = false;
@@ -119,13 +119,13 @@ public class Main {
       // creates and check if admin account created
       int checkIfAdminExists = 0;
       ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
-      while (checkAdmin.next()){
+      while (checkAdmin.next()) {
         checkIfAdminExists++;
       }
-      if (checkIfAdminExists == 0){
+      if (checkIfAdminExists == 0) {
         String adminPassword = "cmpt276";
         String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
-        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','" + encryptedAdminPassword + "')";
         stmt.executeUpdate(insert);
       }
 
@@ -135,7 +135,7 @@ public class Main {
       int checkIfUserExists = 0;
       String checkPassword = "";
       String priority = "";
-      while (rs.next()){
+      while (rs.next()) {
         checkIfUserExists++;
         checkPassword = rs.getString("password");
         priority = rs.getString("priority");
@@ -146,7 +146,7 @@ public class Main {
       System.out.println(checkPassword);
       System.out.println(user.getPassword());
 
-      if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))){
+      if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))) {
 
         request.getSession().setAttribute("username", user.getUsername());
         String userid = (String) request.getSession().getAttribute("username");
@@ -174,7 +174,7 @@ public class Main {
   public String getSignupPage(Map<String, Object> model) {
     User user = new User();
     model.put("newUser", user);
-    if (usernameError == true){
+    if (usernameError == true) {
       String error = "Error: Username already Exists.";
       model.put("usernameError", error);
       usernameError = false;
@@ -187,7 +187,7 @@ public class Main {
           path = "/tee-rific/signup"
   )
   public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) throws Exception {
-    try(Connection connection = dataSource.getConnection()) {
+    try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
 
       String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
@@ -199,27 +199,27 @@ public class Main {
       // creates and check if admin account created
       int checkIfAdminExists = 0;
       ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
-      while (checkAdmin.next()){
+      while (checkAdmin.next()) {
         checkIfAdminExists++;
       }
-      if (checkIfAdminExists == 0){
+      if (checkIfAdminExists == 0) {
         String adminPassword = "cmpt276";
         String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
-        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','" + encryptedAdminPassword + "')";
         stmt.executeUpdate(insert);
       }
 
       stmt.executeUpdate("INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + encryptedPassword + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')");
 
-      String sql = "SELECT username FROM users WHERE username ='"+user.getUsername()+"'";
+      String sql = "SELECT username FROM users WHERE username ='" + user.getUsername() + "'";
       ResultSet rs = stmt.executeQuery(sql);
       int checkCount = 0;
-      while (rs.next()){
+      while (rs.next()) {
         checkCount++;
       }
 
-      if (checkCount > 1){
-        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+      if (checkCount > 1) {
+        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='" + encryptedPassword + "' and fname='" + user.getFname() + "' and lname='" + user.getLname() + "' and email='" + user.getEmail() + "' and gender='" + user.getGender() + "'");
         usernameError = true;
         return "redirect:/tee-rific/signup";
       } else {
@@ -242,15 +242,15 @@ public class Main {
   @GetMapping(
           path = "/tee-rific/signup/Owner"
   )
-  public String getOwnerSignUpPage(Map<String, Object> model){
+  public String getOwnerSignUpPage(Map<String, Object> model) {
     CourseOwner owner = new CourseOwner();
     model.put("newOwner", owner);
 
-    if (usernameError == true){
+    if (usernameError == true) {
       String error = "Error: Username already Exists.";
       model.put("usernameError", error);
       usernameError = false;
-    } else if (courseNameError == true){
+    } else if (courseNameError == true) {
       String error = "Error: Course Name already Exists.";
       model.put("courseNameError", error);
       courseNameError = false;
@@ -263,10 +263,10 @@ public class Main {
           path = "/tee-rific/signup/Owner",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
-  public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner owner){
+  public String handleBrowserOwnerSubmit(Map<String, Object> model, CourseOwner owner) {
     //create a new user, owner, golf course, then add to database
 
-    try(Connection connection = dataSource.getConnection()) {
+    try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
 
       String encryptedPassword = BCrypt.hashpw(owner.getPassword(), BCrypt.gensalt());
@@ -289,7 +289,7 @@ public class Main {
       stmt.executeUpdate(courseInfo);
 
       //initializes a table to keep track of the course hole details
-      for(int i = 0; i < owner.getNumHoles(); i++){
+      for (int i = 0; i < owner.getNumHoles(); i++) {
         String insertHole = "INSERT INTO " + updatedCourseName + "(" + "holeNumber, yardage, par, handicap) VALUES (' " + (i + 1) + "', '0', '0', '0')";
         stmt.executeUpdate(insertHole);
       }
@@ -301,13 +301,13 @@ public class Main {
       int checkIfAdminExists = 0;
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))");
       ResultSet checkAdmin = stmt.executeQuery("SELECT * FROM users WHERE username = 'admin'");
-      while (checkAdmin.next()){
+      while (checkAdmin.next()) {
         checkIfAdminExists++;
       }
-      if (checkIfAdminExists == 0){
+      if (checkIfAdminExists == 0) {
         String adminPassword = "cmpt276";
         String encryptedAdminPassword = BCrypt.hashpw(adminPassword, BCrypt.gensalt());
-        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','"+encryptedAdminPassword+"')";
+        String insert = "INSERT INTO users (priority, username, password) VALUES ('ADMIN','admin','" + encryptedAdminPassword + "')";
         stmt.executeUpdate(insert);
       }
 
@@ -331,30 +331,30 @@ public class Main {
       ownerCreateBookingsTable(connection);
 
       // check if username or course name exists for already existing user
-      String sql = "SELECT username FROM owners WHERE username ='"+user.getUsername()+"'";
+      String sql = "SELECT username FROM owners WHERE username ='" + user.getUsername() + "'";
       ResultSet rs = stmt.executeQuery(sql);
       int checkUserCount = 0;
-      while (rs.next()){
+      while (rs.next()) {
         checkUserCount++;
       }
 
-      String sqlCH = "SELECT courseName FROM owners WHERE courseName ='"+updatedCourseName+"'";
+      String sqlCH = "SELECT courseName FROM owners WHERE courseName ='" + updatedCourseName + "'";
       ResultSet rsCH = stmt.executeQuery(sqlCH);
       int checkCNCount = 0;
-      while (rsCH.next()){
+      while (rsCH.next()) {
         checkCNCount++;
       }
 
-      if (checkUserCount > 1){
+      if (checkUserCount > 1) {
         // delete from user and owner database
-        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='" + encryptedPassword + "' and fname='" + user.getFname() + "' and lname='" + user.getLname() + "' and email='" + user.getEmail() + "' and gender='" + user.getGender() + "'");
         String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
         stmt.executeUpdate(deleteOwner);
 
         usernameError = true;
         return "redirect:/tee-rific/signup/Owner";
-      } else if (checkCNCount > 1){
-        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='"+ encryptedPassword + "' and fname='"+ user.getFname() + "' and lname='"+user.getLname() + "' and email='"+user.getEmail() + "' and gender='"+user.getGender()+"'");
+      } else if (checkCNCount > 1) {
+        stmt.executeUpdate("DELETE FROM users WHERE priority='" + user.getPriority() + "' and username='" + user.getUsername() + "' and password='" + encryptedPassword + "' and fname='" + user.getFname() + "' and lname='" + user.getLname() + "' and email='" + user.getEmail() + "' and gender='" + user.getGender() + "'");
         String deleteOwner = getSQLDeleteOwner(owner, encryptedPassword);
         stmt.executeUpdate(deleteOwner);
 
@@ -371,14 +371,14 @@ public class Main {
 
 
   String getSQLNewTableOwner() {
-    return  "CREATE TABLE IF NOT EXISTS owners (" +
+    return "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(800), directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
             "timeClose varchar(10), bookingInterval varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
-  private String getSQLInsertOwner(CourseOwner owner, String secretPW){
+  private String getSQLInsertOwner(CourseOwner owner, String secretPW) {
     return "INSERT INTO owners ( " +
             "courseName, address, city, country, website, phoneNumber, courseLogo, " +
             "directionsToCourse, description, weekdayRates, weekendRates, numHoles, timeOpen," +
@@ -386,42 +386,42 @@ public class Main {
             owner.getCourseName() + "','" + owner.getAddress() + "','" + owner.getCity() + "','" +
             owner.getCountry() + "','" + owner.getWebsite() + "','" + owner.getPhoneNumber() + "','" +
             owner.getCourseLogo() + "','" + owner.getDirectionsToCourse() + "','" + owner.getDescription() + "','" +
-            owner.getWeekdayRates() + "','" +  owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
+            owner.getWeekdayRates() + "','" + owner.getWeekendRates() + "','" + owner.getNumHoles() + "','" + owner.getTimeOpen() + "','" +
             owner.getTimeClose() + "','" + owner.getBookingInterval() + "','" + owner.getUsername() + "','" + secretPW + "','" + owner.getFname() + "','" + owner.getLname() + "','" +
-            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" +  owner.getRating() + "', '" + owner.getNumberRatings() + "')";
+            owner.getEmail() + "','" + owner.getYardage() + "', '" + owner.getGender() + "', '" + owner.getRating() + "', '" + owner.getNumberRatings() + "')";
   }
 
 
-  private String getSQLDeleteOwner(CourseOwner owner, String secretPW){
+  private String getSQLDeleteOwner(CourseOwner owner, String secretPW) {
     return "DELETE FROM owners WHERE courseName='" + owner.getCourseName() + "' and address='" + owner.getAddress() +
-            "' and city='" + owner.getCity() +  "' and country='" + owner.getCountry() + "' and website='"  +
+            "' and city='" + owner.getCity() + "' and country='" + owner.getCountry() + "' and website='" +
             owner.getWebsite() + "' and phoneNumber='" + owner.getPhoneNumber() + "' and courseLogo='" +
             owner.getCourseLogo() + "' and directionsToCourse='" + owner.getDirectionsToCourse() + "' and description='" +
             owner.getDescription() + "' and weekdayRates='" + owner.getWeekdayRates() + "' and weekendRates='" +
-            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and timeOpen='" + owner.getTimeOpen() + 
-            "' and timeClose='" + owner.getTimeClose() +  "' and bookingInterval='" + owner.getBookingInterval() + "' and userName='" + owner.getUsername() +
+            owner.getWeekendRates() + "' and numHoles='" + owner.getNumHoles() + "' and timeOpen='" + owner.getTimeOpen() +
+            "' and timeClose='" + owner.getTimeClose() + "' and bookingInterval='" + owner.getBookingInterval() + "' and userName='" + owner.getUsername() +
             "' and password='" + secretPW + "' and firstName='" + owner.getFname() + "' and lastName='" + owner.getLname() +
             "' and email='" + owner.getEmail() + "' and yardage='" + owner.getYardage() + "' and gender='" + owner.getGender() +
             "' and rating='" + owner.getRating() + "'and numberRatings='" + owner.getNumberRatings() + "'";
   }
 
 
-  private String getSQLNewTableUsers(){
+  private String getSQLNewTableUsers() {
     return "CREATE TABLE IF NOT EXISTS users (priority varchar(100), username varchar(100), password varchar(100), fname varchar(100), lname varchar(100), email varchar(100), gender varchar(100))";
   }
 
 
-  private String getSQLInsertUser(User user, String secretPW){
+  private String getSQLInsertUser(User user, String secretPW) {
     return "INSERT INTO users (priority, username, password, fname, lname, email, gender) VALUES ('" + user.getPriority() + "','" + user.getUsername() + "','" + secretPW + "','" + user.getFname() + "','" + user.getLname() + "','" + user.getEmail() + "','" + user.getGender() + "')";
   }
 
 
-  private String convertToSnakeCase(String toConvert){
+  private String convertToSnakeCase(String toConvert) {
     String updated = "";
-    for(int i = 0; i < toConvert.length(); i++){
-      if(toConvert.charAt(i) == ' '){
+    for (int i = 0; i < toConvert.length(); i++) {
+      if (toConvert.charAt(i) == ' ') {
         updated += '_';
-      }else{
+      } else {
         updated += toConvert.charAt(i);
       }
     }
@@ -429,12 +429,12 @@ public class Main {
   }
 
 
-  private String convertFromSnakeCase(String toConvert){
+  private String convertFromSnakeCase(String toConvert) {
     String updated = "";
-    for(int i = 0; i < toConvert.length(); i++){
-      if(toConvert.charAt(i) == '_'){
+    for (int i = 0; i < toConvert.length(); i++) {
+      if (toConvert.charAt(i) == '_') {
         updated += ' ';
-      }else{
+      } else {
         updated += toConvert.charAt(i);
       }
     }
@@ -449,17 +449,18 @@ public class Main {
   @GetMapping(
           path = "/tee-rific/home/{username}"
   )
-  public String getHomePage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception{
-    
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+
+  public String getHomePage(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+
+    if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
-    if(null == (request.getSession().getAttribute("username"))) {
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
-    try(Connection connection = dataSource.getConnection()) {
+    try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
 
       //create owners table if not exists, prevents bookings button from breaking
@@ -470,18 +471,18 @@ public class Main {
       ResultSet rs = stmt.executeQuery(getUserPriority);
 
       String userPriority = "";
-      while(rs.next()){
+      while (rs.next()) {
         userPriority = rs.getString("priority");
       }
 
-      if(userPriority.equals(priorities[0])){         // returns golfer homepage
+      if (userPriority.equals(priorities[0])) {         // returns golfer homepage
         return "LandingPages/home";
-      }else if(userPriority.equals(priorities[1])){   //returns owner homepage
+      } else if (userPriority.equals(priorities[1])) {   //returns owner homepage
         return "Owner/ownerHome";
-      }else{                                          //returns admin homepage
+      } else {                                          //returns admin homepage
         return "Admin/adminHome";
       }
-    }catch (Exception e) {
+    } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
@@ -492,7 +493,6 @@ public class Main {
 // COURSES
 //**********************
 
-//TODO: get all the courses, display ratings, allow user to rate courses
 
 //**********************
 // MODIFY ACCOUNT
@@ -501,13 +501,12 @@ public class Main {
   @GetMapping(
           path = "/tee-rific/account/{username}"
   )
-  public String getAccountPage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
-  {
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+  public String getAccountPage(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) {
+    if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/account/" + request.getSession().getAttribute("username");
     }
 
-    if(null == (request.getSession().getAttribute("username"))) {
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
@@ -520,28 +519,28 @@ public class Main {
           path = "/tee-rific/editAccount/{username}"
   )
 
-  public String getEditAccountPage(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
+  public String getEditAccountPage(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) {
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/editAccount/" + request.getSession().getAttribute("username");
     }
 
-    if(null == (request.getSession().getAttribute("username"))) {
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
 
-    try(Connection connection = dataSource.getConnection()) {
+    try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      String getUserPriority= "SELECT priority FROM users WHERE username='" + user +"'";
+      String getUserPriority = "SELECT priority FROM users WHERE username='" + user + "'";
       ResultSet rs = stmt.executeQuery(getUserPriority);
 
       String userPriority = "";
-      while(rs.next()){
+      while (rs.next()) {
         userPriority = rs.getString("priority");
       }
 
-      if(userPriority.equals(priorities[0])){                   // returns golfer edit account
-        String getUserDetails= "SELECT * FROM users WHERE username='" + user +"'";
+      if (userPriority.equals(priorities[0])) {                   // returns golfer edit account
+        String getUserDetails = "SELECT * FROM users WHERE username='" + user + "'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
 
@@ -553,11 +552,11 @@ public class Main {
         output.setLname(details.getString("lname"));
         output.setEmail(details.getString("email"));
         output.setGender(details.getString("gender"));
-        
+
         model.put("userInfo", output);
         return "AccountInfo/editAccount";
-      }else{                                                    //returns owner edit account
-        String getUserDetails= "SELECT * FROM owners WHERE username='" + user +"'";
+      } else {                                                    //returns owner edit account
+        String getUserDetails = "SELECT * FROM owners WHERE username='" + user + "'";
         ResultSet details = stmt.executeQuery(getUserDetails);
         details.next();
 
@@ -568,28 +567,28 @@ public class Main {
         output.setFname(details.getString("firstname"));
         output.setLname(details.getString("lastname"));
         output.setEmail(details.getString("email"));
-        output.setGender(details.getString("gender"));  
-        
+        output.setGender(details.getString("gender"));
+
         output.setCourseName(details.getString("coursename"));  //Golf Course Info
         output.setAddress(details.getString("address"));
         output.setCity(details.getString("city"));
         output.setCountry(details.getString("country"));
-        output.setPhoneNumber(details.getString("phonenumber"));  
+        output.setPhoneNumber(details.getString("phonenumber"));
         output.setWebsite(details.getString("website"));
-        output.setCourseLogo(details.getString("courselogo"));  
+        output.setCourseLogo(details.getString("courselogo"));
         // output.setYardage(details.getString("yardage"));  
-        
-        output.setTimeOpen(details.getString("timeopen"));   
-        output.setTimeClose(details.getString("timeclose")); 
-        output.setWeekdayRates(details.getString("weekdayrates"));  
+
+        output.setTimeOpen(details.getString("timeopen"));
+        output.setTimeClose(details.getString("timeclose"));
+        output.setWeekdayRates(details.getString("weekdayrates"));
         output.setWeekendRates(details.getString("weekendrates"));
-        output.setDirectionsToCourse(details.getString("directionstocourse"));  
-        output.setDescription(details.getString("description")); 
-        
+        output.setDirectionsToCourse(details.getString("directionstocourse"));
+        output.setDescription(details.getString("description"));
+
         model.put("ownerInfo", output);
         return "AccountInfo/editAccountOwner";
       }
-    }catch (Exception e) {
+    } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
@@ -599,9 +598,58 @@ public class Main {
   boolean changeValueError = false;
 
   @GetMapping(
+          path = "/tee-rific/editAccount/passwordSecurity/{username}"
+  )
+  public String changePasswordSecurity(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) {
+    if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/editAccount/passwordSecurity/" + request.getSession().getAttribute("username");
+    }
+
+    if (null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+      User output = new User();
+
+      model.put("userInfo", output);
+
+    return "AccountInfo/changePasswordSecurity";
+}
+
+
+@PostMapping (
+        "/tee-rific/editAccount/passwordSecurity/{username}/check"
+)
+public String checkPasswordVerification(@PathVariable("username") String user, User output, Map<String, Object> model, HttpServletRequest request) {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    System.out.println(user);
+    String sql = "SELECT password FROM users WHERE username='" + user + "'";
+    ResultSet rs = stmt.executeQuery(sql);
+    String checkPassword = "";
+    while (rs.next()) {
+      checkPassword = rs.getString("password");
+    }
+      System.out.println(output.getPassword());
+      System.out.println(checkPassword);
+
+      if (BCrypt.checkpw(output.getPassword(), checkPassword)) {
+        return "redirect:/tee-rific/editAccount/password/" + user;
+      } else {
+        String error = "Password is incorrect.";
+        model.put("errorMessage", error);
+        model.put("userInfo", output);
+        return "AccountInfo/changePasswordSecurity";
+      }
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+}
+
+  @GetMapping(
     path = "/tee-rific/editAccount/{editColumn}/{username}"
   )
-  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){    
+  public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){
     
     if(!user.equals(request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -752,7 +800,6 @@ public class Main {
             String updateUserInfo = "UPDATE owners SET lastname='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);
           } else {
-            System.out.println("IN:"+column);
             String updateUserInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);      
           }
@@ -764,6 +811,11 @@ public class Main {
           stmtOwner.executeUpdate(updateOwnerInfo);
         }
       }
+
+      // Update scorecards
+      Statement updateScoreCards = connection.createStatement();
+      String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
+      updateScoreCards.executeUpdate(changeScorecard);  
 
       if(column.equals("username")){
         changedUsername = true;
@@ -838,80 +890,145 @@ public class Main {
   }
 
 //********************************
-// BROWSE TEE-SHEET -- OWNER
+// BROWSE BOOKING SCHEDULE -- OWNER
 //********************************
 
-  // @GetMapping(
-  //     path = "/tee-rific/teeSheet/{username}"
-  // )
-  // public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  @GetMapping(
+      path = "/tee-rific/teeSheet/{username}"
+  )
+  public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, WrapperDate newDate, HttpServletRequest request) throws Exception {
     
-  //   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-  //     return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+      courseInfo.next();
+
+      String course = courseInfo.getString("courseName");
+      // Convert DB data into ints for comparison
+      String timeOpenStr = courseInfo.getString("timeOpen");
+      // timeOpenStr = timeOpenStr + ":00";
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      String timeOpenMinStr = timeOpenSegments[1];
+
+      String timeCloseStr = courseInfo.getString("timeClose");
+      // timeCloseStr = timeCloseStr + ":00";
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      String timeCloseMinStr = timeCloseSegments[1];
+
+      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
+
+      ArrayList<StatusTeeTime> teeSheet = new ArrayList<StatusTeeTime>();
+      Integer hour = 0;
+      Integer min = 0;
+
+      Integer numIntervals = 0;
+
+      String dates = "";
+      if (newDate.getDate() == null){
+        Statement getDate = connection.createStatement();
+        ResultSet date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+        date.next();
+        dates = date.getString("date");
+      } else {
+        dates = newDate.getDate();
+      }
+
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+
+          String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+          StatusTeeTime ts = new StatusTeeTime();
+          ts.setTeeTime(time);
+
+          String teeTime = time + ":00";
+
+          Statement checkOccupency = connection.createStatement();
+          ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
+          
+          ts.setStatus("EMPTY");
+          int countBookings = 0;
+          while(checkTeeTime.next()){
+            countBookings++;
+          }
+
+          if (countBookings > 0){
+            String newStatus = countBookings + " Bookings";
+            ts.setStatus(newStatus);
+          }
+
+          teeSheet.add(ts);
+        }
+
+        if (min < (60-increments)) {         //to set up to TimeOpen value/hour
+          min += increments;
+        } else {
+          hour++;
+          min = 0;
+        }
+
+        numIntervals++;
+      }
+
+      WrapperDate changeDate = new WrapperDate();
+      model.put("newDate", changeDate);
+      model.put("currentDate", dates);
+      model.put("teeTimes", teeSheet);
+      return "OwnerSchedule/courseSchedule";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  // HELPERS
+  public Integer getDateToCompare(String date){
+    String splitDate[] = date.split("-");
+    String combineDate = splitDate[0] + splitDate[1] + splitDate[2];
+    Integer intDate = Integer.parseInt(combineDate);
+    return intDate;
+  }
+
+  // @GetMapping(
+  //       path = "/tee-rific/teeSheet/{date}/{time}/{username}"
+  // )
+
+  // public String changeDateRedirect(@PathVariable("username")String user, @PathVariable("date")String date, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  //   try (Connection connection = dataSource.getConnection()) {
+  //     Statement stmt = connection.createStatement();
+  //     return "redirect:/tee-rific/teeSheet"+changeDate+"/"+user;
+
+  //   }catch (Exception e) {
+  //     model.put("message", e.getMessage());
+  //     return "LandingPages/error";
   //   }
-
-  //   if(null == (request.getSession().getAttribute("username"))) {
-  //     return "redirect:/";
-  //   }
-
-  // try (Connection connection = dataSource.getConnection()) {
-  //   Statement stmt = connection.createStatement();
-  //   ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
-  //   courseInfo.next();
-
-  //   // Convert DB data into ints for comparison
-  //   String timeOpenStr = courseInfo.getString("timeOpen");
-  //   // timeOpenStr = timeOpenStr + ":00";
-  //   String timeOpenSegments[] = timeOpenStr.split(":");
-  //   String timeOpenHrStr = timeOpenSegments[0];
-  //   String timeOpenMinStr = timeOpenSegments[1];
-
-  //   String timeCloseStr = courseInfo.getString("timeClose");
-  //   // timeCloseStr = timeCloseStr + ":00";
-  //   String timeCloseSegments[] = timeCloseStr.split(":");
-  //   String timeCloseHrStr = timeCloseSegments[0];
-  //   String timeCloseMinStr = timeCloseSegments[1];
-
-  //   Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-  //   Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
-  //   Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
-  //   Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
-
-  //   ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
-  //   Integer hour = 0;
-  //   Integer min = 0;
-
-  //   // whiel hr is less than 25/midnight
-  //   for (int i = 0; i < 48; i++) { //48 30 min increments
-  //     if (hour >= timeOpenHr && hour < timeCloseHr) {
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 30;
-  //       }
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 0;
-  //         hour++;
-  //       }
-
-  //       String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
-  //       Timeslot ts = new Timeslot();
-  //       ts.setTime(time);
-
-  //       validTimeSlots.add(ts);
-  //     }
-
-  //     if (min > 60) {
-  //       min = 30;
-  //     } else {
-  //       hour++;
-  //       min = 0;
-  //     }
-  //   }
-
-  //   return "Booking&ViewingCourses/teeSheetOwner";
-  // }catch (Exception e) {
-  //   model.put("message", e.getMessage());
-  //   return "LandingPages/error";
-  // }
+  //   return "OwnerSchedule/test";
   // }
 
 //********************************
@@ -1141,30 +1258,66 @@ public class Main {
       Integer hour = 0;
       Integer min = 0;
 
-      for (int i = 0; i < 48; i++) {
-        if (hour >= timeOpenHr && hour < timeCloseHr) {
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 30;
-          }
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 0;
-            hour++;
-          }
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            // min += increments;
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+          // if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:45 - start at 1:00
+          //   min = 0;
+          //   hour++;
+          // }
+  
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
           Timeslot ts = new Timeslot();
           ts.setTime(time);
-
+  
           validTimeSlots.add(ts);
         }
-
-        if (min == 0) {
-          min = 30;
+  
+        if (min < (60-increments)) {         //to set up before it 
+          min += increments;
         } else {
           hour++;
           min = 0;
         }
       }
+      // for (int i = 0; i < 48; i++) {
+      //   if (hour >= timeOpenHr && hour < timeCloseHr) {
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 30;
+      //     }
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 0;
+      //       hour++;
+      //     }
+
+      //     String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+      //     Timeslot ts = new Timeslot();
+      //     ts.setTime(time);
+
+      //     validTimeSlots.add(ts);
+      //   }
+
+      //   if (min == 0) {
+      //     min = 30;
+      //   } else {
+      //     hour++;
+      //     min = 0;
+      //   }
+      // }
 
       String city = courseInfo.getString("city");
       String country = courseInfo.getString("country");
@@ -1456,7 +1609,6 @@ public class Main {
 
   // ------ OWNER'S PAGE ------ //
 // TODO: ensure paths are correct
-// TODO: no way to secure IF LOGGED IN ALREADY - kyle
 // TODO: Add style to table in viewInventory page
   @GetMapping(
           path="/tee-rific/golfCourseDetails/inventory/{username}"
@@ -1491,7 +1643,6 @@ public class Main {
     }
   }
 
-  // TODO: no way to secure - kyle
 // TODO: ensure paths are correct
   @GetMapping(
           path="/tee-rific/golfCourseDetails/inventory/update/{username}"
@@ -1899,14 +2050,13 @@ public class Main {
       String gameID = pathVars.get("gameID");
       String courseName = convertFromSnakeCase(courseNameSC);
 
-      //TODO: uncomment 
-    // if(null == (request.getSession().getAttribute("username"))) {
-    //   return "redirect:/";
-    // }
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
 
-    // if(!user.equals(request.getSession().getAttribute("username"))) {
-    //   return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
-    // }
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
