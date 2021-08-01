@@ -596,7 +596,11 @@ public class Main {
           path = "/tee-rific/editAccount/passwordSecurity/{username}"
   )
   public String changePasswordSecurity(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) {
-    if (!user.equals(request.getSession().getAttribute("username"))) {
+    if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/editAccount/passwordSecurity/" + request.getSession().getAttribute("username");
+    }
+
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
       User output = new User();
