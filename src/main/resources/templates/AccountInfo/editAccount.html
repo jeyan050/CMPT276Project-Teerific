@@ -46,9 +46,9 @@
                         </tr>
                         <tr>
                             <td class="title">Password</td>
-                            <td class="value" th:text="${user.password}"></td>
+                            <td class="value">**************************</td>
                             <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/password/'+ user.username}">
+                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/passwordSecurity/' + username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
