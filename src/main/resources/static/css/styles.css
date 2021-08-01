@@ -193,6 +193,11 @@ table input {
     background-size: cover;
 }
 
+#underline {
+    text-decoration: underline;
+    font-style: italic;
+}
+
 /**************************/
 /* CLASSES (MULTIPLE USE) */
 /**************************/
@@ -226,7 +231,7 @@ table input {
     width: 25%;
 }
 
-.ownerTableDisplayCell, .scoredcardDisplayCell{
+.ownerTableDisplayCell, .scoredcardDisplayCell {
     width: 100%;
 }
 
@@ -238,10 +243,27 @@ table input {
 
 .scorecardTable {
     width: 90%;
+    margin-top: 15px;
+    margin-bottom: 25px;
 }
 
-.scorecardTableCell {
+.friendScorecardTable {
+    width: 45%;
+}
+
+.friendsNameCell {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scorecardTableCell, .friendScorecardTableCell {
     width: 15%;
+}
+
+.friendScorecard {
+    width: 100%;
 }
 
 
@@ -456,6 +478,21 @@ table input {
     background:#F90;
     color:#FFF;
 }
+<<<<<<< HEAD
+
+
+
+.courseScorecardLogo {
+    width: 25vh;
+    height: 25vh;
+    border-radius: 100%;
+    border: 4px outset #5e3e07;
+    background-size: cover;
+    margin: 25px;
+}
+
+=======
+>>>>>>> 20b79f1a9877313a0d4d2f1e94c6729ccacc5578
   .weather-container  {
     text-align: center;
   }

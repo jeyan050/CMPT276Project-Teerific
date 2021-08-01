@@ -464,7 +464,12 @@ public class Main {
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      String getUserPriority = "SELECT priority FROM users WHERE username='" + user + "'";
+
+      //create owners table if not exists, prevents bookings button from breaking
+      String newOwnersTable = getSQLNewTableOwner();
+      stmt.executeUpdate(newOwnersTable);
+
+      String getUserPriority= "SELECT priority FROM users WHERE username='" + user +"'";
       ResultSet rs = stmt.executeQuery(getUserPriority);
 
       String userPriority = "";
@@ -2133,6 +2138,38 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         getTime = startTime.getString("teetime");
       }
 
+      //get particpants
+      Integer participantReservations = 0;
+      String getSlots = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+      ResultSet slots = stmt.executeQuery(getSlots);
+      while(slots.next()){
+        participantReservations = slots.getInt("numPlayers");
+      }
+
+      //get friends scorecards TODO: test
+      ArrayList<Scorecard> friendScorecards = new ArrayList<Scorecard>();
+      
+      String getFriendsScorecardInfo = "SELECT * FROM scorecards WHERE id='"+gameID+"' AND course='"+courseName+ "'";
+      ResultSet friendScoreCardInfo = stmt.executeQuery(getFriendsScorecardInfo);
+
+      while(friendScoreCardInfo.next()){
+        
+        if(!friendScoreCardInfo.getString("username").equals(user)){    //will only add to friends scorecardList if the current scorecard is not the user's
+          Scorecard friendScorecard = new Scorecard();
+          ArrayList<Integer> friendStrokes = new ArrayList<Integer>();
+
+          for(int i = 1; i <= 18; i++){                 //get the strokes for each hole
+            String holeNum = "s" + String.valueOf(i);
+            friendStrokes.add(friendScoreCardInfo.getInt(holeNum));
+          }
+          friendScorecard.setUserName(friendScoreCardInfo.getString("username"));
+          friendScorecard.setStrokes(friendStrokes);
+
+          friendScorecards.add(friendScorecard);
+        }
+      }
+
+
       //get course logo from owners
       String getLogo = "SELECT courseLogo FROM owners WHERE coursename='" + courseName + "'";
       ResultSet logoURL = stmt.executeQuery(getLogo);
@@ -2146,6 +2183,31 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         System.out.println("No Image for Course, Tee-rific Ball assigned...");
       }
     
+      //a field to store the name of a player to add
+      PlayerToAdd newPlayer = new PlayerToAdd();
+
+
+      //get the max number of players set out by the booking
+      String getMaxPlayerCount = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+      ResultSet maxCount = stmt.executeQuery(getMaxPlayerCount);
+      Integer maxPlayerCount = 0;
+      while(maxCount.next()){
+        maxPlayerCount = maxCount.getInt("numPlayers");
+      }
+
+      //checks the current slots already in use
+      String getCurrentNumPlayers = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+      ResultSet count = stmt.executeQuery(getCurrentNumPlayers);
+      Integer currentPlayerCount = 0;
+      while(count.next()){
+        currentPlayerCount++;
+      }
+    
+      model.put("currentPlayers", currentPlayerCount);
+      model.put("maxPlayers", maxPlayerCount);
+      model.put("invitee", newPlayer);
+      model.put("friends", friendScorecards);
+      model.put("slots", participantReservations);
       model.put("scoresWrapper", scorecardWrapper);
       model.put("logo", getLogo);
       model.put("teeTime", getTime);
@@ -2190,6 +2252,112 @@ public String updateScorecard(@PathVariable("gameID")String gameID, @PathVariabl
     return "LandingPages/error";
   }
 }//updateScorecard()
+
+
+@GetMapping(
+  path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
+)
+public String getGameInvite(@PathVariable("username")String user, @PathVariable("course")String course, @PathVariable("gameID")String gameID, HttpServletRequest request){
+
+   if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
+}
+
+//TODO: test
+@PostMapping(
+  path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
+)
+public String inviteToGame(@PathVariable("username")String user, @PathVariable("course")String course, @PathVariable("gameID")String gameID, PlayerToAdd playerToAdd, Map<String, Object> model) {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+
+    //get the max number of players set out by the booking
+    String getMaxPlayerCount = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+    ResultSet maxCount = stmt.executeQuery(getMaxPlayerCount);
+    Integer maxPlayerCount = 0;
+    while(maxCount.next()){
+      maxPlayerCount = maxCount.getInt("numPlayers");
+    }
+    System.out.println("MaxPlayerCount for gameID = " + maxPlayerCount);
+
+    //checks the current slots already in use
+    String getCurrentNumPlayers = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+    ResultSet count = stmt.executeQuery(getCurrentNumPlayers);
+    Integer currentPlayerCount = 0;
+    while(count.next()){
+      currentPlayerCount++;
+    }
+    System.out.println("CurrentPlayerCount for gameID = " + currentPlayerCount);
+
+    //create a new scorecard if free slots
+    
+    if(currentPlayerCount < maxPlayerCount){
+      //get the inviters scorecard from the DB
+      Scorecard invitee = new Scorecard();
+
+      String getInviterScorecard = "SELECT * FROM scorecards WHERE username='" + user + "' AND id='" + gameID + "'";
+      ResultSet inviterScorecardDB = stmt.executeQuery(getInviterScorecard);
+      while(inviterScorecardDB.next()){
+        invitee.setActive(inviterScorecardDB.getBoolean("active"));
+        invitee.setGameID(inviterScorecardDB.getString("id"));
+        invitee.setUserName(playerToAdd.getName());
+        invitee.setDatePlayed(inviterScorecardDB.getString("date"));
+        invitee.setCoursePlayed(inviterScorecardDB.getString("course"));
+        invitee.setTeesPlayed(inviterScorecardDB.getString("teesPlayed"));
+        invitee.setHolesPlayed("0");
+        invitee.setFormatPlayed(inviterScorecardDB.getString("formatPlayed"));
+        invitee.setAttestor(inviterScorecardDB.getString("attestor"));
+
+        ArrayList<Integer> initHoleStrokes = new ArrayList<Integer>();
+        for(int i = 0 ; i < 18; i++){
+          initHoleStrokes.add(0);
+        }
+        
+        invitee.setStrokes(initHoleStrokes);
+      }
+
+      //check if playerToAdd is valid user
+      Boolean isValidUser = false;
+      String checkIfInDB = "SELECT * FROM users WHERE userName='" + playerToAdd.getName() + "'";
+      ResultSet inviteeInDB = stmt.executeQuery(checkIfInDB);
+      while(inviteeInDB.next()){
+        if(inviteeInDB.getString("priority").equals("GOLFER")){
+          isValidUser = true;
+        }
+      }
+
+      //check if playerToAdd is in game already
+      Boolean playerInGame = false;
+      String checkIfInGame = "SELECT userName FROM scorecards WHERE userName='" + playerToAdd.getName() + "' AND id='" + gameID + "'";
+      ResultSet inviteeInGame = stmt.executeQuery(checkIfInGame);
+      while(inviteeInGame.next()){
+        playerInGame = true;
+      }
+
+      //if playerToAdd is not currently playing game, add to game
+      if(!playerInGame && isValidUser){
+        userInsertScorecard(connection, playerToAdd.getName(), invitee);
+        System.out.println(user + " added a new player to the " + gameID + " on " + course);
+        System.out.println("Adding the new scorecard to Database for: " + playerToAdd.getName());
+      }
+
+    }else{
+      System.out.println(user + " failed to add " + playerToAdd.getName() + " to the game");
+    }
+
+      return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+}
 
 
 
