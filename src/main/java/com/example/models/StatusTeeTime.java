@@ -3,7 +3,7 @@ package com.example.models;
 public class StatusTeeTime {
     private String status;
     private String teeTime;
-    // Add Date for URL later
+    private int totalPlayers;
 
     public void setStatus(String s) {
         this.status = s;
@@ -19,5 +19,13 @@ public class StatusTeeTime {
 
     public String getTeeTime() {
         return this.teeTime;
+    }
+
+    public void setTotalPlayers(int p) {
+        this.totalPlayers = p;
+    }
+
+    public int getTotalPlayers() {
+        return this.totalPlayers;
     }
 }

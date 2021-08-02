@@ -992,11 +992,13 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           Statement checkOccupency = connection.createStatement();
           ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
           
-          ts.setStatus("EMPTY");
+          int numPlayersTotal = 0;
           int countBookings = 0;
           while(checkTeeTime.next()){
             countBookings++;
+            numPlayersTotal += checkTeeTime.getInt("numplayers");
           }
+          ts.setTotalPlayers(numPlayersTotal);
 
           if (countBookings > 0){
             String newStatus = countBookings + " Bookings";
