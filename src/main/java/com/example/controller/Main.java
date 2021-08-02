@@ -1927,6 +1927,10 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         course.setRating(rs.getDouble("rating"));
         course.setNumberRatings(rs.getDouble("numberRatings"));
 
+        if(course.getCourseLogo().equals("null")){
+          course.setCourseLogo("/images/tee-rificBall.png");
+        }
+
         output.add(course);
       }
       model.put("courses", output);
@@ -2032,7 +2036,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       userCreateScorecardsTable(connection);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards WHERE userName='" + user + "'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards WHERE userName='" + user + "' ORDER by date DESC");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
 
       while(rs.next()) {
@@ -2056,6 +2060,132 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
+    }
+  }
+
+  @GetMapping(
+    path = "tee-rific/scorecards/bestScores/{username}"
+  )
+  public String getBestScores(@PathVariable("username")String user,  Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      ArrayList<LowestScore> lowestScores = new ArrayList<LowestScore>();
+      ArrayList<Scorecard> scorecards = new ArrayList<Scorecard>();
+
+      //go through the 'completed' (active == f) games in scorecards (need course, strokes, gameID, date )
+      String getScorecardsInfo = "SELECT * FROM scorecards WHERE username='" + user + "' AND active='f' ORDER BY course ASC";
+      ResultSet scorecardInfo = stmt.executeQuery(getScorecardsInfo);
+      while(scorecardInfo.next()){
+        Scorecard scorecard = new Scorecard();
+
+        scorecard.setActive(scorecardInfo.getBoolean("active"));
+        scorecard.setGameID(scorecardInfo.getString("id"));
+        scorecard.setUserName(scorecardInfo.getString("username"));
+        scorecard.setDatePlayed(scorecardInfo.getString("date"));
+        scorecard.setCoursePlayed(scorecardInfo.getString("course"));
+
+        //get the stroke information
+        String hole;
+        ArrayList<Integer> strokesForGame = new ArrayList<Integer>();
+        for(int i = 0; i < 18; i++){
+          Integer holeNum = i + 1;
+          String holeNumString = holeNum.toString();
+          hole = "s" + holeNumString;
+          
+          strokesForGame.add(scorecardInfo.getInt(hole));   //add to strokes if user completed hole
+        }
+
+        //adds the strokes arrayList to the scorecard
+        scorecard.setStrokes(strokesForGame);
+
+        //add the scorecard to scorecard list
+        scorecards.add(scorecard);
+      }
+
+      //get the courses par, compare with the user strokes to calculate score for the game if the user particpated on every hole for a valid game
+      for(int i = 0; i < scorecards.size(); i++){
+        String courseName = scorecards.get(i).getCoursePlayed();
+        String courseNameSC = convertToSnakeCase(courseName);
+        ArrayList<Integer> pars = new ArrayList<Integer>();
+        Boolean validGame = true;
+        
+        //get the course pars
+        String getCoursePars = "SELECT par FROM " + courseNameSC + " ORDER BY holeNumber DESC";
+        ResultSet coursePars = stmt.executeQuery(getCoursePars);
+        while(coursePars.next()){
+          pars.add(coursePars.getInt("par"));
+        }
+        
+        //calculate score
+        int score = 0;
+        for(int j = 0; j < pars.size(); j++){
+          int strokesForHole = scorecards.get(i).getStrokes().get(j);
+          int par = pars.get(j);
+
+          if(strokesForHole == 0){    //the user did not particpate on the hole, therefore, the
+            validGame = false;
+            break;     //goes to next iteration of the loop
+           }
+          
+          int scoreOnHole = strokesForHole - par;
+          score += scoreOnHole;
+        }
+
+        if(validGame){
+          LowestScore scoreForGame = new LowestScore();
+          scoreForGame.setCourseName(scorecards.get(i).getCoursePlayed());
+          scoreForGame.setScore(score);
+          scoreForGame.setGameID(scorecards.get(i).getGameID());
+          scoreForGame.setDate(scorecards.get(i).getDatePlayed());
+
+          //check the LowestScore list for the course played, if the score for this game is lower, replace, else leave as is. If the course is not in the list, add to list
+          Boolean inLowestScores = false;
+          for(int k = 0; k < lowestScores.size(); k++){
+            //if course name is in lowest scores
+            if(lowestScores.get(k).getCourseName().equals(scoreForGame.getCourseName())){
+              //compare score
+              inLowestScores = true;
+              if(lowestScores.get(k).getScore() > scoreForGame.getScore()){
+                //replace score
+                lowestScores.get(k).setScore(scoreForGame.getScore());
+              }
+            }
+          }
+        
+          //if no course is found in the list, add lowest score to an arrayList and put in model
+          if(!inLowestScores){
+            lowestScores.add(scoreForGame);
+          } 
+        }
+      }
+      
+      model.put("bestScores", lowestScores);
+      model.put("username", user);
+
+      return "Scorecard/bestScores";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }//getBestScores()
+
+
+  private void printLowestScores(ArrayList<LowestScore> lowestScores){
+    for(int i = 0; i < lowestScores.size(); i++){
+      String course = lowestScores.get(i).getCourseName();
+      int score = lowestScores.get(i).getScore();
+
+      System.out.println("Course: " + course + ", Score: " + score);
     }
   }
 
@@ -2146,7 +2276,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         participantReservations = slots.getInt("numPlayers");
       }
 
-      //get friends scorecards TODO: test
+      //get friends scorecards
       ArrayList<Scorecard> friendScorecards = new ArrayList<Scorecard>();
       
       String getFriendsScorecardInfo = "SELECT * FROM scorecards WHERE id='"+gameID+"' AND course='"+courseName+ "'";

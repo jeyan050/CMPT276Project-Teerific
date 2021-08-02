@@ -55,7 +55,6 @@ div {
 
 table, th, td {
     border: 1px solid black;
-
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -66,8 +65,10 @@ table {
     margin-right: auto;
 }
 
-table input {
-    width: 50%;
+th {
+    background-color: #F0EDC1;
+    background-image: url("https://www.transparenttextures.com/patterns/black-felt.png");
+    font-weight: bold;
 }
 
 /*******************/
@@ -478,9 +479,21 @@ table input {
     background:#F90;
     color:#FFF;
 }
-<<<<<<< HEAD
 
+.scorecardButtonContainer {
+    margin-top: 0px;
+    padding-top: 0px;
+    margin-bottom: 25px;
+}
 
+.scorecardButton {
+    padding: 0px;
+}
+
+.userScorecardContainer {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
 
 .courseScorecardLogo {
     width: 25vh;
@@ -491,8 +504,11 @@ table input {
     margin: 25px;
 }
 
-=======
->>>>>>> 20b79f1a9877313a0d4d2f1e94c6729ccacc5578
+.listOfCoursesLogo {
+    background-size: cover;
+    max-height: 80%;
+}
+
   .weather-container  {
     text-align: center;
   }
@@ -536,3 +552,9 @@ table input {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .drop_button {background-color: #3e8e41;}
+
+
+.bookingField { 
+    width: 100%;
+}
+

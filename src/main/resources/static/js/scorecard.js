@@ -271,6 +271,13 @@ function initial(){
     sumColumns();
     recolorHeadersAndSumColumns();
 
+    //won't show the friends button if only one golfer
+    var currentPlayercount = Number(document.querySelectorAll(".currentCount")[0].innerText);
+
+    if(currentPlayercount == 1){
+        document.querySelectorAll(".showFriends")[0].style.display = "none";        
+    }
+
     document.querySelectorAll(".inviteFriends")[0].style.display = "none";  //hides the inviteFriendsButton
 }//initial()
 
@@ -291,9 +298,10 @@ startUp();
 setHolesAndColumnsInFriendTables();
 toggleInviteButton();
 sendInviteButton();
-initial();
 showFriends();
 hideFriends();
+initial();
+
 
 
 
