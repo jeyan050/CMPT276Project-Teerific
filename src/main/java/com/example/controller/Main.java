@@ -896,9 +896,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 //********************************
 
   @GetMapping(
-      path = "/tee-rific/teeSheet/{username}"
+      path = "/tee-rific/courseSchedule/{username}"
   )
-  public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, WrapperDate newDate, HttpServletRequest request) throws Exception {
+  public String getCourseSchedule(@PathVariable("username")String user, Map<String, Object> model, WrapperDate newDate, HttpServletRequest request) throws Exception {
     
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
@@ -934,7 +934,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
-      ArrayList<StatusTeeTime> teeSheet = new ArrayList<StatusTeeTime>();
+      ArrayList<StatusTeeTime> courseSchedule = new ArrayList<StatusTeeTime>();
       Integer hour = 0;
       Integer min = 0;
 
@@ -1002,7 +1002,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
             String newStatus = countBookings + " Bookings";
             ts.setStatus(newStatus);
           }
-          teeSheet.add(ts);
+          courseSchedule.add(ts);
         }
 
         if (min < (60-increments)) {         //to set up to TimeOpen value/hour
@@ -1018,7 +1018,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       WrapperDate changeDate = new WrapperDate();
       model.put("newDate", changeDate);
       model.put("currentDate", dates);
-      model.put("teeTimes", teeSheet);
+      model.put("teeTimes", courseSchedule);
       return "OwnerSchedule/courseSchedule";
     }catch (Exception e) {
       model.put("message", e.getMessage());
@@ -1034,21 +1034,100 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     return intDate;
   }
 
-  // @GetMapping(
-  //       path = "/tee-rific/teeSheet/{date}/{time}/{username}"
-  // )
+  @GetMapping(
+        path = "/tee-rific/courseSchedule/{date}/{time}/{username}"
+  )
 
-  // public String changeDateRedirect(@PathVariable("username")String user, @PathVariable("date")String date, Map<String, Object> model, HttpServletRequest request) throws Exception {
-  //   try (Connection connection = dataSource.getConnection()) {
-  //     Statement stmt = connection.createStatement();
-  //     return "redirect:/tee-rific/teeSheet"+changeDate+"/"+user;
+  public String viewBookingsForTime(@PathVariable("username")String user, @PathVariable("date")String date, @PathVariable("time")String teeTime, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    }
 
-  //   }catch (Exception e) {
-  //     model.put("message", e.getMessage());
-  //     return "LandingPages/error";
-  //   }
-  //   return "OwnerSchedule/test";
-  // }
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+      courseInfo.next();
+      String course = convertToSnakeCase(courseInfo.getString("courseName"));
+      
+      String bookingsCommand = "SELECT * FROM bookings WHERE coursename='" + course + "' AND date='" + date +"' AND teetime='" + teeTime + "'";
+      ResultSet getBookings = stmt.executeQuery(bookingsCommand);
+      ArrayList<TeeTimeBooking> output = new ArrayList<TeeTimeBooking>();
+
+      while(getBookings.next()){
+        TeeTimeBooking temp = new TeeTimeBooking();
+
+        temp.setUsername(getBookings.getString("username"));
+        temp.setNumPlayers(getBookings.getInt("numplayers"));
+        temp.setGameID(getBookings.getInt("gameid"));
+        temp.setRentalID(getBookings.getString("rentalid"));
+
+        output.add(temp);
+      }
+
+      model.put("date", date);
+      model.put("time", teeTime);
+      model.put("course", course);
+      model.put("bookings", output);
+      return "OwnerSchedule/timeSchedule";
+
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @PostMapping(
+      path = "/tee-rific/courseSchedule/{date}/{time}/{gameID}/{username}",
+      consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String deleteBookingOwnerSide(@PathVariable("username")String user, @PathVariable("date")String date, @PathVariable("time")String teeTime, @PathVariable("gameID")int gameID, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      String getCourseCommand = "SELECT * FROM owners WHERE username='" + user + "'";
+      ResultSet getCourseName = stmt.executeQuery(getCourseCommand);
+      getCourseName.next();
+      String courseName = convertFromSnakeCase(getCourseName.getString("coursename"));
+      
+      EquipmentCart updateInv = new EquipmentCart();
+
+      //get the rental quantities
+      int balls = 0;
+      int clubs = 0;
+      int carts = 0;
+      ResultSet removeStock = stmt.executeQuery("SELECT * FROM rentals WHERE id=" + gameID);
+      while(removeStock.next()){
+        balls = removeStock.getInt("numballs");
+        carts = removeStock.getInt("numcarts");
+        clubs = removeStock.getInt("numclubs");
+      }
+
+      //negate cart values
+      balls = 0 - balls;
+      carts = 0 - carts;
+      clubs = 0 - clubs;
+
+      updateInv.setNumBalls(balls);
+      updateInv.setNumCarts(carts);
+      updateInv.setNumClubs(clubs);
+
+      //subtract from inventory
+      updateInventory(connection, updateInv, courseName);
+
+      stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+
+      return "redirect:/tee-rific/courseSchedule/"+user+"";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
 
 //********************************
 // MODIFY COURSE DETAILS -- OWNER

@@ -32,7 +32,7 @@
                     <div class="titleFont dynamicSize">Course Details</div>
                     
                     <p>To view different dates: Please pick a date below and Click the button</p>
-                    <form action="#" method="get" th:action="${'/tee-rific/teeSheet/'+ username}" th:object="${newDate}">
+                    <form action="#" method="get" th:action="${'/tee-rific/courseSchedule/'+ username}" th:object="${newDate}">
                         <input id="datePicker" type="date" th:field="*{date}" value="${todayDate}"><p id="emptyDate"></p>
                         <button type="submit" id="changeDate" class="button">Change to New Date</button>
                     </form><br>
@@ -45,14 +45,25 @@
                             </tr>
                             <tr th:each="teeTimeDetails : ${teeTimes}">
                                 <td th:text="${teeTimeDetails.teeTime}"></td>
-                                <!-- <form action="#" method="get" th:action="${'/tee-rific/teeSheet/' + date + '/' + username + '/' + teeTimeDetails.teeTime}"> -->
-                                    <td th:style="${teeTimeDetails.status == 'EMPTY' ? 'background-color: green; font-weight: bold;' : 'background-color: red; font-weight: bold;'}">
-                                        <a th:href="${'/tee-rific/teeSheet/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                <div style="padding: 0px;" th:switch="${teeTimeDetails.status}">
+                                    <td th:case="'EMPTY'" style="background-color: green; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
                                         th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
                                     </td>
-                                    <!-- <td onclick="return submitForm(this)" id="status" th:text="${teeTimeDetails.status}" 
-                                    th:style="${teeTimeDetails.status == 'OCCUPY' ? 'background-color: red; font-weight: bold;' : 'background-color: green; font-weight: bold;'}"></td>
-                                </form> -->
+                                    <td th:case="'4 Bookings'" style="background-color: red; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                        th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                    </td>
+                                    <td th:case="*" style="background-color: yellow; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                        th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                    </td>
+                                </div>
+                                
+                                <!-- <td th:style="${teeTimeDetails.status == 'EMPTY' ? 'background-color: green; font-weight: bold;' : 'background-color: red; font-weight: bold;'}">
+                                    <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                    th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                </td> -->
                             </tr>
                         </table>
                     </form>
