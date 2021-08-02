@@ -913,7 +913,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
       courseInfo.next();
 
-      String course = courseInfo.getString("courseName");
+      String course = convertToSnakeCase(courseInfo.getString("courseName"));
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
       // timeOpenStr = timeOpenStr + ":00";
@@ -3195,14 +3195,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String aboutDevelopers(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
 
-    //TODO: uncomment
-    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-    //   return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
-    // }
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
+    }
 
-    // if(request.getSession().getAttribute("username") == (null)) {
-    //   return "redirect:/";
-    // }
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
 
     model.put("username", user);
     return "LandingPages/aboutUs";
