@@ -3195,15 +3195,15 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String aboutDevelopers(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
-    }
+    //TODO: uncomment
+    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    //   return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
+    // }
 
-    if(request.getSession().getAttribute("username") == (null)) {
-      return "redirect:/";
-    }
+    // if(request.getSession().getAttribute("username") == (null)) {
+    //   return "redirect:/";
+    // }
 
-    //this is optional, if you guys feel comfortable doing so, we can upload 'selfies' of our team and maybe talk about our development process
     model.put("username", user);
     return "LandingPages/aboutUs";
   }

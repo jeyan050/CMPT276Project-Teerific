@@ -189,6 +189,11 @@ th {
     background-repeat: repeat;
 }
 
+#aboutUsContent {
+    width: 50%;
+    text-align: center;
+}
+
 .nukeBackdrop {
     background-image: url("https://c.wallhere.com/photos/91/e3/background_tapes_radiation_hazard_wall-734011.jpg!d");
     background-size: cover;
@@ -373,6 +378,25 @@ th {
     border-bottom: 1px solid #EAE2B6; 
 }
 
+.blackPixelBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");
+}
+
+.darkMeshBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");
+}
+
+.aluminumBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/brushed-alum.png");
+}
+
+.blackBuriedBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/buried.png");
+}
 
 
 .socialIcon {
@@ -403,7 +427,6 @@ th {
     height: 95%;
     border-radius: 15px;
     margin: 2.5%;
-    /* font-family: 'Teko', sans-serif; */
     font-family: 'Oswald', sans-serif;
     font-size: 200%;
     font-weight: bold;
@@ -502,6 +525,83 @@ th {
     border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+.developersContainer {
+    float: right;
+}
+
+.developerPicture {
+    width: 20vh;
+    height: 20vh;
+    margin: 0px;
+    border-radius: 100%;
+    background-size: cover;
+}
+
+.developerPictureBorder {
+    width: 22vh;
+    height: 22vh;
+    border-radius: 100%;
+    background-size: cover;
+    margin: 25px;
+    padding: 1vh;
+}
+
+.pageSpacer {
+    margin: 0px;
+    padding: 2px;
+    width: 100%;
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");
+}
+
+.profile{
+    display: inline-block;
+}
+
+.developerProcessParagraph {
+    color: white;
+    font-family: 'Roboto Slab', serif;
+    padding-top: 30px;
+    padding-botton: 30px;
+}
+
+#aboutUsHomeButton {
+    width: 20%;
+}
+
+.processTitle{
+    padding: 5px;
+    font-family: 'Cinzel', serif;
+    color: #AFABAB;
+}
+
+.teerificName {
+    color: #338507;
+}
+
+.processContainer {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+
+.developerNameText {
+    color: white;
+    font-family: 'Russo One', sans-serif;
+    padding: 0px;
+    margin: 1px;
+}
+
+.faintGrey{
+    color: #AFABAB;
+}
+
+.aboutUsLogo {
+    width: 25%;
 }
 
 .listOfCoursesLogo {
