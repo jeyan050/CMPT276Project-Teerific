@@ -913,7 +913,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
       courseInfo.next();
 
-      String course = courseInfo.getString("courseName");
+      String course = convertToSnakeCase(courseInfo.getString("courseName"));
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
       // timeOpenStr = timeOpenStr + ":00";
