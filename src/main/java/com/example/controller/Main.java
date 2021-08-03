@@ -374,7 +374,8 @@ public class Main {
     return "CREATE TABLE IF NOT EXISTS owners (" +
             "courseName varchar(100), address varchar(100), city varchar(100), country varchar(100), website varchar(150), phoneNumber varchar(100), " +
             "courseLogo varchar(800), directionsToCourse varchar(1000), description varchar(1000), weekdayRates varchar(150), weekendRates varchar(150), numHoles integer, timeOpen varchar(10)," +
-            "timeClose varchar(10), bookingInterval varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100),gender varchar(100), rating double precision, numberRatings double precision)";
+            "timeClose varchar(10), bookingInterval varchar(10), userName varchar(100), password varchar(100),firstName varchar(100),lastName varchar(100),email varchar(100),yardage varchar(100)," +
+            "gender varchar(100), rating double precision, numberRatings double precision)";
   }
 
 
@@ -473,6 +474,14 @@ public class Main {
       if (userPriority.equals(priorities[0])) {         // returns golfer homepage
         return "LandingPages/home";
       } else if (userPriority.equals(priorities[1])) {   //returns owner homepage
+          stmt.executeUpdate(getSQLNewTableOwner());
+          ResultSet rs1 = stmt.executeQuery("SELECT * FROM owners WHERE username='" + user + "'");
+          CourseOwner course1 = new CourseOwner();
+          while (rs1.next()) {
+            course1.setCourseName(rs1.getString("courseName"));
+          }
+          String coursename = course1.getCourseName();
+          model.put("courseName", coursename);
         return "Owner/ownerHome";
       } else {                                          //returns admin homepage
         return "Admin/adminHome";
@@ -1761,6 +1770,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           path = "/tee-rific/courses/{username}"
   )
   public String viewAllCourses(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/courses/" + request.getSession().getAttribute("username");
     }
@@ -2089,26 +2099,6 @@ public String updateScorecard(@PathVariable("gameID")String gameID, @PathVariabl
       ResultSet rs = stmt.executeQuery("SELECT * FROM owners WHERE courseName='" + courseNameSC + "'");
       CourseOwner course1 = new CourseOwner();
       while (rs.next()) {
-
-        course1.setCourseName(rs.getString("courseName"));
-        course1.setAddress(rs.getString("address"));
-        course1.setCity(rs.getString("city"));
-        course1.setCountry(rs.getString("country"));
-        course1.setWebsite(rs.getString("website"));
-        course1.setPhoneNumber(rs.getString("phoneNumber"));
-        course1.setCourseLogo(rs.getString("courseLogo"));
-        course1.setDirectionsToCourse(rs.getString("directionsToCourse"));
-        course1.setDescription(rs.getString("description"));
-        course1.setWeekdayRates(rs.getString("weekdayRates"));
-        course1.setWeekendRates(rs.getString("weekendRates"));
-        course1.setNumHoles(rs.getInt("numHoles"));
-        course1.setUsername(rs.getString("userName"));
-        course1.setPassword(rs.getString("password"));
-        course1.setFname(rs.getString("firstName"));
-        course1.setLname(rs.getString("lastName"));
-        course1.setEmail(rs.getString("email"));
-        course1.setYardage(rs.getString("yardage"));
-        course1.setGender(rs.getString("gender"));
         course1.setRating(rs.getDouble("rating"));
         course1.setNumberRatings(rs.getDouble("numberRatings"));
       }
@@ -2146,8 +2136,79 @@ public String updateScorecard(@PathVariable("gameID")String gameID, @PathVariabl
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
+    return "redirect:/tee-rific/feedback/" + request.getSession().getAttribute("username") + "/" + course;
+  }
+
+  @GetMapping(
+          path = "tee-rific/feedback/{username}/{courseName}"
+  )
+  public String getFeedbackPage(@PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model, HttpServletRequest request) {
+    if (null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if (!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/feedback/" + request.getSession().getAttribute("username") + "/" + course;
+    }
+    CourseOwner givenFeedback = new CourseOwner();
+
+    model.put("givenFeedback", givenFeedback);
+  return "Booking&ViewingCourses/feedback";
+  }
+
+  @PostMapping(
+          path = "tee-rific/feedback/{username}/{courseName}/post"
+  )
+  public String handleFeedbackSubmission(CourseOwner givenFeedback, HttpServletRequest request, @PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model) {
+    try(Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + course + "Feedback (username varchar(1000), feedback varchar(10000))");
+      stmt.executeUpdate("INSERT INTO " + course + "Feedback (username, feedback) VALUES ('"+ user +"','"+givenFeedback.getFeedback()+"')");
+    }catch (Exception e){
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
     return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
   }
+
+@GetMapping(
+        path = "/tee-rific/owner/feedback/{username}/{courseName}"
+)
+public String showAllFeedback(@PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model, HttpServletRequest request) throws Exception {
+
+  if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+  }
+
+  if(null == (request.getSession().getAttribute("username"))) {
+    return "redirect:/";
+  }
+
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate(getSQLNewTableOwner());
+    ResultSet rs = stmt.executeQuery("SELECT * FROM " + course + "Feedback");
+    ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
+    while(rs.next()) {
+      CourseOwner temp = new CourseOwner();
+
+      temp.setUsername(rs.getString("username"));
+      temp.setFeedback(rs.getString("feedback"));
+
+      output.add(temp);
+    }
+    model.put("feedback", output);
+    model.put("username", user);
+    return "Owner/courseFeedback";
+  } catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+}
+
+
+
 
 
 // HELPER BOIS (for booking) - Chino
