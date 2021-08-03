@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Rental Details</title>
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/css/detailStyle.css}" type="text/css" rel="stylesheet">
+    
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content rental">
+                <div class="sandBackdrop" th:each="rentalID : ${rID}">
+                    <div>
+                        <img style="width:75%" th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">Rental ID: <span th:text="${rentalID}"></span></div>            
+                    <table>  
+                        <tr>
+                            <th>Course Name</th>
+                            <th>Username</th>
+                            <th>Checkout Date</th>
+                            <th>Number of Balls</th>
+                            <th>Number of Carts</th>
+                            <th>Number of Clubs</th>
+                        </tr>
+                        <tr th:each="rental : ${details}">
+                            <td th:text="${rental.courseName}"></td>
+                            <td th:text="${rental.username}"></td>
+                            <td th:text="${rental.dateCheckout}"></td>      
+                            <td th:text="${rental.numBalls}"></td>     
+                            <td th:text="${rental.numCarts}"></td>  
+                            <td th:text="${rental.numClubs}"></td>  
+                        </tr>
+                    </table><br>
+
+                    <form method= "get" th:action="@{/tee-rific/admin/bookings}">
+                        <button type="submit" class="button">Back to Bookings</button>
+                    </form>
+                </div>
+             </div>
+        </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+        </footer>
+    </div>
+</body>
+</html>

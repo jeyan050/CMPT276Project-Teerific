@@ -3159,19 +3159,18 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       while (listO.next()) {
         CourseOwner temp = new CourseOwner();
 
+        temp.setUsername(listO.getString("username"));
+
         temp.setCourseName(listO.getString("coursename"));
         temp.setAddress(listO.getString("address"));
         temp.setCity(listO.getString("city"));
         temp.setCountry(listO.getString("country"));
-
-        temp.setUsername(listO.getString("username"));
-        temp.setPassword(listO.getString("password"));
-        temp.setFname(listO.getString("firstname"));
-        temp.setLname(listO.getString("lastname"));
-        temp.setEmail(listO.getString("email"));
-        temp.setGender(listO.getString("gender"));
+        temp.setPhoneNumber(listO.getString("phonenumber"));
+        temp.setTimeOpen(listO.getString("timeopen"));
+        temp.setTimeClose(listO.getString("timeclose"));
+        temp.setBookingInterval(listO.getString("bookinginterval"));
         temp.setRating(listO.getDouble("rating"));
-        temp.setNumberRatings(listO.getDouble("numberRatings"));
+        temp.setNumberRatings(listO.getDouble("numberratings"));
 
         output.add(temp);
       }
@@ -3261,6 +3260,201 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
       model.put("details",output);
       return "Admin/courseDetails";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+   // LIST OF BOOKINGS AND RENTALS
+//--------------------------------
+  @GetMapping(
+          path = "/tee-rific/admin/bookings"
+  )
+  public String listBookings(Map<String, Object> model, HttpServletRequest request)
+  {
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+    if(!"admin".equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+
+      createTablesForBooking(connection);
+
+      ResultSet listB = stmt.executeQuery("SELECT * FROM bookings");
+      ArrayList<TeeTimeBooking> output = new ArrayList<TeeTimeBooking>();
+      while (listB.next()) {
+        TeeTimeBooking temp = new TeeTimeBooking();
+
+        temp.setGameID(listB.getInt("gameid"));
+        temp.setCourseName(listB.getString("coursename"));
+        temp.setUsername(listB.getString("username"));
+        temp.setDate(listB.getString("date"));
+        temp.setTime(listB.getString("teetime"));
+        temp.setNumPlayers(listB.getInt("numplayers"));
+        temp.setRentalID(listB.getString("rentalid"));
+
+        output.add(temp);
+      }
+      model.put("bookingList",output);
+      return "Admin/listOfBookings";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  public void createTablesForBooking(Connection connection) throws Exception {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings (gameID serial, courseName varchar(100), username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals (id integer, courseName varchar(100), username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+    userCreateScorecardsTable(connection); //Creates scorecard db if not created
+  }
+
+  @PostMapping(
+          path = "/tee-rific/admin/bookings/clear",
+          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String clearBookingDB(Map<String, Object> model){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String getBookings = "SELECT * FROM bookings";
+      ResultSet getBookingDetails = stmt.executeQuery(getBookings);
+
+      while(getBookingDetails.next()){
+        Statement clearOtherDBs = connection.createStatement();
+        String courseName = convertFromSnakeCase(getBookingDetails.getString("coursename"));
+        int gameID = getBookingDetails.getInt("gameid");
+        
+        EquipmentCart updateInv = new EquipmentCart();
+
+        //get the rental quantities
+        int balls = 0;
+        int clubs = 0;
+        int carts = 0;
+        ResultSet removeStock = clearOtherDBs.executeQuery("SELECT * FROM rentals WHERE id=" + gameID);
+        while(removeStock.next()){
+          balls = removeStock.getInt("numballs");
+          carts = removeStock.getInt("numcarts");
+          clubs = removeStock.getInt("numclubs");
+        }
+
+        //negate cart values
+        balls = 0 - balls;
+        carts = 0 - carts;
+        clubs = 0 - clubs;
+
+        updateInv.setNumBalls(balls);
+        updateInv.setNumCarts(carts);
+        updateInv.setNumClubs(clubs);
+
+        //subtract from inventory
+        updateInventory(connection, updateInv, courseName);
+
+        clearOtherDBs.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+        clearOtherDBs.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+      }
+      
+      stmt.executeUpdate("DROP TABLE bookings");
+
+      return "redirect:/tee-rific/admin/bookings/";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @PostMapping(
+          path = "/tee-rific/admin/bookings/{gameId}",
+          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String deleteBooking(Map<String, Object> model, @PathVariable("gameId") int gameID){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String getBookings = "SELECT * FROM bookings WHERE gameid='" + gameID + "'";
+      ResultSet getBookingDetails = stmt.executeQuery(getBookings);
+      getBookingDetails.next();
+
+      String courseName = convertFromSnakeCase(getBookingDetails.getString("coursename"));
+      
+      EquipmentCart updateInv = new EquipmentCart();
+
+      //get the rental quantities
+      int balls = 0;
+      int clubs = 0;
+      int carts = 0;
+      ResultSet removeStock = stmt.executeQuery("SELECT * FROM rentals WHERE id='" + gameID + "'");
+      while(removeStock.next()){
+        balls = removeStock.getInt("numballs");
+        carts = removeStock.getInt("numcarts");
+        clubs = removeStock.getInt("numclubs");
+      }
+
+      //negate cart values
+      balls = 0 - balls;
+      carts = 0 - carts;
+      clubs = 0 - clubs;
+
+      updateInv.setNumBalls(balls);
+      updateInv.setNumCarts(carts);
+      updateInv.setNumClubs(clubs);
+
+      //subtract from inventory
+      updateInventory(connection, updateInv, courseName);
+
+      stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM bookings WHERE gameid='"+gameID+"'");            
+
+      return "LandingPages/deleteSuccess";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @GetMapping(
+          path = "/tee-rific/admin/bookings/rental/{rentalID}"
+  )
+  public String viewRentalDetails(Map<String, Object> model, @PathVariable("rentalID") String id, HttpServletRequest request){
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+    if(!"admin".equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String sql = "SELECT * FROM rentals WHERE id='" + id + "'";
+      ResultSet rentalDetails = stmt.executeQuery(sql);
+
+      ArrayList<RentalDetail> output = new ArrayList<RentalDetail>();
+      while (rentalDetails.next()) {
+        System.out.println("in while");
+        RentalDetail temp = new RentalDetail();
+
+        temp.setCourseName(rentalDetails.getString("coursename"));
+        temp.setUsername(rentalDetails.getString("username"));
+        temp.setDateCheckout(rentalDetails.getString("datecheckout"));
+        temp.setNumBalls(rentalDetails.getInt("numballs"));
+        temp.setNumCarts(rentalDetails.getInt("numcarts"));
+        temp.setNumClubs(rentalDetails.getInt("numclubs"));
+
+        output.add(temp);
+      }
+
+      model.put("rID", id);
+      model.put("details", output);
+      return "Admin/rentalDetails";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
