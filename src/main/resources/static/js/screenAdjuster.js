@@ -6,6 +6,11 @@ if(screen.width < 1025){
 }
 
 //adds event listener for resizing the window and reloads so appropriate sized table is used
+var previousScreenWidth = screen.width;
 window.addEventListener('resize', function(event) {
-    window.location.reload();
+    //will only reload if the width of the screen changes
+    if(this.screen.width !== previousScreenWidth){
+        previousScreenWidth = this.screen.width;
+        window.location.reload();
+    }
 });
