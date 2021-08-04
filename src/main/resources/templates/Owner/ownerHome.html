@@ -49,7 +49,7 @@
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link" th:href="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">View Course Feedback</a>
+                  <a class="nav-link" th:href="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">View Feedback</a>
                 </li>
 
                   <li class="nav-item">
@@ -71,14 +71,12 @@
                     <button id="editCourseButton" class="homePageButton" type="submit">Course Details</button>
                 </form>
 
-
-
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="editOwnerButton" class="homePageButton" type="submit">Account Details</button>
                 </form>
 
             <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">
-                <button id="feedbackOwnerButton" class="homePageButton" type="submit">View Course Feedback</button>
+                <button id="feedbackOwnerButton" class="homePageButton" type="submit">View Feedback</button>
             </form>
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">

@@ -1204,7 +1204,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
   public String updateCourseDetails(@PathVariable("username")String user, Map<String, Object> model, WrapperHoles wrapper) throws Exception{
-    //TODO: methods to update the database
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
 
@@ -1254,8 +1253,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   // 2. User picks date and time for teetime (using table of buttons)
   // 3. Show options for renting equipment and such and enter into bookings table
   // 4. Create a scorecard for the game with the generated Game ID
-//TODO: can someone do invalid inputs :3
-
 
   @GetMapping(
     path = "/tee-rific/booking/{username}"
@@ -1358,7 +1355,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       // Time timeClose = Time.valueOf(timeCloseStr);
 
       // Create array of valid teetimes based on open / closing times of specified course
-      // TODO: (if we have time) extend so to consider golf course capacity
       ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
       Integer hour = 0;
       Integer min = 0;
@@ -1575,8 +1571,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 // RENT EQUIPMENT
 //**********************
 
-  //TODO: Add extra style
-//TODO: Corner cases (out of stock case, quantity in cart > stock case, negative number case)
   @GetMapping(
           path = "/tee-rific/rentEquipment/{courseName}/{gameID}/{username}"
   )
@@ -1713,10 +1707,10 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     return "Rentals/rentEquipmentSuccess";
   }
 
-
-  // ------ OWNER'S PAGE ------ //
-// TODO: ensure paths are correct
-// TODO: Add style to table in viewInventory page
+// *********************
+    //    OWNER'S PAGE
+// *********************
+ 
   @GetMapping(
           path="/tee-rific/golfCourseDetails/inventory/{username}"
   )
@@ -1841,12 +1835,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       String gameID = pathVars.get("gameID");
       String courseName = convertFromSnakeCase(courseNameSC);
 
-
-      //TODO: get the gameID, update stock and delete rental reservation
-    
-
       Statement stmt = connection.createStatement();
-      
       EquipmentCart updateInv = new EquipmentCart();
 
       //get the rental quantities
@@ -2487,7 +2476,7 @@ public String getGameInvite(@PathVariable("username")String user, @PathVariable(
     return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
 }
 
-//TODO: test
+
 @PostMapping(
   path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
 )
@@ -2661,9 +2650,9 @@ public String inviteToGame(@PathVariable("username")String user, @PathVariable("
   public String handleFeedbackSubmission(CourseOwner givenFeedback, HttpServletRequest request, @PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model) {
     try(Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + course + "Feedback (username varchar(1000), feedback varchar(10000))");
-      stmt.executeUpdate("INSERT INTO " + course + "Feedback (username, feedback) VALUES ('"+ user +"','"+givenFeedback.getFeedback()+"')");
+      String courseSnake = convertToSnakeCase(course);
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + courseSnake + "Feedback (username varchar(1000), feedback varchar(10000))");
+      stmt.executeUpdate("INSERT INTO " + courseSnake + "Feedback (username, feedback) VALUES ('"+ user +"','"+givenFeedback.getFeedback()+"')");
     }catch (Exception e){
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -2687,7 +2676,8 @@ public String showAllFeedback(@PathVariable("username")String user, @PathVariabl
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate(getSQLNewTableOwner());
-    ResultSet rs = stmt.executeQuery("SELECT * FROM " + course + "Feedback");
+    String courseSnake = convertToSnakeCase(course);
+    ResultSet rs = stmt.executeQuery("SELECT * FROM " + courseSnake + "Feedback");
     ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
     while(rs.next()) {
       CourseOwner temp = new CourseOwner();
