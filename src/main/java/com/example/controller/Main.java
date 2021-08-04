@@ -2661,9 +2661,9 @@ public String inviteToGame(@PathVariable("username")String user, @PathVariable("
   public String handleFeedbackSubmission(CourseOwner givenFeedback, HttpServletRequest request, @PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model) {
     try(Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + course + "Feedback (username varchar(1000), feedback varchar(10000))");
-      stmt.executeUpdate("INSERT INTO " + course + "Feedback (username, feedback) VALUES ('"+ user +"','"+givenFeedback.getFeedback()+"')");
+      String courseSnake = convertToSnakeCase(course);
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + courseSnake + "Feedback (username varchar(1000), feedback varchar(10000))");
+      stmt.executeUpdate("INSERT INTO " + courseSnake + "Feedback (username, feedback) VALUES ('"+ user +"','"+givenFeedback.getFeedback()+"')");
     }catch (Exception e){
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -2687,7 +2687,8 @@ public String showAllFeedback(@PathVariable("username")String user, @PathVariabl
   try (Connection connection = dataSource.getConnection()) {
     Statement stmt = connection.createStatement();
     stmt.executeUpdate(getSQLNewTableOwner());
-    ResultSet rs = stmt.executeQuery("SELECT * FROM " + course + "Feedback");
+    String courseSnake = convertToSnakeCase(course);
+    ResultSet rs = stmt.executeQuery("SELECT * FROM " + courseSnake + "Feedback");
     ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
     while(rs.next()) {
       CourseOwner temp = new CourseOwner();
