@@ -1497,12 +1497,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String courseNameSC = pathVars.get("courseName");
     String courseName = convertFromSnakeCase(courseNameSC);
 
-    System.out.println(booking.getUsername());
-    System.out.println(booking.getCourseName());
-    System.out.println(booking.getTime());
-    System.out.println(booking.getDate());
-    System.out.println(booking.getRentalID());
-
     try (Connection connection = dataSource.getConnection()) {
       String teetime = booking.getTime();
       teetime = teetime + ":00";
