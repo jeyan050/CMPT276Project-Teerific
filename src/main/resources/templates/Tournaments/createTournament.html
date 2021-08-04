@@ -32,6 +32,7 @@
                     <div class="titleFont dynamicSize">Create Tournament</div>
                     <form action="#" method="post" th:action="${'/tee-rific/createTournament/' + username}" th:object="${newTournament}">
                         <input type="text" class="inputBox" th:field="*{name}" placeholder="Tournament Name"> <br>
+                        <input type="text" class="inputBox" th:field="*{clubName}" placeholder="Club Name"> <br> 
                         Date: <input type="date" class="inputBox" th:field="*{date}" placeholder="Date"> <br>
                         Time: <input type="time" class="inputBox" th:field="*{time}" placeholder="Time"> <br>
                         <input type="number" class="inputBox" th:field="*{participantSlots}" min = "1" placeholder="Participant Slots"> <br>
@@ -50,8 +51,6 @@
                             <option value = "skins">Skins</option>
                             <option value = "best ball">Best Ball</option>
                         </select> <br>
-                        take out and have it be filled in automaticly by reading the club name associated with the owner account
-                        <input type="text" class="inputBox" th:field="*{clubName}" placeholder="Club Name"> <br> 
                         <input type="submit" class = "button" value="Create Tournament">
                     </form>
                     <form method="get" th:action="${'/tee-rific/tournament/' + username}">

@@ -2144,8 +2144,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     return "Tournaments/tournament";
   }
 
-  // TODO: page crashes on the live version, local host works fine for some reason
-// TODO: breaks if no tournaments have been created yet
   @GetMapping(
           path = "/tee-rific/availableTournaments/{username}"
   )
@@ -2217,7 +2215,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     return "Tournaments/createTournament";
   }
 
-
+//TODO: make it so duplicate tournament names cannot be created
   @PostMapping(
           path = "/tee-rific/createTournament/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -2227,7 +2225,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try (Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100))");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100), creator varchar(100), num_signed_up integer)");
       Integer buyIn = tournament.getBuyIn();
       if (buyIn == null)
       {
@@ -2238,8 +2236,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       {
         ageReq = "all ages";
       }
-      stmt.executeUpdate("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize() + "','" + ageReq + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "')");
-      
+      Integer numSignedUp = 0;
+
+      ResultSet rs = stmt.executeQuery("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name, creator, num_signed_up) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize() + "','" + ageReq + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "','" + user + "','" + numSignedUp + "') RETURNING id");
+      rs.next();
+      Integer new_tournament_id = rs.getInt(1);
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournament_" + new_tournament_id + "_participants (id serial, username varchar(100) CONSTRAINT tournament_"+new_tournament_id+"_unique_username UNIQUE, first_name varchar(50), last_name varchar(50), score integer)");
+
       return "redirect:/tee-rific/availableTournaments/" + user;
     } catch (Exception e)
     {
@@ -2283,6 +2286,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         tournament.setAgeRequirement(rs.getString("age_requirement"));
         tournament.setGameMode(rs.getString("game_mode"));
         tournament.setClubName(rs.getString("club_name"));
+        tournament.setNumSignedUp(rs.getInt("num_signed_up"));
       }
 
   
@@ -2341,10 +2345,10 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   @GetMapping(
     path = "/tee-rific/tournamentSignUp/{tournamentId}/{username}"
     )
-  public String tournamentSignUp(@PathVariable("username")String user,  @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, Tournament tournament, HttpServletRequest request)
-    {
+  public String tournamentSignUp(@PathVariable("username")String username,  @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, /*User user,*/ HttpServletRequest request)
+  {
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    if(!username.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/tournamentSignUp/" + request.getSession().getAttribute("username");
     }
 
@@ -2355,21 +2359,28 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try (Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      //add user to tournament.participants
-      model.put("username", user);
+      model.put("username", username);
       model.put("tournamentId", tournamentId);
-      // ArrayList<User> old_partitipant_list = tournament.getParticipants();
-      // //search participant list to see if use is already registered
-      // for (User participant : old_partitipant_list)
-      // {
-      //   if (participant == user)
-      //   {
-      //     //pop up displays to show that the user is already signed up in the tournament
-      //     return "tournamentSignUp";
-      //   }
-      // }
-      // old_partitipant_list.add(user);
-      // tournament.setParticipants(old_partitipant_list);
+
+      ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE username =" + "'" + username + "'");
+      rs.next();
+      User user = new User();
+      user.setFname(rs.getString("fname"));
+      user.setLname(rs.getString("lname"));
+
+      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + tournamentId + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "') ON CONFLICT (username) DO NOTHING");
+      if (num_row_updated == 0) //user has already signed up for the tournament
+      {
+        return "Tournaments/tournamentSignupError";
+      }
+      rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id=" + tournamentId);
+      rs.next();
+      if (rs.getInt("num_signed_up") == rs.getInt("participant_slots")) //tournament has reached capacity
+      {
+        return "Tournaments/tournamentSignupError";
+      }
+      Integer new_num_signed_up = rs.getInt("num_signed_up") + 1;
+      stmt.execute("UPDATE tournaments SET num_signed_up ="+ new_num_signed_up + " WHERE id=" +tournamentId);
       // //display sign up success
       return "Tournaments/tournamentSignUp";
     } catch (Exception e)
@@ -2379,22 +2390,167 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
+  @GetMapping(
+    path = "/tee-rific/pastTournaments/{username}"
+  )
+  public String pastTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
 
-// @PostMapping(
-//   path ="tee-rific/tournamentSignUp",
-//   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
-// )
-// public String handleTournamentSignUp(Map<String, Object> model, Tournament tournament)
-// {
-//   try (Connection connection = dataSource.getConnection())
-//   {
-//     //sign the user up, add them to the participant list
-//   } catch (Exception e)
-//   {
-//     model.put("message", e.getMessage());
-//     return "error";
-//   }
-// }
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/pastTournament/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try(Connection connection = dataSource.getConnection())
+    {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS past_tournaments (id serial, name varchar(100), date varchar(50), club_name varchar(100))");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM past_tournaments");
+      ArrayList<PastTournaments> output = new ArrayList<PastTournaments>();
+      while (rs.next())
+      {
+        PastTournaments tournament = new PastTournaments();
+        tournament.setId(rs.getInt("id"));
+        tournament.setName(rs.getString("name"));
+        tournament.setClubName(rs.getString("club_name"));
+        tournament.setDate(rs.getString("date"));
+
+        output.add(tournament);
+      }
+
+      model.put("past_tournaments", output);
+      model.put("username", user);
+      return "Tournaments/pastTournaments";
+    } catch (Exception e)
+    {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @GetMapping(
+    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}"
+  )
+  public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
+
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/publishTournamentResults/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try(Connection connection = dataSource.getConnection())
+    {
+      Statement stmt = connection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants");
+      ArrayList<TournamentParticipant> output = new ArrayList<TournamentParticipant>();
+      while (rs.next())
+      {
+        TournamentParticipant participant = new TournamentParticipant();
+        participant.setUsername(rs.getString("username"));
+        participant.setFname(rs.getString("first_name"));
+        participant.setLname(rs.getString("last_name"));
+        participant.setScore(0);
+  
+        output.add(participant);
+      }
+      model.put("participants", output);
+      TournamentParticipant particpant = new TournamentParticipant();
+      model.put("participant", particpant);
+      model.put("username", user);
+      model.put("tournamentId", tournamentId);
+      return "Tournaments/publishTournamentResults";
+    } catch (Exception e)
+    {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+@PostMapping(
+  path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}",
+  consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+)
+public String publishTournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Tournament tournament, PastTournaments past_tournament, TournamentParticipant participants, Map<String, Object> model)
+{
+  try(Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS past_tournaments (id serial, name varchar(100), date varchar(50), club_name varchar(100))");
+    stmt.executeUpdate("INSERT INTO past_tournaments (name, date, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
+
+    //UPDATE tourament_tournamentId_participants SET score = 
+
+    return "redirect:/tee-rific/pastTournaments/" + user;    
+  } catch (Exception e)
+  {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+
+}
+
+@GetMapping(
+  path = "/tee-rific/tournamentResults/{tournamentId}/{username}"
+)
+public String tournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request)
+{
+  if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+  return "redirect:/tee-rific/tournamentResults/" + request.getSession().getAttribute("username");
+  }
+
+  if(null == (request.getSession().getAttribute("username"))) {
+  return "redirect:/";
+  }
+
+  try(Connection connection = dataSource.getConnection())
+  {
+    Statement stmt = connection.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT * FROM past_tournaments WHERE id =" + tournamentId);
+    rs.next();
+
+    PastTournaments past_tournament = new PastTournaments();
+
+    past_tournament.setId(rs.getInt("id"));
+    past_tournament.setClubName(rs.getString("club_name"));
+    past_tournament.setDate(rs.getString("date"));
+    past_tournament.setName(rs.getString("name"));
+
+    model.put("past_tournament", past_tournament);
+
+    rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants");
+    ArrayList<TournamentParticipant> output = new ArrayList<TournamentParticipant>();
+    while (rs.next())
+    {
+      TournamentParticipant participant = new TournamentParticipant();
+      participant.setUsername(rs.getString("username"));
+      participant.setFname(rs.getString("first_name"));
+      participant.setLname(rs.getString("last_name"));
+      // participant.setScore(rs.getString("score"));
+
+      output.add(participant);
+    }
+
+//sort output by score
+// https://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
+
+    model.put("participants", output);
+    model.put("username", user);
+    model.put("tournamentId", tournamentId);
+    return "Tournaments/tournamentResults";
+  } catch (Exception e)
+  {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+}
+
+
+
 
 
 //**********************
