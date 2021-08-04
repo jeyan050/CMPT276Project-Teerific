@@ -3,20 +3,6 @@ var golfSwingSound = new Audio("https://ringtons.s3.eu-west-2.amazonaws.com/th5s
 var numButtons = document.querySelectorAll("button").length;
 var timeoutLength = 500; // in milliseconds (perfect timing for above mp3)
 
-//checks the screen side, ensures correct table is used before other functions are run for set up
-if(screen.width < 1025){
-    document.querySelectorAll(".wideScreenTable")[0].remove();
-}else{
-    document.querySelectorAll(".narrowScreenTable")[0].remove();
-}
-
-//adds event listener for resizing the window and reloads so appropriate sized table is used
-window.addEventListener('resize', function(event) {
-    window.location.reload();
-});
-
-
-
 
 //*******************
 // FUNCTIONS

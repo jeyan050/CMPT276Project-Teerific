@@ -4,12 +4,18 @@ var narrowScreenTableRemoved = 0;
 
 //checks the screen side, ensures correct table is used before other functions are run for set up
 function removeTable(){
-    if(window.screen.width < 1025){
-        wideScreenTableRemoved = 1;
-        document.querySelectorAll(".wideScreenTable")[0].remove();
+    if(screen.width < 1025){
+        if(wideScreenTableRemoved == 0){
+            wideScreenTableRemoved = 1;
+            document.querySelectorAll(".wideScreenTable")[0].remove();
+            console.log("wide table removed");
+        }
     }else{
-        narrowScreenTableRemoved = 1;
-        document.querySelectorAll(".narrowScreenTable")[0].remove();
+        if(narrowScreenTableRemoved == 0){
+            narrowScreenTableRemoved = 1;
+            document.querySelectorAll(".narrowScreenTable")[0].remove();
+            console.log("narrow table removed");
+        }
     }
 }
 
@@ -21,6 +27,7 @@ function addScreenEventListener(){
         //will only reload if both tables have been removed
         if(wideScreenTableRemoved == 1 && narrowScreenTableRemoved == 1){
             window.location.reload();
+            console.log(".... reload");
         }
     });
 }
