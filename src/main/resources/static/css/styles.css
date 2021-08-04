@@ -301,7 +301,12 @@ th {
     width: 80%;
 }
 
-.ownerTableCell{
+.textBox {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.ownerTableCell, .gameListCell {
     width: 25%;
 }
 
@@ -315,14 +320,14 @@ th {
     border-radius: 10%;
 }
 
-.scorecardTable {
-    width: 90%;
+.scorecardTable, .gameListTable {
+    width: 100%;
     margin-top: 15px;
     margin-bottom: 25px;
 }
 
 .friendScorecardTable {
-    width: 45%;
+    width: 100%;
 }
 
 .friendsNameCell {
@@ -332,8 +337,12 @@ th {
     white-space: nowrap;
 }
 
-.scorecardTableCell, .friendScorecardTableCell {
-    width: 15%;
+.friendScorecardTableCell {
+    width: 33.3%;
+}
+
+.scorecardTableCell {
+    width: 16.67%;
 }
 
 .friendScorecard {
@@ -366,6 +375,19 @@ th {
     font-family: "Ubuntu";
     font-weight: bold;
     border-top: 1px solid #EAE2B6;
+}
+
+.aboutUsFooter {
+    bottom: 0px;
+    width: 100%;
+    min-width: 250px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    color: #AFABAB;
+    text-align: center;
+    font-family: "Ubuntu";
+    font-weight: bold;
+    border-top: 1px solid #AFABAB;
 }
 
 .inputBox {
@@ -641,12 +663,24 @@ th {
 }
 
 .courseScorecardLogo {
-    width: 25vh;
-    height: 25vh;
+    width: 15vh;
+    height: 15vh;
+
+    /* for narrow screens
+    max-width: 20vw;
+    max-height: 20vw; */
+
     border-radius: 100%;
     border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+@media (max-width: 1000px) {
+    .courseScorecardLogo{
+        width: 20vh;
+        height: 20vh;
+    }
 }
 
 .coursesLogo {
@@ -656,6 +690,12 @@ th {
     border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+.buttonSpan {
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
 }
 
 .fillScreen {
@@ -700,6 +740,7 @@ th {
 
 #aboutUsHomeButton {
     width: 20%;
+    color: #AFABAB;
 }
 
 .processTitle {
@@ -821,7 +862,7 @@ th {
 
   
   @media (min-width: 1000px){
-    .firstSectionContainer, .secondSectionContainer{
+    .firstSectionContainer, .secondSectionContainer, .sectionContainer {
         vertical-align: top;
         display: inline-block;
         width: 40%;

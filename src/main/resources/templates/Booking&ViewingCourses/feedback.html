@@ -12,6 +12,7 @@
 
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
   <!-- Font Awesome -->
   <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -27,16 +28,17 @@
         <div>
           <img th:src="@{/images/tee-rific.png}">
         </div>
-        <div class="titleFont dynamicSize">Give Private Feedback to</div>
-        <div class="titleFont dynamicSize" th:text="${course}"></div>
+        <div class="titleFont dynamicSize">Give Private Feedback</div>
+        <div class="pageDivider woodBackdrop"></div>
+        <h2 class="largerFont overflowHideFont poppinsFont darkGreyFont"  th:text="${course}"></h2>
         <form action="#" method="post" th:action="${'/tee-rific/feedback/' + username + '/' + courseName + '/post'}" th:object="${givenFeedback}">
-          <textarea class="inputBox" id="value" th:field="*{feedback}" placeholder="Type Here"></textarea><p id="error"> </p>
+          <textarea class="inputBox textBox" id="value" th:field="*{feedback}" placeholder="Type Here"></textarea><p id="error"> </p>
             <div th:each="error : ${errorMessage}">
               <p th:text="${error}"> </p>
             </div>
-          <p><b>Privacy Notice:</b> This feedback is not anonymous, your username is shared with the golf course.</p>
-            <button type="submit" id="submitData" class="button">Submit Feedback</button>
-          </form>
+          <p class="oswaldFont brownFont instruction"><b>Privacy Notice:</b> Feedback Is Not Anonymous. Your Username Is Shared With The Golf Course.</p>
+          <button type="submit" id="submitData" class="button">Submit</button>
+        </form>
         <form method= "get" th:action="${'/tee-rific/home/' + username}">
           <button type="submit" class="button">Skip</button>
         </form>
