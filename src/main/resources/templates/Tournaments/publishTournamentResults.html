@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <title>Tournament</title>
+    <title>Publish TournamentResults</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,19 +34,26 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Tournaments</div>
-                    <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
-                        <button type="submit" class = "button">Available Tournaments</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/createTournament/' + username}">
-                        <button type="submit" class = "button">Create Tournament</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/pastTournaments/' + username}">
-                        <button type="submit" class = "button">Past Tournaments</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/home/' + username}">
-                      <button type="submit" class = "button">Home Page</button>
+                    <!-- <div class="titleFont dynamicSize">Publish Results for <span th:text="${tournament.name}"></span></div> -->
+                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${tournamentResults}">
+                    <table>
+                        <thead>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </thead>
+                        <tr th:each="participant : ${participants}"></tr>
+                            <td td:text="${participant.username}"></td>
+                            <!-- th:field=*{score} -->
+                            <td> <input type="number" class="inputBox" th:field=*{score} placeholder="Score"></td> 
+                            <!-- <td td:text="${participant.first_name}"></td>
+                            <td td:text="${participant.last_name}"></td> -->
+                        </tr>
+                    </table>
+                  <input type="submit" class = "button" value="Publish Results">
                   </form>
+
+
+
                 </div>
             </div>
         </div>

@@ -1,7 +1,5 @@
 package com.example.models;
 
-import java.util.ArrayList;
-
 public class Tournament {
     private Integer id;
     private String name;
@@ -15,7 +13,9 @@ public class Tournament {
     private String clubName; 
     private String date;
     private String time;
-    private ArrayList<User> participants;
+    private String creator;
+    private Integer numSignedUp;
+    //participants are stored in the chorisponding database
 
 //getters
 
@@ -67,9 +67,13 @@ public class Tournament {
     {
         return this.time;
     }
-    public ArrayList<User> getParticipants()
+    public String getCreator()
     {
-        return this.participants;
+        return this.creator;
+    }
+    public Integer getNumSignedUp()
+    {
+        return this.numSignedUp;
     }
 
 //setters
@@ -122,8 +126,12 @@ public class Tournament {
     {
         this.time = t;
     }
-    public void setParticipants(ArrayList<User> updatedUserList)
+    public void setCreator(String c)
     {
-        this.participants = updatedUserList;
+        this.creator = c;
+    }
+    public void setNumSignedUp(Integer num)
+    {
+        this.numSignedUp = num;
     }
 }

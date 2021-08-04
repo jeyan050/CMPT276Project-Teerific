@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <title>Tournament</title>
+    <title>Tournament Results</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,19 +34,20 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Tournaments</div>
-                    <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
-                        <button type="submit" class = "button">Available Tournaments</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/createTournament/' + username}">
-                        <button type="submit" class = "button">Create Tournament</button>
-                    </form>
+                    <div class="titleFont dynamicSize">Results <!-- from <span th:text="${tournament.name}"></span> --> </div>
+                    <table>
+                        <thead>
+                            <th>Placement</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </thead>
+                        <tr>
+                            <!-- for each participant in tournament_tournamentId_participants -->
+                        </tr>
+                    </table>
                     <form method="get" th:action="${'/tee-rific/pastTournaments/' + username}">
                         <button type="submit" class = "button">Past Tournaments</button>
                     </form>
-                    <form method="get" th:action="${'/tee-rific/home/' + username}">
-                      <button type="submit" class = "button">Home Page</button>
-                  </form>
                 </div>
             </div>
         </div>

@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <title>Tournament</title>
+    <title>Sign Up Error</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,51 +34,14 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Tournaments</div>
+                    <div class="titleFont dynamicSize">Error in signing up </div>
+                    <p>You have already signed up for this tournament</p>
                     <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
-                        <button type="submit" class = "button">Available Tournaments</button>
+                        <button type="submit" class = "button">Back to Available Tournaments</button>
                     </form>
-                    <form method="get" th:action="${'/tee-rific/createTournament/' + username}">
-                        <button type="submit" class = "button">Create Tournament</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/pastTournaments/' + username}">
-                        <button type="submit" class = "button">Past Tournaments</button>
-                    </form>
-                    <form method="get" th:action="${'/tee-rific/home/' + username}">
-                      <button type="submit" class = "button">Home Page</button>
-                  </form>
                 </div>
             </div>
         </div>
-         <!-- carousel code -->
-  <section class="bannerBackdrop">
-    <div id="testimonial-carousel" class="carousel slide" data-ride="false">
-      <div class="carousel-inner">
-        <div class="carousel-item active container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </a>
-      <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </a>
-    </div>
-  </section>
-
         <footer>
             <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f"></i>
