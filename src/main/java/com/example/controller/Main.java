@@ -2688,6 +2688,7 @@ public String showAllFeedback(@PathVariable("username")String user, @PathVariabl
     Statement stmt = connection.createStatement();
     stmt.executeUpdate(getSQLNewTableOwner());
     String courseSnake = convertToSnakeCase(course);
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS " + courseSnake + "Feedback (username varchar(1000), feedback varchar(10000))");
     ResultSet rs = stmt.executeQuery("SELECT * FROM " + courseSnake + "Feedback");
     ArrayList<CourseOwner> output = new ArrayList<CourseOwner>();
     while(rs.next()) {
