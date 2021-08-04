@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <title>Tournament Sign up</title>
+    <title>Past Tournaments</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,14 +34,55 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Sucessfully signed up for the tournament! </div>
-                    <p>See you there!</p>
+                    <div class="titleFont dynamicSize">Past Tournaments</div>
+                    <table>
+                        <thead>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Club</th>
+                        </thead>
+                        <tr th:each="tournament : ${past_tournaments}">
+                            <!-- link to the tournament by clicking on name-->
+                            <td> <a th:text="${tournament.name}" th:href="${'/tee-rific/tournamentResults/' + tournament.id + '/' + username}"> </a></td>
+                            <td th:text="${tournament.date}"></td>
+                            <td th:text="${tournament.clubName}"></td>               
+                        </tr>
+                    </table>
                     <form method="get" th:action="${'/tee-rific/tournament/' + username}">
-                        <button type="submit" class = "button">Back to Tournaments</button>
+                        <button type="submit" class = "button">Tournament Page</button>
                     </form>
                 </div>
             </div>
         </div>
+         <!-- carousel code -->
+  <section class="bannerBackdrop">
+    <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+      <div class="carousel-inner">
+        <div class="carousel-item active container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </a>
+      <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </a>
+    </div>
+  </section>
+
         <footer>
             <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f"></i>

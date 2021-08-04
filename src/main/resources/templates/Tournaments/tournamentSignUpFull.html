@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <title>Tournament Sign up</title>
+    <title>Sign Up Error</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,10 +34,10 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Sucessfully signed up for the tournament! </div>
-                    <p>See you there!</p>
-                    <form method="get" th:action="${'/tee-rific/tournament/' + username}">
-                        <button type="submit" class = "button">Back to Tournaments</button>
+                    <div class="titleFont dynamicSize">Error in signing up </div>
+                    <p>This tournament is already full. Sorry!</p>
+                    <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
+                        <button type="submit" class = "button">Back to Available Tournaments</button>
                     </form>
                 </div>
             </div>
