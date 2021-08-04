@@ -1,37 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tournament Sign up</title>
-</head>
-<body>
-    <div class="layer_6">
-        <div class="layer_7">
-            <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
 
-                <!-- <th:block th:each="tournament : ${tournaments}"> get this to work
-                    <h1>Successfully signed up for <span th:text="${tournament.name}"></span> ?</h1>
-                </th:block> -->
-                <p>Sucessfully signed up for the tournament! See you there!</p>
-                <form method="get" th:action="${'/tee-rific/tournament/' + username}">
-                    <button type="submit" class = "button">Back to Tournaments</button>
-                </form>
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+      <!-- bookstrap scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <title>Tournament Sign up</title>
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">Sucessfully signed up for the tournament! </div>
+                    <p>See you there!</p>
+                    <form method="get" th:action="${'/tee-rific/tournament/' + username}">
+                        <button type="submit" class = "button">Back to Tournaments</button>
+                    </form>
+                </div>
             </div>
         </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+              <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
+        </footer>
     </div>
-    <footer>
-        <div class= "woodBackdrop footer">
-            <i class="socialIcon fab fa-facebook-f"></i>
-            <i class="socialIcon fab fa-twitter"></i>
-            <i class="socialIcon fab fa-instagram"></i>
-            <i class="socialIcon fas fa-envelope"></i>
-            <p>© Copyright 2021 Tee-rific</p>
-          </div>
-          <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-    </footer>
+    
 </body>
 </html>
