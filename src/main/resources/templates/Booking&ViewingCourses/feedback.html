@@ -34,6 +34,7 @@
             <div th:each="error : ${errorMessage}">
               <p th:text="${error}"> </p>
             </div>
+          <p><b>Privacy Notice:</b> This feedback is not anonymous, your username is shared with the golf course.</p>
             <button type="submit" id="submitData" class="button">Submit Feedback</button>
           </form>
         <form method= "get" th:action="${'/tee-rific/home/' + username}">
