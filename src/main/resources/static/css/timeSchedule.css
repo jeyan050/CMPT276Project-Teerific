@@ -1,0 +1,22 @@
+.tableSizing {
+    width: 450px; 
+    table-layout: fixed; 
+    word-wrap: break-word;
+}
+
+.gameId, .rentalId {
+    width: 60px;
+}
+
+.numPlayers {
+    width: 75px;
+}
+
+.deleteBut {
+    margin: 0px;
+    width: 60px;
+}
+
+.butSpace {
+    width: 80px;
+}

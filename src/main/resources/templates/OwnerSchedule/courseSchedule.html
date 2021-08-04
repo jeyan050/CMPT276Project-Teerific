@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Course Details</title>
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop" th:each="todayDate : ${currentDate}">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">Course Details</div>
+                    
+                    <p>To view different dates: Please pick a date below and Click the button</p>
+                    <form action="#" method="get" th:action="${'/tee-rific/courseSchedule/'+ username}" th:object="${newDate}">
+                        <input id="datePicker" type="date" th:field="*{date}" value="${todayDate}"><p id="emptyDate"></p>
+                        <button type="submit" id="changeDate" class="button">Change to New Date</button>
+                    </form><br>
+                    <div class="titleFont dynamicSize">Current Date: <span id="date" th:text="${todayDate}"></span></div>
+                    <p><span style="font-weight: bold;">Index</span><br> 
+                        <span style="background-color: Red;">Red</span> = Booking Time Full (4 people)<br>
+                        <span style="background-color: Yellow;">Yellow</span>: Booking Time has bookings but not Full<br>
+                        <span style="background-color: Green; color: white">Green</span> : Booking Time Empty</p><br>
+                    <form>
+                        <table class="ownerTable">
+                            <tr>
+                                <th>Tee Time</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr th:each="teeTimeDetails : ${teeTimes}">
+                                <td th:text="${teeTimeDetails.teeTime}"></td>
+                                <div style="padding: 0px;" th:switch="${teeTimeDetails.totalPlayers}">
+                                    <td th:case="0" style="background-color: green; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                        th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                    </td>
+                                    <td th:case="4" style="background-color: red; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                        th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                    </td>
+                                    <td th:case="*" style="background-color: yellow; font-weight: bold;">
+                                        <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                        th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                    </td>
+                                </div>
+                                
+                                <!-- <td th:style="${teeTimeDetails.status == 'EMPTY' ? 'background-color: green; font-weight: bold;' : 'background-color: red; font-weight: bold;'}">
+                                    <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
+                                    th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
+                                </td> -->
+                            </tr>
+                        </table>
+                    </form>
+                    <form  method= "get" th:action="${'/tee-rific/home/' + username}">
+                        <button type="submit" class="button">Home Page</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/ownerSchedule.js"></script>
+        </footer>
+    </div>
+    
+</body>
+</html>

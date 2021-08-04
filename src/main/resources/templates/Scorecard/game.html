@@ -31,118 +31,163 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Scorecard</div>
-                    <div class="courseLogoScorecardWrapper">
-                        <img class="courseScorecardLogo" th:src="${logo}">
-                    </div>
-                    <table>
-                        <tr>
-                            <th>Course</th>
-                            <td th:text="${scorecard.coursePlayed}"></td>
-                        </tr>
-                        <tr>
-                            <th>Date</th>
-                            <td th:text="${scorecard.datePlayed}"></td>
-                        </tr>
-                        <tr>
-                            <th>Time</th>
-                            <td th:text="${teeTime}"></td>
-                        </tr>
-                        <tr>
-                            <th>Tees Played</th>
-                            <td th:text="${scorecard.teesPlayed}"></td>
-                        </tr>
-                        <tr>
-                            <th>Holes Played</th>
-                            <td class="holesPlayed"></td>
-                        </tr>
-                        <tr>
-                            <th>Format</th>
-                            <td th:text="${scorecard.formatPlayed}"></td>
-                        </tr>
-                        <tr>
-                            <th>Attestor</th>
-                            <td th:text="${scorecard.attestor}"></td>
-                        </tr>
-                        <tr>
-                            <th>Game ID</th>
-                            <td th:text="${scorecard.gameID}"></td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td class="gameStatus"></td>
-                        </tr>
 
-                        <!-- <tr> * members here * </tr> -->
-                    </table>
-
-                    <h4 class="instruction" id="strokeInstruction"> Click On A 'Stroke' Cell To Edit </h4>
-
-                    <form action="#" method="post" th:action="${'/tee-rific/scorecards/' + username + '/' + courseName + '/' + gameID}" th:object="${scoresWrapper}">
-                        <!-- status of scorecard -->
-                        <input type="hidden" id="scorecardStatus" th:field="*{active}">      
-
-                        <!-- table with hole information and stroke input -->
-                        <table class="scorecardTable">
+                    <div class="gameInfoContainer">
+                        <div class="courseLogoScorecardWrapper">
+                            <img class="courseScorecardLogo" th:src="${logo}">
+                        </div>
+                        <table>
                             <tr>
-                                <th class="scorecardTableCell">Hole #</th>
-                                <th class="scorecardTableCell">Yardage</th>
-                                <th class="scorecardTableCell">Handicap</th>
-                                <th class="scorecardTableCell">Par</th>
-                                <th class="scorecardTableCell">Score</th>
-                                <th class="scorecardTableCell">Strokes</th>
-                            </tr>
-    
-                            <tr th:each="scorecardHole, i : ${scoresWrapper.scorecardHoles}">
-                                <td class="scorecardTableCell">
-                                    <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.holeNumber}"></div>
-                                    <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.holeNumber}">
-                                </td>
-                                <td class="scorecardTableCell yardageCell" >
-                                    <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.yardage}"></div>
-                                    <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.yardage}">
-                                </td>
-                                <td class="scorecardTableCell handicapCell">
-                                    <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.handicap}"></div>
-                                    <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.handicap}">
-                                </td>
-                                <td class="scorecardTableCell parCell" >
-                                    <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.par}"></div>
-                                    <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.par}">
-                                </td>
-                                <td class="scorecardTableCell scoreCell">
-                                    <!-- javascript calculated -->
-                                </td>
-                                <td class="scorecardTableCell editStrokes">
-                                    <div class="scorecardTableDisplayCell" th:text="${scorecardHole.stroke}"></div>
-                                    <input class="scorecardTableInputCell" type="text" th:field="*{scorecardHoles[__${i.index}__].stroke}">
-                                </td>
+                                <th>Course</th>
+                                <td th:text="${scorecard.coursePlayed}"></td>
                             </tr>
                             <tr>
-                                <th>Total</th>
-                                <td class="sumYardage"></td>
-                                <td class="sumHandicap"></td>
-                                <td class="sumPar"></td>
-                                <td class="sumScore"></td>
-                                <td class="sumStrokes"></td>
+                                <th>Date</th>
+                                <td th:text="${scorecard.datePlayed}"></td>
+                            </tr>
+                            <tr>
+                                <th>Time</th>
+                                <td th:text="${teeTime}"></td>
+                            </tr>
+                            <tr>
+                                <th>Game ID</th>
+                                <td th:text="${scorecard.gameID}"></td>
+                            </tr>
+                            <tr>
+                                <th>Players</th>
+                                <td th:value="${currentPlayers}" class="currentCount" th:text="${currentPlayers}"></td>
+                            </tr>
+                            <tr>
+                                <th>Max Players</th>
+                                <td th:value="${maxPlayers}" class="playerCount" th:text="${maxPlayers}"></td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td class="gameStatus"></td>
+                            </tr>
+                            <tr>
+                                <th>Holes Played</th>
+                                <td class="holesPlayed"></td>
                             </tr>
                         </table>
-                        <span class="errorMessage"></span>
+    
+                        <h4 class="instruction" id="strokeInstruction"> Click On A <span id="underline">Stroke</span> Cell To Edit </h4>
 
-                        <!-- update the scorecard -->
-                        <button type="submit" id="validate" class="button update">Update</button> 
+                        <!-- this message will display if the game is no longer active for the user -->
+                        <div id="completeGame">
+                            <h4>Game Complete!</h4>
+                        </div>
+
+                    </div>  <!-- gameInfoContainerEnd -->
+                    <div class="userScorecardContainer">
+                        <form action="#" method="post" th:action="${'/tee-rific/scorecards/' + username + '/' + courseName + '/' + gameID}" th:object="${scoresWrapper}">
+                            <!-- status of scorecard -->
+                            <input type="hidden" id="scorecardStatus" th:field="*{active}">      
+    
+                            <!-- table with hole information and stroke input -->
+                            <table class="scorecardTable">
+                                <tr>
+                                    <th class="scorecardTableCell">Hole #</th>
+                                    <th class="scorecardTableCell">Yardage</th>
+                                    <th class="scorecardTableCell">Handicap</th>
+                                    <th class="scorecardTableCell">Par</th>
+                                    <th class="scorecardTableCell">Score</th>
+                                    <th class="scorecardTableCell">Strokes</th>
+                                </tr>
+        
+                                <tr th:each="scorecardHole, i : ${scoresWrapper.scorecardHoles}">
+                                    <td class="scorecardTableCell holeCell">
+                                        <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.holeNumber}"></div>
+                                        <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.holeNumber}">
+                                    </td>
+                                    <td class="scorecardTableCell yardageCell">
+                                        <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.yardage}"></div>
+                                        <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.yardage}">
+                                    </td>
+                                    <td class="scorecardTableCell handicapCell">
+                                        <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.handicap}"></div>
+                                        <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.handicap}">
+                                    </td>
+                                    <td class="scorecardTableCell parCell" >
+                                        <div class="scorecardTableDisplayCell" th:text="${scorecardHole.holeInfo.par}"></div>
+                                        <input type="hidden" th:field="*{scorecardHoles[__${i.index}__].holeInfo.par}">
+                                    </td>
+                                    <td class="scorecardTableCell scoreCell">
+                                        <!-- javascript calculated -->
+                                    </td>
+                                    <td class="scorecardTableCell editStrokes">
+                                        <div class="scorecardTableDisplayCell" th:text="${scorecardHole.stroke}"></div>
+                                        <input class="scorecardTableInputCell" type="text" th:field="*{scorecardHoles[__${i.index}__].stroke}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total</th>
+                                    <td class="sumYardage sumColumn"></td>
+                                    <td class="sumHandicap sumColumn"></td>
+                                    <td class="sumPar sumColumn"></td>
+                                    <td class="sumScore sumColumn"></td>
+                                    <td class="sumStrokes sumColumn"></td>
+                                </tr>
+                            </table>
+                            <span class="errorMessage"></span>
+    
+                            <!-- update the scorecard -->
+                            <button type="submit" id="validate" class="button update scorecardButton">Update</button> 
+                            
+                            <!-- sets the status to complete and updates -->
+                            <button type="submit" id="setActivity" class="button complete scorecardButton">Complete</button>
+                        </form>
+                    </div>  <!-- userScorecardContainerEnd -->
+                    <div class="scorecardButtonContainer">
                         
-                        <!-- sets the status to complete and updates -->
-                        <button type="submit" id="setActivity" class="button complete">Complete</button>
-                    </form>
-                    <form  method= "get" th:action="${'/tee-rific/scorecards/' + username +'/'+ courseName + '/'+ gameID + '/cancel'}">
-                        <button type="submit" class="button cancel">Cancel Booking</button>
-                    </form>
-                    <div id="completeGame">
-                        <h4>Game Complete!</h4>
-                    </div>
-                    <form  method= "get" th:action="${'/tee-rific/scorecards/' + username}">
-                        <button type="submit" class="button">Scorecards</button>
-                    </form>
+                        <!-- this button cancels the current booking -->
+                        <form  method= "get" th:action="${'/tee-rific/scorecards/' + username + '/' + courseName + '/'+ gameID + '/cancel'}">
+                            <button type="submit" class="button cancel scorecardButton">Cancel Booking</button>
+                        </form>
+
+                        
+                        <!-- this button returns back to the scorecards page -->
+                        <form  method= "get" th:action="${'/tee-rific/scorecards/' + username}">
+                            <button type="submit" class="button scorecardButton">Scorecards</button>
+                        </form>
+    
+                        <!-- this button will reveal the form for inviting a friend -->
+                        <button class="inviteButton button scorecardButton">Invite</button>
+                    
+                        <!-- this form will only show if there are less than 4 participants in a game -->
+                        <form class="inviteFriends" method="post" th:action="${'/tee-rific/scorecards/' + username + '/' + courseName + '/' + gameID + '/invite'}" th:object="${invitee}">
+                            <input type="text" th:field="*{name}" placeholder="Username"></input>
+                            <button type="submit" class="button scorecardButton">Add</button>
+                        </form>
+    
+                        <!-- friends scorecards already passed into the model, these buttons uses JS to reveal/collapse them if there are more than 1 participant -->
+                        <div class="showFriends">
+                            <button class="button scorecardButton">Friends</button>
+                        </div>
+                        <div class="hideFriends">
+                            <button class="button scorecardButton">Hide</button>
+                        </div>
+                    </div>  <!-- buttonContainerEnd -->
+                    <div class="friendScorecard" th:each="friend : ${friends}">
+                        <h4 th:text="${friend.userName + ' Scorecard'}"></h4>   
+                        <table class="friendScorecardTable">
+                            <tr>
+                                <th class="friendScorecardTableCell">Hole #</th>
+                                <th class="friendScorecardTableCell">Score</th>
+                                <th class="friendScorecardTableCell">Strokes</th>
+                            </tr>
+                            <tr th:each="stroke, i : ${friend.strokes}">
+                                <td class="friendScorecardTableCell holeValueFriends"></td>
+                                <td class="friendScorecardTableCell scoreValueFriends"></td>
+                                <td class="friendScorecardTableCell strokeValueFriends" th:text="${stroke}"></td>
+                            </tr>
+                            <tr>
+                                <th class="friendScorecardTableCell sumColumn">Total</th>
+                                <td class="friendScorecardTableCell scoreSumFriends sumColumn"></td>
+                                <td class="friendScorecardTableCell strokeSumFriends sumColumn"></td>
+                            </tr>
+                        </table>
+                    </div>  <!-- friendscorecardsEnd -->
                 </div>
             </div>
         </div>

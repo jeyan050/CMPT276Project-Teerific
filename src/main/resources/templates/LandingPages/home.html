@@ -54,9 +54,9 @@
                   <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account</a>
                   </li>
-                  <!-- <li class="nav-item">
+                  <li class="nav-item">
                     <a class="nav-link" th:href="${'/tee-rific/aboutUs/' + username}">About Us</a>
-                  </li> -->
+                  </li>
                   <li class="nav-item">
                     <a class="nav-link" href="/tee-rific/logout">Log Out</a>
                   </li>
@@ -85,9 +85,9 @@
                     <button id="accountButton" class="homePageButton" type="submit">My Account</button>
                 </form> 
                 
-                <!-- <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                     <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
-                </form>  -->
+                </form> 
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" action="/tee-rific/logout">
                     <button id="logOutButton" class="homePageButton" type="submit" >Log Out</button>

@@ -37,32 +37,24 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Scorecards</div>
+                    <div class="titleFont dynamicSize">Best Scores</div>
                     <table>
                         <tr>
                             <th>Date</th>
                             <th>Course</th>
                             <th>Game ID</th>
-                            <th></th>
+                            <th>Score</th>
                         </tr>
-                        <tr th:each="scorecard: ${scorecards}">
-                            <td th:text="${scorecard.datePlayed}"></td>
-                            <td th:text="${scorecard.coursePlayed}"></td>
-                            <td th:text="${scorecard.gameID}"></td>
-                            <td>
-                                <form action="#" method="get" th:action="${'/tee-rific/scorecards/' + username + '/' + scorecard.coursePlayedSC + '/' + scorecard.gameID}">
-                                    <button type="Submit">View</button>
-                                </form>
-                            </td>
+                        <tr th:each="bestScore: ${bestScores}">
+                            <td th:text="${bestScore.date}"></td>
+                            <td th:text="${bestScore.courseName}"></td>
+                            <td th:text="${bestScore.gameID}"></td>
+                            <td th:text="${bestScore.score}"></td>
                         </tr>
                     </table>
 
-                    <form method="get" th:action="${'/tee-rific/scorecards/bestScores/' + username}">
-                      <button type="submit" class="button">Personal Bests</button>
-                    </form>
-
-                    <form  method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class="button">Home Page</button>
+                    <form method="get" th:action="${'/tee-rific/scorecards/' + username}">
+                      <button type="submit" class="button">Scorecards</button>
                     </form>
                 </div>
             </div>

@@ -38,7 +38,7 @@
         <div class="titleFont dynamicSize">List of Courses</div>
         <table class="owners tableSizing">
           <tr>
-            <th>Find a way to get images in this column</th>
+            <th></th>
             <th>Course Name</th>
             <th>Address</th>
             <th>City</th>
@@ -47,7 +47,11 @@
           </tr>
 
     <tr th:each="course: ${courses}">
-      <td th:text="${course.courseLogo}"></td>
+      <td>
+        <div>
+          <img class="listOfCoursesLogo" th:src="${course.courseLogo}">
+        </div>
+      </td>
       <td>
         <a th:href="${'/tee-rific/courses/' + course.courseName + '/' + username}" th:text="${course.courseName}"></a>
       </td>

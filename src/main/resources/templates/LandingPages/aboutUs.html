@@ -1,34 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=WindSong&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <title>About Us</title>
 </head>
-<body>
-    <div class="layer_6">
-        <div class="layer_7">
-            <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}">
-                <h1>Developer Page</h1>
-                *Information About Developers here*
-                <form method="get" th:action="${'/tee-rific/home/' + username}">
-                    <button type="submit" class = "button">Go Back</button>
-                </form>
+<body class="blackBuriedBackdrop">
+    <div class="pageWrap">
+        <div>
+            <img class="aboutUsLogo" th:src="@{/images/tee-rific.png}">
+        </div>
+        <div class="pageSpacer"></div>
+        <div class="developersContainer blackPixelBackdrop">
+            <div class="profile">
+                <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
+                    <img id="Chino" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Chino">
+                </div>
+                <h6 class="developerNameText">Chino</h6>
+                <h2 class="developerNameText faintGrey">Fernandez</h2>
+            </div>
+            <div class="profile">
+                <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
+                    <img id="Justin" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Justin">
+                </div>
+                <h6 class="developerNameText">Justin</h6>
+                <h2 class="developerNameText faintGrey">Yan</h2>
+            </div>
+            <div class="profile">
+                <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
+                    <img id="Kyle" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Kyle">
+                </div>
+                <h6 class="developerNameText">Kyle</h6>
+                <h2 class="developerNameText faintGrey">Brandon</h2>
+            </div>
+            <div class="profile">
+                <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
+                    <img id="Mike" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Mike">
+                </div>
+                <h6 class="developerNameText">Mike</h6>
+                <h2 class="developerNameText faintGrey">Kreutz</h2>
+            </div>
+            <div class="profile">
+                <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
+                    <img id="Zach" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Zach">
+                </div>
+                <h6 class="developerNameText">Zach</h6>
+                <h2 class="developerNameText faintGrey">Syvenky</h2>
             </div>
         </div>
+        <div class="pageSpacer"></div>
+        <div class="processContainer">
+            <h2 class="processTitle">Our Process</h2>
+            <p class="developerProcessParagraph faintGrey">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ornare quam vel pretium. 
+                Nam nunc nibh, malesuada in diam nec, pellentesque accumsan diam. Pellentesque porta urna vitae erat 
+                consectetur, sed dapibus tellus hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et 
+                ultrices posuere cubilia curae; Vestibulum eu sollicitudin massa. Cras luctus risus quis nunc pharetra, 
+                et gravida risus pretium. Sed luctus enim arcu, in luctus nibh venenatis nec. Vestibulum non sem eget 
+                ligula mattis imperdiet non et odio. Nulla fringilla eu nibh eu scelerisque. Suspendisse lobortis 
+                porttitor nibh, et imperdiet sapien commodo nec. Nulla a odio metus. In ac felis ac urna luctus 
+                pellentesque eget et odio. Vivamus fermentum molestie risus, in sodales purus mattis id. Nunc vitae 
+                quam et diam ultricies imperdiet at semper turpis. Sed fringilla velit orci, id porta mauris imperdiet et. 
+                Aenean dignissim ligula et mi volutpat, id imperdiet ex interdum. Cras at imperdiet orci. Integer posuere, 
+                tortor vel porta convallis, turpis ipsum vehicula dui, non sodales tortor nisl ac lorem. Cras sit amet ultricies augue, 
+                vel pulvinar elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
+                Duis in faucibus felis. Nunc tristique arcu massa, ac sodales felis mattis in. Suspendisse nec blandit ex. 
+                Praesent tristique efficitur nulla, ut feugiat erat pellentesque lacinia. Nullam at est lorem. Vestibulum in 
+                iaculis quam, id accumsan magna. Pellentesque luctus eleifend sapien. Pellentesque ac justo libero. 
+                Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam metus lectus, vestibulum vitae tristique id.
+            </p>
+            <h4 class="developerProcessParagraph faintGrey">Thank You For Your Continued Support!</h4>
+            <img class="aboutUsLogo" th:src="@{/images/tee-rific.png}">
+        </div>
+        <div class="pageSpacer"></div>
+        <div class="blackPixelBackdrop">
+            <form method="get" th:action="${'/tee-rific/home/' + username}">
+                <button id="aboutUsHomeButton" type="submit" class="button darkMeshBackdrop">Home</button>
+            </form>
+        </div>
+        <footer>
+            <div class= "darkMeshBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+            </div>
+            <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+            <script src="/js/aboutUs.js" type="text/javascript"></script>
+        </footer>
     </div>
-    <footer>
-        <div class= "woodBackdrop footer">
-            <i class="socialIcon fab fa-facebook-f"></i>
-            <i class="socialIcon fab fa-twitter"></i>
-            <i class="socialIcon fab fa-instagram"></i>
-            <i class="socialIcon fas fa-envelope"></i>
-            <p>© Copyright 2021 Tee-rific</p>
-          </div>
-          <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-    </footer>
 </body>
 </html>

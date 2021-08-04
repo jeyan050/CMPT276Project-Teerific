@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.lang.Integer;
 
+import java.time.LocalDate;
+
 @Controller
 @SpringBootApplication
 public class Main {
@@ -463,7 +465,12 @@ public class Main {
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      String getUserPriority = "SELECT priority FROM users WHERE username='" + user + "'";
+
+      //create owners table if not exists, prevents bookings button from breaking
+      String newOwnersTable = getSQLNewTableOwner();
+      stmt.executeUpdate(newOwnersTable);
+
+      String getUserPriority= "SELECT priority FROM users WHERE username='" + user +"'";
       ResultSet rs = stmt.executeQuery(getUserPriority);
 
       String userPriority = "";
@@ -804,7 +811,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
             String updateUserInfo = "UPDATE owners SET lastname='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);
           } else {
-            System.out.println("IN:"+column);
             String updateUserInfo = "UPDATE owners SET " + column + "='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);      
           }
@@ -816,6 +822,11 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           stmtOwner.executeUpdate(updateOwnerInfo);
         }
       }
+
+      // Update scorecards
+      Statement updateScoreCards = connection.createStatement();
+      String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
+      updateScoreCards.executeUpdate(changeScorecard);  
 
       if(column.equals("username")){
         changedUsername = true;
@@ -890,81 +901,244 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   }
 
 //********************************
-// BROWSE TEE-SHEET -- OWNER
+// BROWSE BOOKING SCHEDULE -- OWNER
 //********************************
 
-  // @GetMapping(
-  //     path = "/tee-rific/teeSheet/{username}"
-  // )
-  // public String getTeeSheet(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  @GetMapping(
+      path = "/tee-rific/courseSchedule/{username}"
+  )
+  public String getCourseSchedule(@PathVariable("username")String user, Map<String, Object> model, WrapperDate newDate, HttpServletRequest request) throws Exception {
     
-  //   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-  //     return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
-  //   }
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    }
 
-  //   if(null == (request.getSession().getAttribute("username"))) {
-  //     return "redirect:/";
-  //   }
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
 
-  // try (Connection connection = dataSource.getConnection()) {
-  //   Statement stmt = connection.createStatement();
-  //   ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
-  //   courseInfo.next();
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+      courseInfo.next();
 
-  //   // Convert DB data into ints for comparison
-  //   String timeOpenStr = courseInfo.getString("timeOpen");
-  //   // timeOpenStr = timeOpenStr + ":00";
-  //   String timeOpenSegments[] = timeOpenStr.split(":");
-  //   String timeOpenHrStr = timeOpenSegments[0];
-  //   String timeOpenMinStr = timeOpenSegments[1];
+      String course = convertToSnakeCase(courseInfo.getString("courseName"));
+      // Convert DB data into ints for comparison
+      String timeOpenStr = courseInfo.getString("timeOpen");
+      // timeOpenStr = timeOpenStr + ":00";
+      String timeOpenSegments[] = timeOpenStr.split(":");
+      String timeOpenHrStr = timeOpenSegments[0];
+      String timeOpenMinStr = timeOpenSegments[1];
 
-  //   String timeCloseStr = courseInfo.getString("timeClose");
-  //   // timeCloseStr = timeCloseStr + ":00";
-  //   String timeCloseSegments[] = timeCloseStr.split(":");
-  //   String timeCloseHrStr = timeCloseSegments[0];
-  //   String timeCloseMinStr = timeCloseSegments[1];
+      String timeCloseStr = courseInfo.getString("timeClose");
+      // timeCloseStr = timeCloseStr + ":00";
+      String timeCloseSegments[] = timeCloseStr.split(":");
+      String timeCloseHrStr = timeCloseSegments[0];
+      String timeCloseMinStr = timeCloseSegments[1];
 
-  //   Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-  //   Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
-  //   Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
-  //   Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
+      Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
+      Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
 
-  //   ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
-  //   Integer hour = 0;
-  //   Integer min = 0;
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
-  //   // whiel hr is less than 25/midnight
-  //   for (int i = 0; i < 48; i++) { //48 30 min increments
-  //     if (hour >= timeOpenHr && hour < timeCloseHr) {
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 30;
-  //       }
-  //       if (hour == timeOpenHr && min < timeOpenMin) {
-  //         min = 0;
-  //         hour++;
-  //       }
+      ArrayList<StatusTeeTime> courseSchedule = new ArrayList<StatusTeeTime>();
+      Integer hour = 0;
+      Integer min = 0;
 
-  //       String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
-  //       Timeslot ts = new Timeslot();
-  //       ts.setTime(time);
+      Integer numIntervals = 0;
 
-  //       validTimeSlots.add(ts);
-  //     }
+      String dates = "";
+      if (newDate.getDate() == null){
+        Statement getDate = connection.createStatement();
+        ResultSet date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+        
+        int checkIfEmpty = 0;
+        while (date.next()){
+          checkIfEmpty++;
+        }
+        
+        if (checkIfEmpty > 0){
+          date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+          date.next();
+          dates = date.getString("date");
+        } else {
+          LocalDate currentDate = LocalDate.now();
+          dates = currentDate.toString();
+        }
 
-  //     if (min > 60) {
-  //       min = 30;
-  //     } else {
-  //       hour++;
-  //       min = 0;
-  //     }
-  //   }
+        if (dates == null || dates.isEmpty()){
+          LocalDate currentDate = LocalDate.now();
+          dates = currentDate.toString();
+        }
+      } else {
+        dates = newDate.getDate();
+      }
 
-  //   return "Booking&ViewingCourses/teeSheetOwner";
-  // }catch (Exception e) {
-  //   model.put("message", e.getMessage());
-  //   return "LandingPages/error";
-  // }
-  // }
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+
+          String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+          StatusTeeTime ts = new StatusTeeTime();
+          ts.setTeeTime(time);
+
+          String teeTime = time + ":00";
+
+          ts.setStatus("EMPTY");
+          Statement checkOccupency = connection.createStatement();
+          ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
+          
+          int numPlayersTotal = 0;
+          int countBookings = 0;
+          while(checkTeeTime.next()){
+            countBookings++;
+            numPlayersTotal += checkTeeTime.getInt("numplayers");
+          }
+          ts.setTotalPlayers(numPlayersTotal);
+
+          if (countBookings > 0){
+            String newStatus = countBookings + " Bookings";
+            ts.setStatus(newStatus);
+          }
+          courseSchedule.add(ts);
+        }
+
+        if (min < (60-increments)) {         //to set up to TimeOpen value/hour
+          min += increments;
+        } else {
+          hour++;
+          min = 0;
+        }
+
+        numIntervals++;
+      }
+
+      WrapperDate changeDate = new WrapperDate();
+      model.put("newDate", changeDate);
+      model.put("currentDate", dates);
+      model.put("teeTimes", courseSchedule);
+      return "OwnerSchedule/courseSchedule";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  // HELPERS
+  public Integer getDateToCompare(String date){
+    String splitDate[] = date.split("-");
+    String combineDate = splitDate[0] + splitDate[1] + splitDate[2];
+    Integer intDate = Integer.parseInt(combineDate);
+    return intDate;
+  }
+
+  @GetMapping(
+        path = "/tee-rific/courseSchedule/{date}/{time}/{username}"
+  )
+
+  public String viewBookingsForTime(@PathVariable("username")String user, @PathVariable("date")String date, @PathVariable("time")String teeTime, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+    }
+
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
+      courseInfo.next();
+      String course = convertToSnakeCase(courseInfo.getString("courseName"));
+      
+      String bookingsCommand = "SELECT * FROM bookings WHERE coursename='" + course + "' AND date='" + date +"' AND teetime='" + teeTime + "'";
+      ResultSet getBookings = stmt.executeQuery(bookingsCommand);
+      ArrayList<TeeTimeBooking> output = new ArrayList<TeeTimeBooking>();
+
+      while(getBookings.next()){
+        TeeTimeBooking temp = new TeeTimeBooking();
+
+        temp.setUsername(getBookings.getString("username"));
+        temp.setNumPlayers(getBookings.getInt("numplayers"));
+        temp.setGameID(getBookings.getInt("gameid"));
+        temp.setRentalID(getBookings.getString("rentalid"));
+
+        output.add(temp);
+      }
+
+      model.put("date", date);
+      model.put("time", teeTime);
+      model.put("course", course);
+      model.put("bookings", output);
+      return "OwnerSchedule/timeSchedule";
+
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @PostMapping(
+      path = "/tee-rific/courseSchedule/{date}/{time}/{gameID}/{username}",
+      consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String deleteBookingOwnerSide(@PathVariable("username")String user, @PathVariable("date")String date, @PathVariable("time")String teeTime, @PathVariable("gameID")int gameID, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      String getCourseCommand = "SELECT * FROM owners WHERE username='" + user + "'";
+      ResultSet getCourseName = stmt.executeQuery(getCourseCommand);
+      getCourseName.next();
+      String courseName = convertFromSnakeCase(getCourseName.getString("coursename"));
+      
+      EquipmentCart updateInv = new EquipmentCart();
+
+      //get the rental quantities
+      int balls = 0;
+      int clubs = 0;
+      int carts = 0;
+      ResultSet removeStock = stmt.executeQuery("SELECT * FROM rentals WHERE id=" + gameID);
+      while(removeStock.next()){
+        balls = removeStock.getInt("numballs");
+        carts = removeStock.getInt("numcarts");
+        clubs = removeStock.getInt("numclubs");
+      }
+
+      //negate cart values
+      balls = 0 - balls;
+      carts = 0 - carts;
+      clubs = 0 - clubs;
+
+      updateInv.setNumBalls(balls);
+      updateInv.setNumCarts(carts);
+      updateInv.setNumClubs(clubs);
+
+      //subtract from inventory
+      updateInventory(connection, updateInv, courseName);
+
+      stmt.executeUpdate("DELETE FROM bookings WHERE gameID='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+
+      return "redirect:/tee-rific/courseSchedule/"+user+"";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
 
 //********************************
 // MODIFY COURSE DETAILS -- OWNER
@@ -1193,30 +1367,66 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       Integer hour = 0;
       Integer min = 0;
 
-      for (int i = 0; i < 48; i++) {
-        if (hour >= timeOpenHr && hour < timeCloseHr) {
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 30;
-          }
-          if (hour == timeOpenHr && min < timeOpenMin) {
-            min = 0;
-            hour++;
-          }
+      Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
+      while (hour < 25){
+        if (hour >= timeOpenHr && hour < timeCloseHr) {   
+          
+          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
+          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
+            // min += increments;
+            while (min < timeOpenMin){
+              if (min >= (60-increments)){
+                min = 0;
+                hour++;
+                break;
+              }
+              min += increments;
+            }
+          }
+          // if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:45 - start at 1:00
+          //   min = 0;
+          //   hour++;
+          // }
+  
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
           Timeslot ts = new Timeslot();
           ts.setTime(time);
-
+  
           validTimeSlots.add(ts);
         }
-
-        if (min == 0) {
-          min = 30;
+  
+        if (min < (60-increments)) {         //to set up before it 
+          min += increments;
         } else {
           hour++;
           min = 0;
         }
       }
+      // for (int i = 0; i < 48; i++) {
+      //   if (hour >= timeOpenHr && hour < timeCloseHr) {
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 30;
+      //     }
+      //     if (hour == timeOpenHr && min < timeOpenMin) {
+      //       min = 0;
+      //       hour++;
+      //     }
+
+      //     String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
+      //     Timeslot ts = new Timeslot();
+      //     ts.setTime(time);
+
+      //     validTimeSlots.add(ts);
+      //   }
+
+      //   if (min == 0) {
+      //     min = 30;
+      //   } else {
+      //     hour++;
+      //     min = 0;
+      //   }
+      // }
 
       String city = courseInfo.getString("city");
       String country = courseInfo.getString("country");
@@ -1808,6 +2018,10 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         course.setRating(rs.getDouble("rating"));
         course.setNumberRatings(rs.getDouble("numberRatings"));
 
+        if(course.getCourseLogo().equals("null")){
+          course.setCourseLogo("/images/tee-rificBall.png");
+        }
+
         output.add(course);
       }
       model.put("courses", output);
@@ -1913,7 +2127,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       userCreateScorecardsTable(connection);
 
-      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards WHERE userName='" + user + "'");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM scorecards WHERE userName='" + user + "' ORDER by date DESC");
       ArrayList<Scorecard> output = new ArrayList<Scorecard>();
 
       while(rs.next()) {
@@ -1937,6 +2151,132 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
+    }
+  }
+
+  @GetMapping(
+    path = "tee-rific/scorecards/bestScores/{username}"
+  )
+  public String getBestScores(@PathVariable("username")String user,  Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+
+      ArrayList<LowestScore> lowestScores = new ArrayList<LowestScore>();
+      ArrayList<Scorecard> scorecards = new ArrayList<Scorecard>();
+
+      //go through the 'completed' (active == f) games in scorecards (need course, strokes, gameID, date )
+      String getScorecardsInfo = "SELECT * FROM scorecards WHERE username='" + user + "' AND active='f' ORDER BY course ASC";
+      ResultSet scorecardInfo = stmt.executeQuery(getScorecardsInfo);
+      while(scorecardInfo.next()){
+        Scorecard scorecard = new Scorecard();
+
+        scorecard.setActive(scorecardInfo.getBoolean("active"));
+        scorecard.setGameID(scorecardInfo.getString("id"));
+        scorecard.setUserName(scorecardInfo.getString("username"));
+        scorecard.setDatePlayed(scorecardInfo.getString("date"));
+        scorecard.setCoursePlayed(scorecardInfo.getString("course"));
+
+        //get the stroke information
+        String hole;
+        ArrayList<Integer> strokesForGame = new ArrayList<Integer>();
+        for(int i = 0; i < 18; i++){
+          Integer holeNum = i + 1;
+          String holeNumString = holeNum.toString();
+          hole = "s" + holeNumString;
+          
+          strokesForGame.add(scorecardInfo.getInt(hole));   //add to strokes if user completed hole
+        }
+
+        //adds the strokes arrayList to the scorecard
+        scorecard.setStrokes(strokesForGame);
+
+        //add the scorecard to scorecard list
+        scorecards.add(scorecard);
+      }
+
+      //get the courses par, compare with the user strokes to calculate score for the game if the user particpated on every hole for a valid game
+      for(int i = 0; i < scorecards.size(); i++){
+        String courseName = scorecards.get(i).getCoursePlayed();
+        String courseNameSC = convertToSnakeCase(courseName);
+        ArrayList<Integer> pars = new ArrayList<Integer>();
+        Boolean validGame = true;
+        
+        //get the course pars
+        String getCoursePars = "SELECT par FROM " + courseNameSC + " ORDER BY holeNumber DESC";
+        ResultSet coursePars = stmt.executeQuery(getCoursePars);
+        while(coursePars.next()){
+          pars.add(coursePars.getInt("par"));
+        }
+        
+        //calculate score
+        int score = 0;
+        for(int j = 0; j < pars.size(); j++){
+          int strokesForHole = scorecards.get(i).getStrokes().get(j);
+          int par = pars.get(j);
+
+          if(strokesForHole == 0){    //the user did not particpate on the hole, therefore, the
+            validGame = false;
+            break;     //goes to next iteration of the loop
+           }
+          
+          int scoreOnHole = strokesForHole - par;
+          score += scoreOnHole;
+        }
+
+        if(validGame){
+          LowestScore scoreForGame = new LowestScore();
+          scoreForGame.setCourseName(scorecards.get(i).getCoursePlayed());
+          scoreForGame.setScore(score);
+          scoreForGame.setGameID(scorecards.get(i).getGameID());
+          scoreForGame.setDate(scorecards.get(i).getDatePlayed());
+
+          //check the LowestScore list for the course played, if the score for this game is lower, replace, else leave as is. If the course is not in the list, add to list
+          Boolean inLowestScores = false;
+          for(int k = 0; k < lowestScores.size(); k++){
+            //if course name is in lowest scores
+            if(lowestScores.get(k).getCourseName().equals(scoreForGame.getCourseName())){
+              //compare score
+              inLowestScores = true;
+              if(lowestScores.get(k).getScore() > scoreForGame.getScore()){
+                //replace score
+                lowestScores.get(k).setScore(scoreForGame.getScore());
+              }
+            }
+          }
+        
+          //if no course is found in the list, add lowest score to an arrayList and put in model
+          if(!inLowestScores){
+            lowestScores.add(scoreForGame);
+          } 
+        }
+      }
+      
+      model.put("bestScores", lowestScores);
+      model.put("username", user);
+
+      return "Scorecard/bestScores";
+    }catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }//getBestScores()
+
+
+  private void printLowestScores(ArrayList<LowestScore> lowestScores){
+    for(int i = 0; i < lowestScores.size(); i++){
+      String course = lowestScores.get(i).getCourseName();
+      int score = lowestScores.get(i).getScore();
+
+      System.out.println("Course: " + course + ", Score: " + score);
     }
   }
 
@@ -2019,6 +2359,38 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         getTime = startTime.getString("teetime");
       }
 
+      //get particpants
+      Integer participantReservations = 0;
+      String getSlots = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+      ResultSet slots = stmt.executeQuery(getSlots);
+      while(slots.next()){
+        participantReservations = slots.getInt("numPlayers");
+      }
+
+      //get friends scorecards
+      ArrayList<Scorecard> friendScorecards = new ArrayList<Scorecard>();
+      
+      String getFriendsScorecardInfo = "SELECT * FROM scorecards WHERE id='"+gameID+"' AND course='"+courseName+ "'";
+      ResultSet friendScoreCardInfo = stmt.executeQuery(getFriendsScorecardInfo);
+
+      while(friendScoreCardInfo.next()){
+        
+        if(!friendScoreCardInfo.getString("username").equals(user)){    //will only add to friends scorecardList if the current scorecard is not the user's
+          Scorecard friendScorecard = new Scorecard();
+          ArrayList<Integer> friendStrokes = new ArrayList<Integer>();
+
+          for(int i = 1; i <= 18; i++){                 //get the strokes for each hole
+            String holeNum = "s" + String.valueOf(i);
+            friendStrokes.add(friendScoreCardInfo.getInt(holeNum));
+          }
+          friendScorecard.setUserName(friendScoreCardInfo.getString("username"));
+          friendScorecard.setStrokes(friendStrokes);
+
+          friendScorecards.add(friendScorecard);
+        }
+      }
+
+
       //get course logo from owners
       String getLogo = "SELECT courseLogo FROM owners WHERE coursename='" + courseName + "'";
       ResultSet logoURL = stmt.executeQuery(getLogo);
@@ -2032,6 +2404,31 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         System.out.println("No Image for Course, Tee-rific Ball assigned...");
       }
     
+      //a field to store the name of a player to add
+      PlayerToAdd newPlayer = new PlayerToAdd();
+
+
+      //get the max number of players set out by the booking
+      String getMaxPlayerCount = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+      ResultSet maxCount = stmt.executeQuery(getMaxPlayerCount);
+      Integer maxPlayerCount = 0;
+      while(maxCount.next()){
+        maxPlayerCount = maxCount.getInt("numPlayers");
+      }
+
+      //checks the current slots already in use
+      String getCurrentNumPlayers = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+      ResultSet count = stmt.executeQuery(getCurrentNumPlayers);
+      Integer currentPlayerCount = 0;
+      while(count.next()){
+        currentPlayerCount++;
+      }
+    
+      model.put("currentPlayers", currentPlayerCount);
+      model.put("maxPlayers", maxPlayerCount);
+      model.put("invitee", newPlayer);
+      model.put("friends", friendScorecards);
+      model.put("slots", participantReservations);
       model.put("scoresWrapper", scorecardWrapper);
       model.put("logo", getLogo);
       model.put("teeTime", getTime);
@@ -2076,6 +2473,112 @@ public String updateScorecard(@PathVariable("gameID")String gameID, @PathVariabl
     return "LandingPages/error";
   }
 }//updateScorecard()
+
+
+@GetMapping(
+  path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
+)
+public String getGameInvite(@PathVariable("username")String user, @PathVariable("course")String course, @PathVariable("gameID")String gameID, HttpServletRequest request){
+
+   if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
+}
+
+//TODO: test
+@PostMapping(
+  path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
+)
+public String inviteToGame(@PathVariable("username")String user, @PathVariable("course")String course, @PathVariable("gameID")String gameID, PlayerToAdd playerToAdd, Map<String, Object> model) {
+  try (Connection connection = dataSource.getConnection()) {
+    Statement stmt = connection.createStatement();
+
+    //get the max number of players set out by the booking
+    String getMaxPlayerCount = "SELECT numPlayers FROM bookings WHERE gameID='" + gameID + "'";
+    ResultSet maxCount = stmt.executeQuery(getMaxPlayerCount);
+    Integer maxPlayerCount = 0;
+    while(maxCount.next()){
+      maxPlayerCount = maxCount.getInt("numPlayers");
+    }
+    System.out.println("MaxPlayerCount for gameID = " + maxPlayerCount);
+
+    //checks the current slots already in use
+    String getCurrentNumPlayers = "SELECT * FROM scorecards WHERE id='" + gameID + "'";
+    ResultSet count = stmt.executeQuery(getCurrentNumPlayers);
+    Integer currentPlayerCount = 0;
+    while(count.next()){
+      currentPlayerCount++;
+    }
+    System.out.println("CurrentPlayerCount for gameID = " + currentPlayerCount);
+
+    //create a new scorecard if free slots
+    
+    if(currentPlayerCount < maxPlayerCount){
+      //get the inviters scorecard from the DB
+      Scorecard invitee = new Scorecard();
+
+      String getInviterScorecard = "SELECT * FROM scorecards WHERE username='" + user + "' AND id='" + gameID + "'";
+      ResultSet inviterScorecardDB = stmt.executeQuery(getInviterScorecard);
+      while(inviterScorecardDB.next()){
+        invitee.setActive(inviterScorecardDB.getBoolean("active"));
+        invitee.setGameID(inviterScorecardDB.getString("id"));
+        invitee.setUserName(playerToAdd.getName());
+        invitee.setDatePlayed(inviterScorecardDB.getString("date"));
+        invitee.setCoursePlayed(inviterScorecardDB.getString("course"));
+        invitee.setTeesPlayed(inviterScorecardDB.getString("teesPlayed"));
+        invitee.setHolesPlayed("0");
+        invitee.setFormatPlayed(inviterScorecardDB.getString("formatPlayed"));
+        invitee.setAttestor(inviterScorecardDB.getString("attestor"));
+
+        ArrayList<Integer> initHoleStrokes = new ArrayList<Integer>();
+        for(int i = 0 ; i < 18; i++){
+          initHoleStrokes.add(0);
+        }
+        
+        invitee.setStrokes(initHoleStrokes);
+      }
+
+      //check if playerToAdd is valid user
+      Boolean isValidUser = false;
+      String checkIfInDB = "SELECT * FROM users WHERE userName='" + playerToAdd.getName() + "'";
+      ResultSet inviteeInDB = stmt.executeQuery(checkIfInDB);
+      while(inviteeInDB.next()){
+        if(inviteeInDB.getString("priority").equals("GOLFER")){
+          isValidUser = true;
+        }
+      }
+
+      //check if playerToAdd is in game already
+      Boolean playerInGame = false;
+      String checkIfInGame = "SELECT userName FROM scorecards WHERE userName='" + playerToAdd.getName() + "' AND id='" + gameID + "'";
+      ResultSet inviteeInGame = stmt.executeQuery(checkIfInGame);
+      while(inviteeInGame.next()){
+        playerInGame = true;
+      }
+
+      //if playerToAdd is not currently playing game, add to game
+      if(!playerInGame && isValidUser){
+        userInsertScorecard(connection, playerToAdd.getName(), invitee);
+        System.out.println(user + " added a new player to the " + gameID + " on " + course);
+        System.out.println("Adding the new scorecard to Database for: " + playerToAdd.getName());
+      }
+
+    }else{
+      System.out.println(user + " failed to add " + playerToAdd.getName() + " to the game");
+    }
+
+      return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
+  }catch (Exception e) {
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
+  }
+}
 
 
 
@@ -2717,19 +3220,18 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       while (listO.next()) {
         CourseOwner temp = new CourseOwner();
 
+        temp.setUsername(listO.getString("username"));
+
         temp.setCourseName(listO.getString("coursename"));
         temp.setAddress(listO.getString("address"));
         temp.setCity(listO.getString("city"));
         temp.setCountry(listO.getString("country"));
-
-        temp.setUsername(listO.getString("username"));
-        temp.setPassword(listO.getString("password"));
-        temp.setFname(listO.getString("firstname"));
-        temp.setLname(listO.getString("lastname"));
-        temp.setEmail(listO.getString("email"));
-        temp.setGender(listO.getString("gender"));
+        temp.setPhoneNumber(listO.getString("phonenumber"));
+        temp.setTimeOpen(listO.getString("timeopen"));
+        temp.setTimeClose(listO.getString("timeclose"));
+        temp.setBookingInterval(listO.getString("bookinginterval"));
         temp.setRating(listO.getDouble("rating"));
-        temp.setNumberRatings(listO.getDouble("numberRatings"));
+        temp.setNumberRatings(listO.getDouble("numberratings"));
 
         output.add(temp);
       }
@@ -2825,6 +3327,201 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
+   // LIST OF BOOKINGS AND RENTALS
+//--------------------------------
+  @GetMapping(
+          path = "/tee-rific/admin/bookings"
+  )
+  public String listBookings(Map<String, Object> model, HttpServletRequest request)
+  {
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+    if(!"admin".equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+
+      createTablesForBooking(connection);
+
+      ResultSet listB = stmt.executeQuery("SELECT * FROM bookings");
+      ArrayList<TeeTimeBooking> output = new ArrayList<TeeTimeBooking>();
+      while (listB.next()) {
+        TeeTimeBooking temp = new TeeTimeBooking();
+
+        temp.setGameID(listB.getInt("gameid"));
+        temp.setCourseName(listB.getString("coursename"));
+        temp.setUsername(listB.getString("username"));
+        temp.setDate(listB.getString("date"));
+        temp.setTime(listB.getString("teetime"));
+        temp.setNumPlayers(listB.getInt("numplayers"));
+        temp.setRentalID(listB.getString("rentalid"));
+
+        output.add(temp);
+      }
+      model.put("bookingList",output);
+      return "Admin/listOfBookings";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  public void createTablesForBooking(Connection connection) throws Exception {
+    Statement stmt = connection.createStatement();
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings (gameID serial, courseName varchar(100), username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals (id integer, courseName varchar(100), username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
+    userCreateScorecardsTable(connection); //Creates scorecard db if not created
+  }
+
+  @PostMapping(
+          path = "/tee-rific/admin/bookings/clear",
+          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String clearBookingDB(Map<String, Object> model){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String getBookings = "SELECT * FROM bookings";
+      ResultSet getBookingDetails = stmt.executeQuery(getBookings);
+
+      while(getBookingDetails.next()){
+        Statement clearOtherDBs = connection.createStatement();
+        String courseName = convertFromSnakeCase(getBookingDetails.getString("coursename"));
+        int gameID = getBookingDetails.getInt("gameid");
+        
+        EquipmentCart updateInv = new EquipmentCart();
+
+        //get the rental quantities
+        int balls = 0;
+        int clubs = 0;
+        int carts = 0;
+        ResultSet removeStock = clearOtherDBs.executeQuery("SELECT * FROM rentals WHERE id=" + gameID);
+        while(removeStock.next()){
+          balls = removeStock.getInt("numballs");
+          carts = removeStock.getInt("numcarts");
+          clubs = removeStock.getInt("numclubs");
+        }
+
+        //negate cart values
+        balls = 0 - balls;
+        carts = 0 - carts;
+        clubs = 0 - clubs;
+
+        updateInv.setNumBalls(balls);
+        updateInv.setNumCarts(carts);
+        updateInv.setNumClubs(clubs);
+
+        //subtract from inventory
+        updateInventory(connection, updateInv, courseName);
+
+        clearOtherDBs.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+        clearOtherDBs.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+      }
+      
+      stmt.executeUpdate("DROP TABLE bookings");
+
+      return "redirect:/tee-rific/admin/bookings/";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @PostMapping(
+          path = "/tee-rific/admin/bookings/{gameId}",
+          consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
+  )
+  public String deleteBooking(Map<String, Object> model, @PathVariable("gameId") int gameID){
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String getBookings = "SELECT * FROM bookings WHERE gameid='" + gameID + "'";
+      ResultSet getBookingDetails = stmt.executeQuery(getBookings);
+      getBookingDetails.next();
+
+      String courseName = convertFromSnakeCase(getBookingDetails.getString("coursename"));
+      
+      EquipmentCart updateInv = new EquipmentCart();
+
+      //get the rental quantities
+      int balls = 0;
+      int clubs = 0;
+      int carts = 0;
+      ResultSet removeStock = stmt.executeQuery("SELECT * FROM rentals WHERE id='" + gameID + "'");
+      while(removeStock.next()){
+        balls = removeStock.getInt("numballs");
+        carts = removeStock.getInt("numcarts");
+        clubs = removeStock.getInt("numclubs");
+      }
+
+      //negate cart values
+      balls = 0 - balls;
+      carts = 0 - carts;
+      clubs = 0 - clubs;
+
+      updateInv.setNumBalls(balls);
+      updateInv.setNumCarts(carts);
+      updateInv.setNumClubs(clubs);
+
+      //subtract from inventory
+      updateInventory(connection, updateInv, courseName);
+
+      stmt.executeUpdate("DELETE FROM scorecards WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM rentals WHERE id='"+gameID+"'");
+      stmt.executeUpdate("DELETE FROM bookings WHERE gameid='"+gameID+"'");            
+
+      return "LandingPages/deleteSuccess";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
+  @GetMapping(
+          path = "/tee-rific/admin/bookings/rental/{rentalID}"
+  )
+  public String viewRentalDetails(Map<String, Object> model, @PathVariable("rentalID") String id, HttpServletRequest request){
+
+    if(request.getSession().getAttribute("username") == (null)) {
+      return "redirect:/";
+    }
+
+    if(!"admin".equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
+    try (Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      String sql = "SELECT * FROM rentals WHERE id='" + id + "'";
+      ResultSet rentalDetails = stmt.executeQuery(sql);
+
+      ArrayList<RentalDetail> output = new ArrayList<RentalDetail>();
+      while (rentalDetails.next()) {
+        System.out.println("in while");
+        RentalDetail temp = new RentalDetail();
+
+        temp.setCourseName(rentalDetails.getString("coursename"));
+        temp.setUsername(rentalDetails.getString("username"));
+        temp.setDateCheckout(rentalDetails.getString("datecheckout"));
+        temp.setNumBalls(rentalDetails.getInt("numballs"));
+        temp.setNumCarts(rentalDetails.getInt("numcarts"));
+        temp.setNumClubs(rentalDetails.getInt("numclubs"));
+
+        output.add(temp);
+      }
+
+      model.put("rID", id);
+      model.put("details", output);
+      return "Admin/rentalDetails";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
+  }
+
 //**********************
 // ABOUT-US
 //**********************
@@ -2842,7 +3539,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       return "redirect:/";
     }
 
-    //this is optional, if you guys feel comfortable doing so, we can upload 'selfies' of our team and maybe talk about our development process
     model.put("username", user);
     return "LandingPages/aboutUs";
   }
@@ -2915,7 +3611,9 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
       for(int i = 0; i < courses.size(); i++){
         String removeCourseTable = "DROP TABLE IF EXISTS " + courses.get(i);
+        String removeCourseTableFeedback = "DROP TABLE IF EXISTS " + courses.get(i) + "Feedback";
         stmt.executeUpdate(removeCourseTable);
+        stmt.executeUpdate(removeCourseTableFeedback);
         System.out.println("Removed Course Table: " + courses.get(i));
       }
 

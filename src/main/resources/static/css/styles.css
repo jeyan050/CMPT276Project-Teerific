@@ -55,7 +55,6 @@ div {
 
 table, th, td {
     border: 1px solid black;
-
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -66,8 +65,10 @@ table {
     margin-right: auto;
 }
 
-table input {
-    width: 50%;
+th {
+    background-color: #F0EDC1;
+    background-image: url("https://www.transparenttextures.com/patterns/black-felt.png");
+    font-weight: bold;
 }
 
 /*******************/
@@ -155,6 +156,10 @@ table input {
     background-image: url("https://media1.giphy.com/media/J33nEazsOU9yO4oDni/giphy.gif?cid=ecf05e47ra7019n2n9nsto16j1thj3suxo59zk4vgyo1irlt&rid=giphy.gif&ct=g");
     background-size: cover;
 }
+#adminBookingRentalsButton {
+    background-image: url("https://i.giphy.com/media/6K32TjntJ3dFNhQHgI/giphy.webp");
+    background-size: cover;
+}
 
 #logoutAdminButton {
     background-image: url("https://media1.giphy.com/media/l2JdZKub444p8isw0/giphy.gif?cid=790b76110c1b984b92f8d0c8aa3279b1e87387c98ce174fc&rid=giphy.gif&ct=g");
@@ -193,9 +198,19 @@ table input {
     background-repeat: repeat;
 }
 
+#aboutUsContent {
+    width: 50%;
+    text-align: center;
+}
+
 .nukeBackdrop {
     background-image: url("https://c.wallhere.com/photos/91/e3/background_tapes_radiation_hazard_wall-734011.jpg!d");
     background-size: cover;
+}
+
+#underline {
+    text-decoration: underline;
+    font-style: italic;
 }
 
 /**************************/
@@ -231,7 +246,7 @@ table input {
     width: 25%;
 }
 
-.ownerTableDisplayCell, .scoredcardDisplayCell{
+.ownerTableDisplayCell, .scoredcardDisplayCell {
     width: 100%;
 }
 
@@ -243,10 +258,27 @@ table input {
 
 .scorecardTable {
     width: 90%;
+    margin-top: 15px;
+    margin-bottom: 25px;
 }
 
-.scorecardTableCell {
+.friendScorecardTable {
+    width: 45%;
+}
+
+.friendsNameCell {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scorecardTableCell, .friendScorecardTableCell {
     width: 15%;
+}
+
+.friendScorecard {
+    width: 100%;
 }
 
 
@@ -355,6 +387,25 @@ table input {
     border-bottom: 1px solid #EAE2B6; 
 }
 
+.blackPixelBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");
+}
+
+.darkMeshBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");
+}
+
+.aluminumBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/brushed-alum.png");
+}
+
+.blackBuriedBackdrop {
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/buried.png");
+}
 
 
 .socialIcon {
@@ -385,7 +436,6 @@ table input {
     height: 95%;
     border-radius: 15px;
     margin: 2.5%;
-    /* font-family: 'Teko', sans-serif; */
     font-family: 'Oswald', sans-serif;
     font-size: 200%;
     font-weight: bold;
@@ -462,13 +512,110 @@ table input {
     color:#FFF;
 }
 
+.scorecardButtonContainer {
+    margin-top: 0px;
+    padding-top: 0px;
+    margin-bottom: 25px;
+}
+
+.scorecardButton {
+    padding: 0px;
+}
+
+.userScorecardContainer {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
 
 .courseScorecardLogo {
-    width: 50%;
-    border-radius: 50%;
-    border: 0.25px solid black;
+    width: 25vh;
+    height: 25vh;
+    border-radius: 100%;
+    border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+.developersContainer {
+    float: right;
+}
+
+.developerPicture {
+    width: 20vh;
+    height: 20vh;
+    margin: 0px;
+    border-radius: 100%;
+    background-size: cover;
+}
+
+.developerPictureBorder {
+    width: 22vh;
+    height: 22vh;
+    border-radius: 100%;
+    background-size: cover;
+    margin: 25px;
+    padding: 1vh;
+}
+
+.pageSpacer {
+    margin: 0px;
+    padding: 2px;
+    width: 100%;
+    background-color: #000000;
+    background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");
+}
+
+.profile{
+    display: inline-block;
+}
+
+.developerProcessParagraph {
+    color: white;
+    font-family: 'Roboto Slab', serif;
+    padding-top: 30px;
+    padding-botton: 30px;
+}
+
+#aboutUsHomeButton {
+    width: 20%;
+}
+
+.processTitle{
+    padding: 5px;
+    font-family: 'Cinzel', serif;
+    color: #AFABAB;
+}
+
+.teerificName {
+    color: #338507;
+}
+
+.processContainer {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+
+.developerNameText {
+    color: white;
+    font-family: 'Russo One', sans-serif;
+    padding: 0px;
+    margin: 1px;
+}
+
+.faintGrey{
+    color: #AFABAB;
+}
+
+.aboutUsLogo {
+    width: 25%;
+}
+
+.listOfCoursesLogo {
+    background-size: cover;
+    max-height: 80%;
 }
 
   .weather-container  {
@@ -514,3 +661,9 @@ table input {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .drop_button {background-color: #3e8e41;}
+
+
+.bookingField { 
+    width: 100%;
+}
+

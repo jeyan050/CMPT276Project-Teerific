@@ -12,8 +12,10 @@ public class Scorecard {
     private String holesPlayed;
     private String formatPlayed;
     private String attestor;
-    private ArrayList groupMembers;
+    private ArrayList<String> groupMembers;
     private String gameID;
+    private ArrayList<Integer> strokes = new ArrayList<Integer>();
+
 
     public boolean isActive(){
         return this.active;
@@ -76,10 +78,10 @@ public class Scorecard {
     }
     public void setAttestor(String f) { this.attestor = f; }
 
-    public ArrayList getGroupMembers() {
+    public ArrayList<String> getGroupMembers() {
         return this.groupMembers;
     }
-    public void setUsername(ArrayList f) { this.groupMembers = f; }
+    public void setUsername(ArrayList<String> f) { this.groupMembers = f; }
 
     public String getGameID(){
         return this.gameID;
@@ -88,4 +90,13 @@ public class Scorecard {
     public void setGameID(String gameID){
         this.gameID = gameID;
     }
+
+    public ArrayList<Integer> getStrokes(){
+        return this.strokes;
+    }
+
+    public void setStrokes(ArrayList<Integer> strokes){
+        this.strokes = strokes;
+    }
+
 }

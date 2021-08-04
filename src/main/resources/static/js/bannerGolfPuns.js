@@ -1,15 +1,15 @@
 
 //source: https://thoughtcatalog.com/january-nelson/2018/08/golf-puns/
 var puns = ["It Takes Alot Of Golf Balls To Golf The Way I Do", 
-            "May The Course Be With You", 
-            "I Once Golfed On A Course So Hard, I Lost Three Golf Balls In The Washer...",
+            "May The 'Course' Be With You", 
+            "I Once Golfed On A Course So Hard, I Lost Three Golf Balls In The Ball-Washer...",
             "Young, Wild, And Free Golf!", 
-            "Asking Fore A Friend...", 
-            "Un-fore-gettable, In Every Way", 
-            "As Par As I Can See!", 
+            "Asking 'FORE' A Friend...", 
+            "Un-'FORE'-gettable, In Every Way", 
+            "As 'Par' As I Can See!", 
             "You Are The Best By Par!", 
             "Green There, Done That!",
-            "I Am 'Iron-Man'", 
+            "I Am Iron-Man", 
             "Not All People Are Created Eagle", 
             "A Chip Off The Old Block!", 
             "A Game So Good, You Will Never FORE-get!", 
@@ -17,7 +17,7 @@ var puns = ["It Takes Alot Of Golf Balls To Golf The Way I Do",
             "Golf Is A Lot Like Taxes, You Go For The Green And End Up In The Hole...",
             "Golf Balls Are Like Eggs, They Are White, Sold By The Dozen, And A Week Later You Have To Buy More!",
             "The Only Problem With Golf Is The Slow Groups Are Always Infront Of You And The Fast Groups Are Always Behind You",
-            "Whats The Easiest Shot In Golf? Your Fourth Put..."
+            "Whats The Easiest Shot In Golf? Your Fourth Putt..."
             ]
 
 //choose 5 random numbers, no duplicates chosen

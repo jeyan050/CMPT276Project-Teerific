@@ -49,6 +49,9 @@
                   <a class="nav-link" href="/tee-rific/admin/tournaments">Tournaments</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link" href="/tee-rific/admin/bookings">Bookings & Rentals</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/tee-rific/login">Log Out</a>
                   </li>
               </ul>
@@ -68,11 +71,15 @@
                     <button id="adminTournamentsButton" class="homePageButton" type="submit">Tournaments</button>
                 </form>
 
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/admin/bookings}">
+                    <button id="adminBookingRentalsButton" class="homePageButton" type="submit">Bookings & Rentals</button>
+                </form>
+
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/login}">
                     <button id="logoutAdminButton" class="homePageButton" type="submit">Log Out</button>
                 </form>
         </div>
-        <footer>
+        <footer> <br>
           <form class="active" method="post" th:action="@{/tee-rific/nuke/admin}">
             <button id="nukeButton"></button>
           </form>
