@@ -1299,9 +1299,8 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     // Enter into bookings db to create a ID for the game
     try (Connection connection = dataSource.getConnection()) {
       String courseName = convertToSnakeCase(selectedCourse.getCourseName());
-      String id = createNewBooking(connection, user, courseName);
 
-      return "redirect:/tee-rific/booking/"+courseName+"/"+id+"/"+user+"";
+      return "redirect:/tee-rific/booking/"+courseName+"/"+user+"";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
@@ -1309,9 +1308,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   }// handleSelectCourse()
 
   @GetMapping(
-    path = "/tee-rific/booking/{courseName}/{gameID}/{username}"
+    path = "/tee-rific/booking/{courseName}/{username}"
   )
-  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
+  public String displayCourseTimes(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking, HttpServletRequest request) throws Exception {
     String user = pathVars.get("username");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
@@ -1323,15 +1322,23 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     }
     
     String courseName = convertFromSnakeCase(pathVars.get("courseName"));
-    String gameIDStr = pathVars.get("gameID");
-    Integer gameID = Integer.parseInt(gameIDStr);
+
+    TeeTimeBooking newBooking = new TeeTimeBooking();
+    newBooking.setUsername(user);
+    newBooking.setCourseName(courseName);
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE courseName='"+courseName+"'");
-
       courseInfo.next();
 
+      if (booking.getDate() == null) {
+        // Default to current date
+        LocalDate currentDate = LocalDate.now();
+        newBooking.setDate(currentDate.toString());
+      } else {
+        newBooking.setDate(booking.getDate());
+      }
 
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
@@ -1339,29 +1346,27 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       String timeOpenSegments[] = timeOpenStr.split(":");
       String timeOpenHrStr = timeOpenSegments[0];
       String timeOpenMinStr = timeOpenSegments[1];
-
+      
       String timeCloseStr = courseInfo.getString("timeClose");
       // timeCloseStr = timeCloseStr + ":00";
       String timeCloseSegments[] = timeCloseStr.split(":");
       String timeCloseHrStr = timeCloseSegments[0];
       String timeCloseMinStr = timeCloseSegments[1];
-
+      
       Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
       Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
       Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
       Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
-
-      // Time timeOpen = Time.valueOf(timeOpenStr);
-      // Time timeClose = Time.valueOf(timeCloseStr);
-
+      
+      
       // Create array of valid teetimes based on open / closing times of specified course
       ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
       Integer hour = 0;
       Integer min = 0;
-
+      
       Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
-
-      while (hour < 25){
+      
+      while (hour < 25) {
         if (hour >= timeOpenHr && hour < timeCloseHr) {   
           
           // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
@@ -1377,23 +1382,51 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
             }
           }
           // if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:45 - start at 1:00
-          //   min = 0;
-          //   hour++;
-          // }
-  
+            //   min = 0;
+            //   hour++;
+            // }
+            
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
-          Timeslot ts = new Timeslot();
-          ts.setTime(time);
-  
-          validTimeSlots.add(ts);
+          // Check if there are any other bookings for this timeslot
+          String timeAndSeconds =  time + ":00";
+          Integer numAvailPlayerSlots = 4;
+          Integer numPlayersInTimeslot = 0;
+          Statement stmt2 = connection.createStatement();     
+          ResultSet bookingInfo = stmt2.executeQuery("SELECT * FROM bookings WHERE courseName='"+courseName+"' AND date='"+newBooking.getDate()+"' AND teetime='"+timeAndSeconds+"'");
+          
+          // If there are, do some math and work out possible party sizes
+          while (bookingInfo.next()) {
+            numPlayersInTimeslot += bookingInfo.getInt("numPlayers");
+          }
+          numAvailPlayerSlots -= numPlayersInTimeslot;
+
+          // If timeslot is at capacity, it is not a valid timeslot
+          if (numAvailPlayerSlots > 0) {
+            ArrayList<Integer> possiblePartySizes = new ArrayList<Integer>(); 
+            for (int i = 1; i <= numAvailPlayerSlots; i++) {
+              Integer partySize = i;
+              possiblePartySizes.add(partySize);
+            }
+
+            Timeslot ts = new Timeslot();
+            ts.setPartySizes(possiblePartySizes);
+            ts.setTime(time);
+            validTimeSlots.add(ts);
+          }
         }
-  
+
         if (min < (60-increments)) {         //to set up before it 
           min += increments;
         } else {
           hour++;
           min = 0;
-        }
+        } 
+      }
+
+      if (booking.getTime() == null) {
+        newBooking.setTime(validTimeSlots.get(0).getTime());
+      } else {
+        newBooking.setTime(booking.getTime());
       }
       // for (int i = 0; i < 48; i++) {
       //   if (hour >= timeOpenHr && hour < timeCloseHr) {
@@ -1422,15 +1455,24 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       String city = courseInfo.getString("city");
       String country = courseInfo.getString("country");
-
-      TeeTimeBooking booking = new TeeTimeBooking();
-      booking.setUsername(user);
       courseName = convertToSnakeCase(courseName);
+
+      // Find index of selected time slot in validTimeSlots
+      int tsIndex = 0;
+      while (validTimeSlots.iterator().hasNext() && tsIndex < validTimeSlots.size()-1) {
+        if (validTimeSlots.get(tsIndex).getTime().equals(newBooking.getTime())) {
+          break;
+        }
+
+        tsIndex++;
+      }
+
       model.put("timeSlots", validTimeSlots);
+      model.put("selectedTime", validTimeSlots.get(tsIndex));
+      model.put("selectedDate", newBooking.getDate());
       model.put("courseName", courseName);
-      model.put("gameID", gameID);
       model.put("username", user);
-      model.put("booking", booking);
+      model.put("booking", newBooking);
       model.put("city", city);
       model.put("country", country);
       model.put("OpenTime", timeOpenHr);
@@ -1447,26 +1489,31 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   }// displayCourseTimes()
 
   @PostMapping(
-    path = "/tee-rific/booking/{courseName}/{gameID}/{username}",
+    path = "/tee-rific/booking/{courseName}/{username}",
     consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
   )
   public String handleNewBooking(@PathVariable Map<String, String> pathVars, Map<String, Object> model, TeeTimeBooking booking) throws Exception {
     String user = pathVars.get("username");
     String courseNameSC = pathVars.get("courseName");
-    String gameIDStr = pathVars.get("gameID");
     String courseName = convertFromSnakeCase(courseNameSC);
+
+    System.out.println(booking.getUsername());
+    System.out.println(booking.getCourseName());
+    System.out.println(booking.getTime());
+    System.out.println(booking.getDate());
+    System.out.println(booking.getRentalID());
 
     try (Connection connection = dataSource.getConnection()) {
       String teetime = booking.getTime();
       teetime = teetime + ":00";
       booking.setTime(teetime);
 
-      updateBookingsTable(connection, booking, courseName, gameIDStr);
+      String gameID = insertBookingsTable(connection, booking, courseName, user);
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
       scorecard.setActive(true);
-      scorecard.setGameID(gameIDStr);
+      scorecard.setGameID(gameID);
       scorecard.setDatePlayed(booking.getDate());
       scorecard.setCoursePlayed(courseName);
       scorecard.setAttestor("");
@@ -1478,7 +1525,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       userInsertScorecard(connection, user, scorecard);
       courseName = convertToSnakeCase(courseNameSC);
 
-      return "redirect:/tee-rific/booking/{courseName}/{gameID}/{username}/success";
+      return "redirect:/tee-rific/booking/{courseName}/"+gameID+"/{username}/success";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "LandingPages/error";
@@ -1537,20 +1584,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     stmt.executeUpdate("CREATE TABLE IF NOT EXISTS bookings (gameID serial, courseName varchar(100), username varchar(100), date date, teetime time, numplayers integer, rentalID varchar(20))");
   } //ownerCreateBookingsTable
 
-  public String createNewBooking(Connection connection, String user, String courseName) throws Exception {
-    Statement stmt = connection.createStatement();
-    stmt.executeUpdate("INSERT INTO bookings (username, courseName) VALUES ('" + user + "' , '" + courseName + "')");
-
-    // Go to very bottom of table since we just inserted there
-    ResultSet rs = stmt.executeQuery("SELECT gameID FROM bookings");
-    String id = "";
-    while (rs.next()) {
-      id = rs.getString("gameID");
-    }
-
-    return id;
-  }// createNewBooking()
-
   public String singleDigitToDoubleDigitString(Integer n) {
     // Converts single digit ints to double digit strings
     // ie 0 -> "00"
@@ -1561,9 +1594,17 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     return ret;
   } // singleDigitToDoubleDigitString()
 
-  public void updateBookingsTable(Connection connection, TeeTimeBooking booking, String courseName, String gameID) throws Exception {
+  public String insertBookingsTable(Connection connection, TeeTimeBooking booking, String courseName, String username) throws Exception {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("UPDATE bookings SET (date, teetime, numplayers) = ('"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"') WHERE gameID='"+gameID+"'");
+    stmt.executeUpdate("INSERT INTO bookings (courseName, username, date, teetime, numplayers) VALUES ('"+courseName+"', '"+username+"', '"+booking.getDate()+"', '"+booking.getTime()+"', '"+booking.getNumPlayers()+"')");
+  
+    String gameID = "";
+    ResultSet rs = stmt.executeQuery("SELECT * FROM bookings");
+    while (rs.next()) {
+      gameID = rs.getString("gameID");
+    }
+  
+    return gameID;
   } //updateBookingsTable()
 
 
