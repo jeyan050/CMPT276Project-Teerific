@@ -10,7 +10,8 @@ var previousScreenWidth = screen.width;
 window.addEventListener('resize', function(event) {
     //will only reload if the width of the screen changes
     if(this.screen.width !== previousScreenWidth){
+        this.alert("previous Screen width: " + previousScreenWidth + ", currentScreenWidth: " + this.screen.width);
         previousScreenWidth = this.screen.width;
-        window.location.reload();
+        // window.location.reload();
     }
 });
