@@ -37,6 +37,10 @@
                         <button type="submit" id="changeDate" class="button">Change to New Date</button>
                     </form><br>
                     <div class="titleFont dynamicSize">Current Date: <span id="date" th:text="${todayDate}"></span></div>
+                    <p><span style="font-weight: bold;">Index</span><br> 
+                        <span style="background-color: Red;">Red</span> = Booking Time Full (4 people)<br>
+                        <span style="background-color: Yellow;">Yellow</span>: Booking Time has bookings but not Full<br>
+                        <span style="background-color: Green; color: white">Green</span> : Booking Time Empty</p><br>
                     <form>
                         <table class="ownerTable">
                             <tr>
@@ -45,12 +49,12 @@
                             </tr>
                             <tr th:each="teeTimeDetails : ${teeTimes}">
                                 <td th:text="${teeTimeDetails.teeTime}"></td>
-                                <div style="padding: 0px;" th:switch="${teeTimeDetails.status}">
-                                    <td th:case="'EMPTY'" style="background-color: green; font-weight: bold;">
+                                <div style="padding: 0px;" th:switch="${teeTimeDetails.totalPlayers}">
+                                    <td th:case="0" style="background-color: green; font-weight: bold;">
                                         <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
                                         th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
                                     </td>
-                                    <td th:case="'4 Bookings'" style="background-color: red; font-weight: bold;">
+                                    <td th:case="4" style="background-color: red; font-weight: bold;">
                                         <a th:href="${'/tee-rific/courseSchedule/' + todayDate + '/' + teeTimeDetails.teeTime + '/' + username}" th:text="${teeTimeDetails.status}"
                                         th:style="${teeTimeDetails.status == 'EMPTY' ? 'color: white;' : 'color: black;'}"></a>
                                     </td>

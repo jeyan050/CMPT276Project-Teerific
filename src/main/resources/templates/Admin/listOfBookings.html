@@ -31,48 +31,38 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">List of Owners</div>            
-                    <table class="owners tableSizing">  
+                    <div class="titleFont dynamicSize">List of Bookings</div>            
+                    <table class="tableSizing">  
                         <tr>
+                            <th style="width: 80px;">Game ID</th>
                             <th>Course Name</th>
                             <th>Username</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>Country</th>
-
-                            <th>Phone Number</th>
-                            <th>Time Open</th>
-                            <th>Time Close</th>
-                            <th>Booking Interval</th>
-                            <th>Ratings</th>
+                            <th style="width: 120px;">Date Booked</th>
+                            <th style="width: 120px;" >Time Booked</th>
+                            <th style="width: 80px;" >Number of Players</th>
+                            <th style="width: 70px;" >Rental ID</th>
+                            <th style="width: 90px;" ></th>
                         </tr>
-                        <tr th:each="owner : ${ownerList}">
+                        <tr th:each="booking : ${bookingList}">
+                            <td th:text="${booking.gameID}"></td>
+                            <td th:text="${booking.courseName}"></td>
+                            <td th:text="${booking.username}"></td>
+                            <td th:text="${booking.date}"></td>                            
+                            <td th:text="${booking.time}"></td>
+                            <td th:text="${booking.numPlayers}"></td>
                             <td>
-                                <a th:href="${'/tee-rific/admin/owners/golfCourse/'+owner.courseName}" th:text="${owner.courseName}">...</a>
+                                <a th:href="${'/tee-rific/admin/bookings/rental/'+booking.rentalID}" th:text="${booking.rentalID}">...</a>
                             </td>
-                            <td th:text="${owner.username}"></td>
 
-                            <td th:text="${owner.address}"></td>
-                            <td th:text="${owner.city}"></td>
-                            <td th:text="${owner.country}"></td>
-                            <td th:text="${owner.phoneNumber == 'null' ? '' : owner.phoneNumber}"></td>
-                            <td th:text="${owner.timeOpen}"></td>
-                            <td th:text="${owner.timeClose}"></td>
-                            <td th:text="${owner.bookingInterval + ' minutes'}"></td>
-                            <td>
-                                <span style="font-weight: bold;" th:text="${owner.rating}"></span>
-                                <br>
-                                <span th:text="${'#Ratings:' + owner.numberRatings}"></span>
-                            </td>
-                            <form action="#" method="post" th:action="${'/tee-rific/admin/owner/'+owner.username}">
+                            <form action="#" method="post" th:action="${'/tee-rific/admin/bookings/'+booking.gameID}">
                                 <td>
-                                    <input class="button deleteButton ownerDB" type="submit" value="Delete">
+                                    <input style="width: 70px;" class="button deleteButton" type="submit" value="Delete">
                                 </td>
                             </form>
                         </tr>
                     </table><br>
 
-                    <form method="post" th:action="@{/tee-rific/admin/owners/clear}">
+                    <form method="post" th:action="@{/tee-rific/admin/bookings/clear}">
                         <button type="submit" class="button">Clear Database</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">

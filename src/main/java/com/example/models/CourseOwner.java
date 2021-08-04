@@ -29,6 +29,7 @@ public class CourseOwner {
     private String gender;
     private double rating;
     private double numberRatings;
+    private String feedback;
 
 
     public String getUsername() {
@@ -210,5 +211,12 @@ public class CourseOwner {
 
     public double getNumberRatings() { return this.numberRatings;}
     public void setNumberRatings(double f) {this.numberRatings = f;}
+
+    public String getFeedback() {
+        return this.feedback;
+    }
+    public void setFeedback(String f) {
+        this.feedback = f;
+    }
 
 }

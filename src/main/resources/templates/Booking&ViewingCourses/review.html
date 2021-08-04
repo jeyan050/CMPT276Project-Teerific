@@ -67,7 +67,7 @@
                     <input id="testing" name = "testing" type = "hidden" th:field = "*{rating}">
                     <button type="submit" id="submitReview" class="button">Submit Review</button>
                 </form>
-                <form method= "get" th:action="${'/tee-rific/home/' + username}">
+                <form method= "get" th:action="${'/tee-rific/feedback/' + username + '/' + nameCourse}">
                     <button type="submit" class="button">Skip</button>
                 </form>
             </div>

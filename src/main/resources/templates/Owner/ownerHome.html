@@ -47,6 +47,11 @@
                 <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account Details</a>
                 </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" th:href="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">View Course Feedback</a>
+                </li>
+
                   <li class="nav-item">
                   <a class="nav-link" th:href="${'/tee-rific/aboutUs/' + username}">About Us</a>
                 </li>
@@ -64,17 +69,21 @@
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/golfCourseDetails/' + username}">
                     <button id="editCourseButton" class="homePageButton" type="submit">Course Details</button>
-                </form> 
+                </form>
 
-                
+
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="editOwnerButton" class="homePageButton" type="submit">Account Details</button>
-                </form> 
+                </form>
+
+            <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">
+                <button id="feedbackOwnerButton" class="homePageButton" type="submit">View Course Feedback</button>
+            </form>
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                   <button id="aboutUsButton" class="homePageButton" type="submit" >About Us</button>
-                </form> 
+                </form>
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/logout}">
                     <button id="logoutOwnerButton" class="homePageButton" type="submit">Log Out</button>
