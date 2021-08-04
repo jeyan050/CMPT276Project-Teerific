@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -30,19 +31,28 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Booking Successful!</div>
-                    <p>Thank you for booking with Tee-rific! Here is your game info.</p>
-                    <table >
+                    <div class="pageDivider woodBackdrop"></div>
+
+                    <div>
+                        <h5 class="poppinsFont greyFont">Thank You For Booking With Tee-rific! Here Is Your Game Info.</h5>
+                    </div>
+                    
+                    <table class="bookingTable oswaldFont">
                         <tr>
-                            <td>Game ID:</td><td th:text="${gameID}"></td>
+                            <th class="bookingHeader">Game ID:</td>
+                            <td class="bookingCell overflowHideFont brownFont" th:text="${gameID}"></td>
                         </tr>
                         <tr>
-                            <td>Location:</td><td th:text="${courseName}"></td>
+                            <th class="bookingHeader">Location:</td>
+                            <td class="bookingCell overflowHideFont brownFont" th:text="${courseName}"></td>
                         </tr>
                         <tr>
-                            <td>Date:</td><td th:text="${toDisplay.date}"></td>
+                            <th class="bookingHeader">Date:</td>
+                            <td class="bookingCell overflowHideFont brownFont" th:text="${toDisplay.date}"></td>
                         </tr>
                         <tr>
-                            <td>Tee-Time:</td><td th:text="*{toDisplay.time}"></td>
+                            <th class="bookingHeader">Tee-Time:</td>
+                            <td class="bookingCell overflowHideFont brownFont" th:text="*{toDisplay.time}"></td>
                         </tr>
                     </table>
 
@@ -51,7 +61,7 @@
                     </form>
                     
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class = "button">Home Page</button>
+                        <button type="submit" class = "button">Home</button>
                     </form>
                 </div>
             </div>

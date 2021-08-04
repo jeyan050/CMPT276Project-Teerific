@@ -1322,10 +1322,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       Statement stmt = connection.createStatement();
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE courseName='"+courseName+"'");
 
-      
-
-      
-
       courseInfo.next();
 
 
@@ -1432,6 +1428,8 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       model.put("country", country);
       model.put("OpenTime", timeOpenHr);
       model.put("CloseTime", timeCloseHr);
+
+      model.put("notSnakeCasedCourseName", convertFromSnakeCase(courseName));
       
       return "Booking&ViewingCourses/bookingTimes"; 
 
@@ -1576,13 +1574,14 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String courseNameSC = pathVars.get("courseName");
     String gameIDStr = pathVars.get("gameID");
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
-    }
+    //TODO: uncomment
+    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    //   return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
+    // }
 
-    if(null == (request.getSession().getAttribute("username"))) {
-      return "redirect:/";
-    }
+    // if(null == (request.getSession().getAttribute("username"))) {
+    //   return "redirect:/";
+    // }
 
     EquipmentCart cart = new EquipmentCart();
 
@@ -1969,6 +1968,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           path = "/tee-rific/courses/{username}"
   )
   public String viewAllCourses(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/courses/" + request.getSession().getAttribute("username");
     }
@@ -2073,8 +2073,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       String city = info.getString("city");
       String country = info.getString("country");
-
-      //ERROR: ResultSet not positioned properly, perhaps you need to call next.
 
       model.put("courseName", courseID);
       model.put("username", user);

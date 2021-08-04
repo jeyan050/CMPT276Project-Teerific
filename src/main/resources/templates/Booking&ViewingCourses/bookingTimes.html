@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -27,166 +27,189 @@
     <title>Booking</title>
 </head>
 <body class="grassBackdrop">
-    <div class="pageWrap">
-        <div class="content">
-            <div class="woodBackdrop border content">
-                <div class="sandBackdrop">
-                    <div>
-                        <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    
-                    <div class="bookingContainer">
-                      <div class="titleFont dynamicSize">Booking</div>
-                      <h4 class="instruction"> Open from <span id= "open_hours" th:text="${OpenTime}"></span>:00 to <span id= "close_hours" th:text="${CloseTime}"></span>:00</h4>
+  <div class="pageWrap">
+    <div class="content">
+      <div class="woodBackdrop expandedBorder border content">
+        <div class="sandBackdrop">
+          <div class="logoContainer">
+            <img th:src="@{/images/tee-rific.png}">
+          </div>
+          <div class="titleFont dynamicSize">Booking</div>
+          <div class="bookingContainer firstSectionContainer">
+           
+            <h1 class="overflowHideFont poppinsFont darkGreyFont" th:text="${notSnakeCasedCourseName}"></h1>
+            <div class="pageDivider woodBackdrop"></div>
+            <h2 class="poppinsFont brownFont">Open - <span class="poppinsFont brownFont" id="open_hours" th:text="${OpenTime}"></span>:00</h2>
+            <h2 class="poppinsFont brownFont">Close - <span class="poppinsFont brownFont" id="close_hours" th:text="${CloseTime}"></span>:00</h2>
 
-                      <form method="post" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}" th:object="${booking}">
-                        <table class="bookingTable">
-                          <tr>
-                            <th>Date:</th>
-                            <td>
-                              <input class="bookingField" type="date" th:field="*{date}">
-                            </td>
-                          </tr>
-                          <tr>
-                            <th>Time:</th>
-                            <td>
-                              <select class="bookingField" name="timeSlots" th:field="*{time}">
-                                <option th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"></option>
-                              </select>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th>Party Size:</th>
-                            <td>
-                              <select class="bookingField" name="partySize" th:field="*{numPlayers}">
-                                <option type="number" value="1">1</option>
-                                <option type="number" value="2">2</option>
-                                <option type="number" value="3">3</option>
-                                <option type="number" value="4">4</option>
-                              </select>
-                            </td>
-                          </tr>
-                        </table>
-                        <button type="submit" class = "button">Confirm Booking</button>
-                      </form>
-                      <form method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class = "button">Back</button>
-                      </form>
-                    </div>  <!-- bookingContainerEnd -->
+            <form method="post" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}" th:object="${booking}">
+              <table class="bookingTable oswaldFont">
+                <tr>
+                  <th class="bookingHeader">Date:</th>
+                  <td class="bookingCell">
+                    <input class="bookingField" type="date" th:field="*{date}">
+                  </td>
+                </tr>
+                <tr>
+                  <th class="bookingHeader">Time:</th>
+                  <td class="bookingCell">
+                     <select class="bookingField" name="timeSlots" th:field="*{time}">
+                       <option th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"></option>
+                     </select>
+                    </td>
+                 </tr>
+                <tr>
+                   <th class="bookingHeader">Party Size:</th>
+                   <td class="bookingCell">
+                     <select class="bookingField" name="partySize" th:field="*{numPlayers}">
+                        <option type="number" value="1">1</option>
+                        <option type="number" value="2">2</option>
+                        <option type="number" value="3">3</option>
+                        <option type="number" value="4">4</option>
+                    </select>
+                  </td>
+               </tr>
+              </table>
+              <button type="submit" class = "button">Confirm</button>
+            </form>
+            <form method="get" th:action="${'/tee-rific/home/' + username}">
+              <button type="submit" class = "button">Back</button>
+            </form>
+          </div>  <!-- bookingContainerEnd -->
                     
-                    <div class="weatherAPI weatherAPIContainer">
-                      <h2>5 Day Weather Forcast</h2>
-                      <h4> City: <span id="city" th:text="${city}"></span></h4>
-                      <h4> Country: <span id="country" th:text="${country}"></span></h4>
-                      <div class = "dropdown">
-                        <button class="drop_button" id="date1"></button>
-                        <div class="dropdown_content">
-                          <button id="date1_1" class="button"></button>
-                          <button id="date1_2" class="button"></button>
-                          <button id="date1_3" class="button"></button>
-                          <button id="date1_4" class="button"></button>
-                          <button id="date1_5" class="button"></button>
-                          <button id="date1_6" class="button"></button>
-                          <button id="date1_7" class="button"></button>
-                          <button id="date1_8" class="button"></button>
-                        </div>
-                      </div>
-                      <div class = "dropdown">
-                        <button class="drop_button"id="date2"></button>
-                        <div class="dropdown_content">
-                          <button id="date2_1" class="button"></button>
-                          <button id="date2_2" class="button"></button>
-                          <button id="date2_3" class="button"></button>
-                          <button id="date2_4" class="button"></button>
-                          <button id="date2_5" class="button"></button>
-                          <button id="date2_6" class="button"></button>
-                          <button id="date2_7" class="button"></button>
-                          <button id="date2_8" class="button"></button>
-                        </div>
-                      </div>
-                      <div class = "dropdown">
-                        <button class="drop_button" id="date3"></button>
-                        <div class="dropdown_content">
-                          <button id="date3_1" class="button"></button>
-                          <button id="date3_2" class="button"></button>
-                          <button id="date3_3" class="button"></button>
-                          <button id="date3_4" class="button"></button>
-                          <button id="date3_5" class="button"></button>
-                          <button id="date3_6" class="button"></button>
-                          <button id="date3_7" class="button"></button>
-                          <button id="date3_8" class="button"></button>
-                        </div>
-                      </div>
-                      <div class = "dropdown">
-                        <button class="drop_button" id="date4"></button>
-                        <div class="dropdown_content">
-                          <button id="date4_1" class="button"></button>
-                          <button id="date4_2" class="button"></button>
-                          <button id="date4_3" class="button"></button>
-                          <button id="date4_4" class="button"></button>
-                          <button id="date4_5" class="button"></button>
-                          <button id="date4_6" class="button"></button>
-                          <button id="date4_7" class="button"></button>
-                          <button id="date4_8" class="button"></button>
-                        </div>
-                      </div>
-                      <div class = "dropdown">
-                        <button class="drop_button" id="date5"></button>
-                        <div class="dropdown_content">
-                          <button id="date5_1" class="button"></button>
-                          <button id="date5_2" class="button"></button>
-                          <button id="date5_3" class="button"></button>
-                          <button id="date5_4" class="button"></button>
-                          <button id="date5_5" class="button"></button>
-                          <button id="date5_6" class="button"></button>
-                          <button id="date5_7" class="button"></button>
-                          <button id="date5_8" class="button"></button>
-                        </div>
-                      </div>
-                      <div class = "dropdown">
-                        <button class="drop_button" id="date6"></button>
-                        <div class="dropdown_content">
-                          <button id="date6_1" class="button"></button>
-                          <button id="date6_2" class="button"></button>
-                          <button id="date6_3" class="button"></button>
-                          <button id="date6_4" class="button"></button>
-                          <button id="date6_5" class="button"></button>
-                          <button id="date6_6" class="button"></button>
-                          <button id="date6_7" class="button"></button>
-                          <button id="date6_8" class="button"></button>
-                        </div>
-                      </div>
-                      <p id = "selected_forcast">
-                        <div class="weather-container">
-                          <h2 class ="forcast_title"></h2>
-                          <img class="icon">
-                          <p class="weather"></p>
-                          <p class="weather_description"></p>
-                          <p class="temp"> </p>
-                          <p class="temp_feels_like"></p>
-                          <p class="wind"></p>
-                          <p class="gust"></p>
-                          <p class="prob_rain"></p>
-                          <!-- <p class="rain_vol"></p>
-                          <p class="snow_vol"></p> -->
-                        </div>
-                      </p>
-                    </div>    <!-- weatherAPIContainerEnd -->
-                </div>
-            </div>
-        </div>
-        <footer>
-            <div class= "woodBackdrop footer">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
-                <p>© Copyright 2021 Tee-rific</p>
-              </div>
-              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-        </footer>
-    </div>
-    
+                    <div class="secondSectionContainer"> 
+                      <div class="apiWrapper darkBlueAsfaltBackdrop">
+                        <h2 class="oswaldFont faintGrey">5-Day Weather Forecast</h2>
+                        <h1 class="oswaldFont faintGrey"><span id="city" class="oswaldFont faintGrey" th:text="${city}"></span>, <span id="country" class="oswaldFont faintGrey" th:text="${country}"></span></h1>
+                        <select id="selectdate" class="chooseDate">
+                          <option disabled selected>Date</option>
+                          <option id="date1" class="validDate"></option>
+                          <option id="date2" class="validDate"></option>
+                          <option id="date3" class="validDate"></option>
+                          <option id="date4" class="validDate"></option>
+                          <option id="date5" class="validDate"></option>
+                          <option id="date6" class="validDate"></option>
+                        </select>
+  
+                        <select id="timeDate1" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time0" class="validTime"></option>
+                          <option id="time1" class="validTime"></option>
+                          <option id="time2" class="validTime"></option>
+                          <option id="time3" class="validTime"></option>
+                          <option id="time4" class="validTime"></option>
+                          <option id="time5" class="validTime"></option>
+                          <option id="time6" class="validTime"></option>
+                          <option id="time7" class="validTime"></option>
+                        </select>
+  
+                        <select id="timeDate2" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time8" class="validTime"></option>
+                          <option id="time9" class="validTime"></option>
+                          <option id="time10" class="validTime"></option>
+                          <option id="time11" class="validTime"></option>
+                          <option id="time12" class="validTime"></option>
+                          <option id="time13" class="validTime"></option>
+                          <option id="time14" class="validTime"></option>
+                          <option id="time15" class="validTime"></option>
+                        </select>
+  
+                        <select id="timeDate3" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time16" class="validTime"></option>
+                          <option id="time17" class="validTime"></option>
+                          <option id="time18" class="validTime"></option>
+                          <option id="time19" class="validTime"></option>
+                          <option id="time20" class="validTime"></option>
+                          <option id="time21" class="validTime"></option>
+                          <option id="time22" class="validTime"></option>
+                          <option id="time23" class="validTime"></option>
+                        </select>
+  
+                        <select id="timeDate4" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time24" class="validTime"></option>
+                          <option id="time25" class="validTime"></option>
+                          <option id="time26" class="validTime"></option>
+                          <option id="time27" class="validTime"></option>
+                          <option id="time28" class="validTime"></option>
+                          <option id="time29" class="validTime"></option>
+                          <option id="time30" class="validTime"></option>
+                          <option id="time31" class="validTime"></option>
+                        </select>
+  
+                        <select id="timeDate5" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time32" class="validTime"></option>
+                          <option id="time33" class="validTime"></option>
+                          <option id="time34" class="validTime"></option>
+                          <option id="time35" class="validTime"></option>
+                          <option id="time36" class="validTime"></option>
+                          <option id="time37" class="validTime"></option>
+                          <option id="time38" class="validTime"></option>
+                          <option id="time39" class="validTime"></option>
+                        </select>
+  
+                        <select id="timeDate6" class="chooseTime">
+                          <option disabled selected>Time</option>
+                          <option id="time40" class="validTime"></option>
+                          <option id="time41" class="validTime"></option>
+                          <option id="time42" class="validTime"></option>
+                          <option id="time43" class="validTime"></option>
+                          <option id="time44" class="validTime"></option>
+                          <option id="time45" class="validTime"></option>
+                          <option id="time46" class="validTime"></option>
+                          <option id="time47" class="validTime"></option>
+                        </select>
+  
+                        <div id="selected_forecast" class="oswaldFont darkGrey lightBlueAsfaltBackdrop">
+                          <div class="weather-container">
+                            <h2 class ="forcast_title"></h2>
+                            
+                            <div class="iconContainer">
+                              <!-- CSS source code: https://codepen.io/_fbrz/pen/iqtlk -->
+                              <div class="sunnyContainer">
+                                <div class="sunny weatherImage"></div>
+                              </div>
+                              <div class="cloudyContainer">
+                                <div class="cloudy weatherImage"></div>
+                              </div>
+                              <div class="rainyContainer">
+                                <div class="rainy weatherImage"></div>
+                              </div>
+                              <div class="stormyContainer">
+                                <div class="stormy weatherImage"></div>
+                              </div>
+                              <div class="snowyContainer">
+                                <div class="snowy weatherImage"></div>
+                              </div>
+                            </div>  <!-- iconContainer -->
+                            
+                            <p class="weather oswaldFont darkGreyFont"></p>
+                            <p class="weather_description oswaldFont darkGreyFont"></p>
+                            <p class="temp oswaldFont darkGreyFont"> </p>
+                            <p class="temp_feels_like oswaldFont darkGreyFont"></p>
+                            <p class="wind oswaldFont darkGreyFont"></p>
+                            <p class="gust oswaldFont darkGreyFont"></p>
+                            <p class="prob_rain oswaldFont darkGreyFont"></p>
+                          </div>    <!-- weatherContainer -->
+                        </div>      <!-- selectedForecast -->
+                      </div>      <!-- APIWrapper -->
+                    </div>        <!-- secondSectionContainer -->
+        </div><!-- sandBackdrop -->
+      </div><!-- woodBackdrop/Border -->
+    </div><!-- content -->
+    <footer>
+         <div class= "woodBackdrop footer">
+            <i class="socialIcon fab fa-facebook-f"></i>
+            <i class="socialIcon fab fa-twitter"></i>
+            <i class="socialIcon fab fa-instagram"></i>
+            <i class="socialIcon fas fa-envelope"></i>
+            <p>© Copyright 2021 Tee-rific</p>
+          </div>
+          <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+     </footer>
+  </div><!-- pageWrap -->
 </body>
-
 </html>

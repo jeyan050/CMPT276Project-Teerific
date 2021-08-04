@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -27,17 +28,28 @@
             <div class="woodBackdrop border content">
                 <div class="sandBackdrop">
                     <img th:src="@{/images/tee-rific.png}">
-                <div class="titleFont dynamicSize">Golf Course Equipment</div>
+                <div class="titleFont dynamicSize">Golf Course Rentals</div>
                 <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">
-                    <p class="label"></p>
-                    <input type="number" th:field=*{numBalls} class="input">
-
-                    <p class="label"></p>
-                    <input type="number" th:field=*{numCarts} class="input">
-
-                    <p class="label"></p>
-                    <input type="number" th:field=*{numClubs} class="input"> <br>
-
+                    <table class="bookingTable oswaldFont">
+                        <tr>
+                            <th class="bookingHeader">Balls</th>
+                            <td class="bookingCell">
+                                <input class="bookingField" type="number" th:field=*{numBalls}>
+                            </td>
+                        </tr>
+                       <tr>
+                            <th class="bookingHeader">Carts</th>
+                            <td class="bookingCell">
+                                <input class="bookingField" type="number" th:field=*{numCarts}>
+                            </td>
+                       </tr>
+                       <tr>
+                            <th class="bookingHeader">Clubs</th>
+                            <td class="bookingCell">
+                                <input class="bookingField" type="number" th:field=*{numClubs}>
+                            </td>
+                        </tr>
+                    </table>
                     <button type="submit" class="button">Checkout</button>
                 </form>
                 <form method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}">
