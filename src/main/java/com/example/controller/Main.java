@@ -2530,7 +2530,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
       participant.setUsername(rs.getString("username"));
       participant.setFname(rs.getString("first_name"));
       participant.setLname(rs.getString("last_name"));
-      // participant.setScore(rs.getString("score"));
+      participant.setScore(rs.getInt("score"));
 
       output.add(participant);
     }

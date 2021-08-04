@@ -1,7 +1,5 @@
 package com.example.models;
 
-import java.util.ArrayList;
-
 public class Tournament {
     private Integer id;
     private String name;
