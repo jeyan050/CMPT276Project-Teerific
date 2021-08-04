@@ -34,19 +34,16 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <!-- <div class="titleFont dynamicSize">Publish Results for <span th:text="${tournament.name}"></span></div> -->
-                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${tournamentResults}">
+                    <!-- <div class="titleFont dynamicSize">Publish Results for <span th:text="${tournament.name}"></span>?</div> -->
+                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${participant}">
                     <table>
                         <thead>
                             <th>Name</th>
                             <th>Score</th>
                         </thead>
-                        <tr th:each="participant : ${participants}"></tr>
-                            <td td:text="${participant.username}"></td>
-                            <!-- th:field=*{score} -->
-                            <td> <input type="number" class="inputBox" th:field=*{score} placeholder="Score"></td> 
-                            <!-- <td td:text="${participant.first_name}"></td>
-                            <td td:text="${participant.last_name}"></td> -->
+                        <tr th:each="participant : ${participants}">
+                            <td th:text="${participant.username}"></td>
+                            <td> <input type="number" class="inputBox" th:field="*{score}" placeholder="Score"></td> 
                         </tr>
                     </table>
                   <input type="submit" class = "button" value="Publish Results">
