@@ -39,6 +39,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -54,8 +55,8 @@
                 <div>
                     <img th:src="@{/images/tee-rific.png}">
                 </div>
-                <div class="titleFont dynamicSize">Please Rate</div>
-                <div class="titleFont dynamicSize" th:text="${course}"></div>
+                <div class="titleFont dynamicSize">Rating</div>
+                <div class="overflowHideFont poppinsFont darkGreyFont biggerFont" th:text="${course}"></div>
                     <div class="stars" data-rating="3">
                         <span class="star">&nbsp;</span>
                         <span class="star">&nbsp;</span>

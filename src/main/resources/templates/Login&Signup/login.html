@@ -35,8 +35,12 @@
                     </div>
                     <div class="titleFont dynamicSize">Welcome!</div>
                     <form  action="#" method="post" th:action="@{/tee-rific/login/check}" th:object="${loginUser}">
-                        <input class="inputBox" type="text"  name="username" th:field="*{username}" placeholder="Username">
-                        <input class="inputBox" type="password" name="password" th:field="*{password}" placeholder="Password">
+                        <div>
+                            <input class="inputBox" type="text"  name="username" th:field="*{username}" placeholder="Username">
+                        </div>
+                        <div>
+                            <input class="inputBox" type="password" name="password" th:field="*{password}" placeholder="Password">
+                        </div>
                         <div th:each="errorText : ${failedLogin}">
                             <p id="errorU" th:text="${errorText}"></p>
                         </div>

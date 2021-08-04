@@ -2271,9 +2271,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   )
   public String getSpecificScorecard(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     String user = pathVars.get("username");
-      String courseNameSC = pathVars.get("courseName");
-      String gameID = pathVars.get("gameID");
-      String courseName = convertFromSnakeCase(courseNameSC);
+    String courseNameSC = pathVars.get("courseName");
+    String gameID = pathVars.get("gameID");
+    String courseName = convertFromSnakeCase(courseNameSC);
 
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -2573,6 +2573,7 @@ public String inviteToGame(@PathVariable("username")String user, @PathVariable("
   public String getRatingPage(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) throws Exception {
     String user = pathVars.get("username");
     String courseNameSC = pathVars.get("courseName");
+
     if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
@@ -2631,6 +2632,7 @@ public String inviteToGame(@PathVariable("username")String user, @PathVariable("
           path = "tee-rific/feedback/{username}/{courseName}"
   )
   public String getFeedbackPage(@PathVariable("username")String user, @PathVariable("courseName") String course, Map<String, Object> model, HttpServletRequest request) {
+    
     if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
@@ -2641,6 +2643,7 @@ public String inviteToGame(@PathVariable("username")String user, @PathVariable("
     CourseOwner givenFeedback = new CourseOwner();
 
     model.put("givenFeedback", givenFeedback);
+    model.put("course", convertFromSnakeCase(course));
   return "Booking&ViewingCourses/feedback";
   }
 
