@@ -333,7 +333,7 @@ public class Main {
       ownerCreateBookingsTable(connection);
 
       // check if username or course name exists for already existing user
-      String sql = "SELECT username FROM owners WHERE username ='" + user.getUsername() + "'";
+      String sql = "SELECT username FROM users WHERE username ='" + user.getUsername() + "'";
       ResultSet rs = stmt.executeQuery(sql);
       int checkUserCount = 0;
       while (rs.next()) {
