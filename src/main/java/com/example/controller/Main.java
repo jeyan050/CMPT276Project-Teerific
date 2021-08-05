@@ -862,8 +862,8 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   @GetMapping(
     path = "/tee-rific/delete/{username}"
   )
-  public String accountDeleted(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
-  {
+  public String accountDeleted(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
+
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/delete/" + request.getSession().getAttribute("username");
     }

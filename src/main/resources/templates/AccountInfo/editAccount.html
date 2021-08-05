@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -25,73 +25,93 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop" th:each="user : ${userInfo}">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    <div class="titleFont dynamicSize">Account Infomation</div>   
-
-                     <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
-                     <div style="font-size:40px" class="titleFont dynamicSize">Account Details</div>   
-                     <table>
-                        <tr>
-                            <td class="title">Username</td>
-                            <td class="value" th:text="${user.username}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/username/'+ user.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Password</td>
-                            <td class="value">**************************</td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/passwordSecurity/' + username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">First Name</td>
-                            <td class="value" th:text="${user.fname}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/fname/'+ user.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Last Name</td>
-                            <td class="value" th:text="${user.lname}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/lname/'+ user.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Email</td>
-                            <td class="value" th:text="${user.email}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/email/'+ user.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Gender</td>
-                            <td class="value" th:text="${user.gender}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/gender/'+ user.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>                   
+                      </div>
+                    <div class="titleFont dynamicSize">Account Infomation</div>
+                    <div><h3 class="overflowHideFont largerFont poppinsFont darkGreyFont">Account Details</h3></div>
+                    <div class="pageDivider woodBackdrop"></div>
+                     <div class="oswaldFont brownFont">Click On The Field You Wish To Change</div>   
+                      <div class="wideScreenTable">
+                        <table class="editAccountTable oswaldFont">
+                            <tr>
+                                <th class="editAccountTableCell">Username</th>
+                                <td class="editAccountTableCell">
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/username/'+ user.username}" th:text="${user.username}"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="editAccountTableCell">Password</th>
+                                <td class="editAccountTableCell">
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/passwordSecurity/' + username}">*************</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="editAccountTableCell">First Name</th>
+                                <td class="editAccountTableCell" >
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/fname/'+ user.username}" th:text="${user.fname}"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="editAccountTableCell">Last Name</th>
+                                <td class="editAccountTableCell" >
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/lname/'+ user.username}" th:text="${user.lname}"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="editAccountTableCell">Email</th>
+                                <td class="editAccountTableCell">
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/email/'+ user.username}" th:text="${user.email}"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="editAccountTableCell">Gender</th>
+                                <td class="editAccountTableCell">
+                                    <a class="overflowHideFont brownFont link" th:href="${'/tee-rific/editAccount/gender/'+ user.username}" th:text="${user.gender}"></a>
+                                </td>
+                            </tr>
+                        </table>   
+                      </div>
+                      <div class="narrowScreenTable">
+                          <table class="editAccountTable oswaldFont">
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/username/'+ user.username}">Username</a>
+                                  </th>
+                              </tr>
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/passwordSecurity/' + username}">Password</a>
+                                  </th>
+                              </tr>
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/fname/'+ user.username}">First Name</a>
+                                  </th>
+                              </tr>
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/lname/'+ user.username}">Last Name</a>
+                                  </th>
+                              </tr>
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/email/'+ user.username}">Email</a>
+                                  </th>
+                              </tr>
+                              <tr>
+                                  <th>
+                                    <a class="overflowHideFont linkText" th:href="${'/tee-rific/editAccount/gender/'+ user.username}">Gender</a>
+                                  </th>
+                              </tr>
+                          </table>
+                      </div>
+                      
+                    <div class="pageDivider woodBackdrop"></div>               
                     <form method= "get" th:action="${'/tee-rific/account/' + user.username}">
-                        <button type="submit" class="button">Go Back</button>
+                        <button type="submit" class="button">Back</button>
                     </form>
                 </div>
              </div>
@@ -104,6 +124,7 @@
                 <i class="socialIcon fas fa-envelope"></i>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
+              <script src="/js/screenAdjuster.js" type="text/javascript"></script>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
         </footer>
     </div>
