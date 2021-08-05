@@ -58,14 +58,18 @@ function changeButtonListener(){
 
 function checkButtonListener(){
     document.querySelectorAll(".checkDecoy")[0].addEventListener("click", function(){
-        document.querySelectorAll(".check")[0].parentElement.submit();
+        golfSwingSound.play();
+        
+        setTimeout(submitForm, timeoutLength, document.querySelectorAll(".check")[0]);
     })
 }//checkButtonListener()
 
 
 function confirmButtonListener(){
     document.querySelectorAll(".confirmDecoy")[0].addEventListener("click", function(){
-        document.querySelectorAll(".confirm")[0].parentElement.submit();
+        golfSwingSound.play();
+        
+        setTimeout(submitForm, timeoutLength, document.querySelectorAll(".confirm")[0]);
     })
 }//confirmButtonListener()
 
