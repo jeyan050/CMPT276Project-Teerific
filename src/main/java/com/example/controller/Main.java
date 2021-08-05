@@ -3048,7 +3048,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
-  @GetMapping(
+  @GetMapping( //TODO: make it so it displays an error message if no one is signed up
     path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}"
   )
   public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
@@ -3119,7 +3119,7 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
     System.out.println(tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName());
     stmt.executeUpdate("INSERT INTO past_tournaments (id, name, date, club_name) VALUES ('" + tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
     System.out.println("break_2");
-    for (int i = 0; i < wrapper_participants.getParticipants().size(); i++)
+    for (int i = 0; i < wrapper_participants.getParticipants().size(); i++) //TODO: curently only grabs index 0 for some reason
     {
       System.out.println("break:" + i);
       Integer score = wrapper_participants.getParticipants().get(i).getScore();
