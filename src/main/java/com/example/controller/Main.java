@@ -922,7 +922,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
       courseInfo.next();
 
-      String course = convertToSnakeCase(courseInfo.getString("courseName"));
+      String course = courseInfo.getString("courseName");
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
       // timeOpenStr = timeOpenStr + ":00";
@@ -950,28 +950,10 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       Integer numIntervals = 0;
 
       String dates = "";
-      if (newDate.getDate() == null){
-        Statement getDate = connection.createStatement();
-        ResultSet date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
+      if (newDate.getDate() == null){  
+        LocalDate currentDate = LocalDate.now();
+        dates = currentDate.toString();
         
-        int checkIfEmpty = 0;
-        while (date.next()){
-          checkIfEmpty++;
-        }
-        
-        if (checkIfEmpty > 0){
-          date = getDate.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' ORDER BY date asc");
-          date.next();
-          dates = date.getString("date");
-        } else {
-          LocalDate currentDate = LocalDate.now();
-          dates = currentDate.toString();
-        }
-
-        if (dates == null || dates.isEmpty()){
-          LocalDate currentDate = LocalDate.now();
-          dates = currentDate.toString();
-        }
       } else {
         dates = newDate.getDate();
       }
@@ -1063,7 +1045,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       Statement stmt = connection.createStatement();
       ResultSet courseInfo = stmt.executeQuery("SELECT * FROM owners WHERE username='"+user+"'");
       courseInfo.next();
-      String course = convertToSnakeCase(courseInfo.getString("courseName"));
+      String course = courseInfo.getString("courseName");
       
       String bookingsCommand = "SELECT * FROM bookings WHERE coursename='" + course + "' AND date='" + date +"' AND teetime='" + teeTime + "'";
       ResultSet getBookings = stmt.executeQuery(bookingsCommand);
