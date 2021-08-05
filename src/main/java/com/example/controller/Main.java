@@ -34,7 +34,6 @@ import org.springframework.http.MediaType;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
-import java.sql.Time;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.lang.Integer;
 
+import java.sql.Time;
+import java.time.LocalTime;
 import java.time.LocalDate;
 
 @Controller
@@ -1325,23 +1326,17 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
-      // timeOpenStr = timeOpenStr + ":00";
       String timeOpenSegments[] = timeOpenStr.split(":");
-      String timeOpenHrStr = timeOpenSegments[0];
-      String timeOpenMinStr = timeOpenSegments[1];
-      
+      Integer timeOpenHr = Integer.parseInt(timeOpenSegments[0]);
+      Integer timeOpenMin = Integer.parseInt(timeOpenSegments[1]);
+      LocalTime timeOpen = LocalTime.of(timeOpenHr, timeOpenMin);
+
       String timeCloseStr = courseInfo.getString("timeClose");
-      // timeCloseStr = timeCloseStr + ":00";
       String timeCloseSegments[] = timeCloseStr.split(":");
-      String timeCloseHrStr = timeCloseSegments[0];
-      String timeCloseMinStr = timeCloseSegments[1];
-      
-      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-      Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
-      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
-      Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
-      
-      
+      Integer timeCloseHr = Integer.parseInt(timeCloseSegments[0]);
+      Integer timeCloseMin = Integer.parseInt(timeCloseSegments[1]);
+      LocalTime timeClose = LocalTime.of(timeCloseHr, timeCloseMin);
+
       // Create array of valid teetimes based on open / closing times of specified course
       ArrayList<Timeslot> validTimeSlots = new ArrayList<Timeslot>();
       Integer hour = 0;
@@ -1349,26 +1344,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       
       Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
       
-      while (hour < 25) {
-        if (hour >= timeOpenHr && hour < timeCloseHr) {   
-          
-          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
-          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
-            // min += increments;
-            while (min < timeOpenMin){
-              if (min >= (60-increments)){
-                min = 0;
-                hour++;
-                break;
-              }
-              min += increments;
-            }
-          }
-          // if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:45 - start at 1:00
-            //   min = 0;
-            //   hour++;
-            // }
-            
+      while (hour < 24) {
+        LocalTime toCheck = LocalTime.of(hour, min);  
+        if (toCheck.isBefore(timeClose) && toCheck.isAfter(timeOpen)) {
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
           // Check if there are any other bookings for this timeslot
           String timeAndSeconds =  time + ":00";
@@ -1411,30 +1389,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       } else {
         newBooking.setTime(booking.getTime());
       }
-      // for (int i = 0; i < 48; i++) {
-      //   if (hour >= timeOpenHr && hour < timeCloseHr) {
-      //     if (hour == timeOpenHr && min < timeOpenMin) {
-      //       min = 30;
-      //     }
-      //     if (hour == timeOpenHr && min < timeOpenMin) {
-      //       min = 0;
-      //       hour++;
-      //     }
-
-      //     String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
-      //     Timeslot ts = new Timeslot();
-      //     ts.setTime(time);
-
-      //     validTimeSlots.add(ts);
-      //   }
-
-      //   if (min == 0) {
-      //     min = 30;
-      //   } else {
-      //     hour++;
-      //     min = 0;
-      //   }
-      // }
 
       String city = courseInfo.getString("city");
       String country = courseInfo.getString("country");
@@ -1485,6 +1439,28 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       teetime = teetime + ":00";
       booking.setTime(teetime);
 
+      // Check if user made a booking in the past before going through with setting the booking 
+      LocalDate currentDate = LocalDate.now();
+      LocalTime currentTime = LocalTime.now();
+
+      String bookingDateSegments[] = booking.getDate().split("-");
+      Integer bookingYear = Integer.parseInt(bookingDateSegments[0]);
+      Integer bookingMonth = Integer.parseInt(bookingDateSegments[1]);
+      Integer bookingDay = Integer.parseInt(bookingDateSegments[2]);
+
+      String bookingTimeSegments[] = booking.getTime().split(":");
+      Integer bookingHr = Integer.parseInt(bookingTimeSegments[0]);
+      Integer bookingMin = Integer.parseInt(bookingTimeSegments[1]);
+      Integer bookingSec = Integer.parseInt(bookingTimeSegments[2]);
+
+      LocalDate bookingDate = LocalDate.of(bookingYear, bookingMonth, bookingDay);
+      LocalTime bookingTime = LocalTime.of(bookingHr, bookingMin, bookingSec);
+
+      if (bookingDate.isBefore(currentDate) || bookingTime.isBefore(currentTime)) {
+        return "redirect:/tee-rific/booking/" + courseNameSC + "/" + user;
+      }
+
+      // Insert into bookings table if time and date are valid 
       String gameID = insertBookingsTable(connection, booking, courseName, user);
 
       // Create a new scorecard
@@ -1935,32 +1911,8 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     stmt.executeUpdate("INSERT INTO inventory (courseName, itemName) VALUES ('"+courseName+"', 'clubs')");
   }
 
-
-  // private void ownerInsertNewItem(Connection connection, String nameOfItem) throws Exception {
-  //   Statement stmt = connection.createStatement();
-  //   stmt.executeUpdate("INSERT INTO inventory_"+courseName+" (name) VALUES ('"+nameOfItem+"')");
-  // }
-
-
-  // private void ownerDeleteItem(Connection connection, String nameOfItem) throws Exception {
-  //   Statement stmt = connection.createStatement();
-  //   stmt.executeUpdate("DELETE FROM inventory_"+courseName+" WHERE name='"+nameOfItem+"'");
-  // }
-
-
   private void ownerUpdateInventory(Connection connection, EquipmentCart cart, String courseName) throws Exception {
     Statement stmt = connection.createStatement();
-    // ResultSet rs = stmt.executeQuery("SELECT * FROM inventory");
-
-    // rs.next();
-    // int ballStock = rs.getInt("stock");
-    // int updatedBallStock = ballStock + cart.getNumBalls();
-    // rs.next();
-    // int golfCartStock = rs.getInt("stock");
-    // int updatedGolfCartStock = golfCartStock + cart.getNumCarts();
-    // rs.next();
-    // int clubStock = rs.getInt("stock");
-    // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
     stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
@@ -3817,43 +3769,5 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
       model.put("message", e.getMessage());
       return "LandingPages/error";
     }
-  }//
-
-  // try 
-  // {
-  //   URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=vancouver&units=metric&appid=96bf787bdb96400f9a642360f1e901d7");
-  //   HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-  //   conn.setRquestMethod("GET");
-  //   conn.connect();
-  
-  //   int response_code = conn.getResponseCode();
-  //   if (response_code != 200)
-  //   {
-  //     //throw exception
-  //   }
-  //   else
-  //   {
-  //     String inline = "";
-  //     Scanner scanner = new Scanner(url.openStream());
-  //     while (scanner.hasNext())
-  //     {
-  //       inline += scanner.nextLine();
-  //     }
-  //     scanner.close();
-    //   JSONParser parse = new JSONParser();
-  //     JSONObject data_obj = (JSONObject) parse.parse(inline);
-
-  //     JSONObject objects = (JSONObject) data_obj.get("data I want here");
-
-// for (int i = 0; i < objects.size(); i++)
-// {
-//   JSONObject x = (JSONObject) objects.get(i);
-
-// }
-  //   }
-  
-
-  // }
-
-
-}
+  }// nukeDB()
+} // main()
