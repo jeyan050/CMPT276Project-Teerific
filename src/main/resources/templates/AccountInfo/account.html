@@ -13,6 +13,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -33,17 +34,19 @@
             <div class="woodBackdrop border content">
                 <div class="sandBackdrop">
                     <img th:src="@{/images/tee-rific.png}">
-                    <div class="titleFont dynamicSize"><span th:text="${username}"></span>'s Account</div>
+                    <div class="titleFont dynamicSize" th:text="${username}"></div>
+                    <span>
+                      <h2 class="poppinsFont darkGreyFont biggerFont">Account</h2>
+                    </span>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form action="#" method="get" th:action="${'/tee-rific/editAccount/' + username}">
-                        <button type="submit" class="button" value="Edit Account">Edit Account</button>
+                        <button type="submit" class="button" value="Edit Account">Edit</button>
                     </form>         
                     <form onsubmit="return checkDelete()" action="#" method="post" th:action="${'/tee-rific/delete/' + username}">
-                        <button type="submit" id="deleteAccount" class="button" value="Delete Account">Delete Account</button>
-                        <!-- display a pop up asking the user if they are sure -->
-                        <!-- Can probably use JS for this feature -->
+                        <button type="submit" id="deleteAccount" class="button" value="Delete Account">Delete</button>
                     </form>
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class="button">Go Back</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
             </div>
