@@ -69,17 +69,6 @@ th {
     font-weight: bold;
 }
 
-.bookingHeader {
-    width: 30%;
-    padding: 2%;
-}
-
-.bookingCell {
-    width: 70%;
-    padding: 2%;
-}
-
-
 
 .pageDivider {
     height: 3px;
@@ -243,18 +232,30 @@ th {
     margin-top: 30px;
     margin-bottom: 30px;
     width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.bookingCell {
+    width: 70%;
+    padding: 2%;
 }
 
 .bookingHeader {
     min-width: 60px;
+    width: 30%;
     padding: 2%;
 }
 
 .bookingField {
     max-width: 80%;
     margin: 0px;
+}
+
+.bookingDateInput {
+    max-width: 50%;
+    margin: 0px;
+    overflow: hidden;
 }
 
 .link {
@@ -322,6 +323,14 @@ th {
 
 .scorecardTable, .gameListTable {
     width: 100%;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.rentalTable {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
     margin-top: 15px;
     margin-bottom: 25px;
 }
@@ -396,8 +405,19 @@ th {
     width: clamp(110px, 50%, 50%);
 }
 
+.rentalInput {
+    border-radius: 7px;
+    width: 40px;
+}
+
 .spacer {
     margin: 50px;
+}
+
+.selectorSpacer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
 }
 
 .titleFont {
@@ -424,6 +444,8 @@ th {
     padding: 4px;
     margin: 5px;
     width: clamp(110px, 50%, 20vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* creates the mouse hover effect */
@@ -805,7 +827,6 @@ th {
 }
 
 
-
 .listOfCoursesLogo {
     background-size: cover;
     max-height: 80%;
@@ -821,6 +842,10 @@ th {
 
   .weather-container  {
     text-align: center;
+  }
+
+  .dateInputCell {
+      max-width: 70%;
   }
 
   .chooseDate, .chooseTime {

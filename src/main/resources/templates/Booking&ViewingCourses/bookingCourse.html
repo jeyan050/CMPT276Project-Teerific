@@ -32,8 +32,9 @@
                     </div>
                     <div class="titleFont dynamicSize">Booking Page</div>
 
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="post" th:action="${'/tee-rific/booking/' + username}" th:object="${selectedCourse}">
-                        <select th:field="*{courseName}">
+                        <select class="selectorSpacer" th:field="*{courseName}">
                             <option value="bruh" disabled>Select Course...</option>
                             <option th:each="course : ${coursesList}" th:value="${course.courseName}" th:text="${course.courseName}"></option>
                         </select> <br>

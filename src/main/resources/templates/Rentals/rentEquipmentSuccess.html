@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -30,8 +31,13 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Rental Order Confirmed!</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div>
+                        <h5 class="overflowHideFont poppinsFont darkGreyFont">Please Check In Upon Arrival To Receive Your Order</h5>
+                    </div>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class = "button">Home Page</button>
+                        <button type="submit" class = "button">Home</button>
                     </form>
                 </div>
             </div>

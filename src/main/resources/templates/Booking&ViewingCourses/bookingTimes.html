@@ -35,35 +35,74 @@
             <img th:src="@{/images/tee-rific.png}">
           </div>
           <div class="titleFont dynamicSize">Booking</div>
-          <div class="bookingContainer firstSectionContainer">
+          <div class="bookingContainer sectionContainer">
            
             <h1 class="overflowHideFont poppinsFont darkGreyFont" th:text="${notSnakeCasedCourseName}"></h1>
             <div class="pageDivider woodBackdrop"></div>
             <h2 class="poppinsFont brownFont">Open - <span class="poppinsFont brownFont" id="open_hours" th:text="${OpenTime}"></span>:00</h2>
             <h2 class="poppinsFont brownFont">Close - <span class="poppinsFont brownFont" id="close_hours" th:text="${CloseTime}"></span>:00</h2>
 
-            <form id="dateTimeForm" method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ username}" th:object="${booking}">
-              <table class="bookingTable oswaldFont">
-                <tr>
-                  <th class="bookingHeader">Date:</th>
-                  <td class="bookingCell">
-                    <input class="bookingField" type="date" th:value="${selectedDate}" th:field="*{date}">
-                  </td>
-                </tr>
-                <tr>
-                  <th class="bookingHeader">Time:</th>
-                  <td class="bookingCell">
-                     <select class="bookingField" name="timeSlots" th:field="*{time}">
-                       <option th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"></option>
-                     </select>
+            <div class="wideScreenTable">
+              <form id="dateTimeForm" method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ username}" th:object="${booking}">
+                <table class="bookingTable oswaldFont">
+                  <tr>
+                    <th class="bookingHeader">Date:</th>
+                    <td class="bookingCell">
+                        <input class="bookingField dateInput" type="date" th:value="${selectedDate}" th:field="*{date}">
                     </td>
-                 </tr>
-              </table>
-              <button type="submit" class = "button">Check For Available Spots</button>
-            </form>
+                  </tr>
+                  <tr>
+                    <th class="bookingHeader">Time:</th>
+                    <td class="bookingCell">
+                       <select class="bookingField timeInput" name="timeSlots" th:field="*{time}">
+                         <option th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"></option>
+                       </select>
+                      </td>
+                   </tr>
+                </table>
+                <button type="submit" class ="button check">Check</button>
+              </form>
+            </div>
 
+            <div class="narrowScreenTable">
+              <form id="dateTimeForm" method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ username}" th:object="${booking}">
+                <table class="bookingTable oswaldFont">
+                  <tr>
+                    <th class="bookingHeader">Date:</th>
+                  </tr>
+                  <tr>
+                    <td class="bookingCell">
+                        <input class="bookingField dateInput" type="date" th:value="${selectedDate}" th:field="*{date}">
+                    </td>
+                  </tr>
+                </table>
+                <table class="bookingTable">
+                  <tr>
+                    <th class="bookingHeader">Time:</th>
+                  </tr>
+                  <tr>
+                    <td class="bookingCell">
+                      <select class="bookingField timeInput" name="timeSlots" th:field="*{time}">
+                        <option th:each="ts : ${timeSlots}" th:value="${ts.time}" th:text="${ts.time}"></option>
+                      </select>
+                     </td>
+                  </tr>
+                </table>
+                <button type="submit" class="button check">Check</button>
+              </form>
+            </div>
+
+            <div>
               <form id="partySizeForm" method="post" th:action="${'/tee-rific/booking/' + courseName +'/'+ username}" th:object="${booking}">
-                <table>
+                <table class="bookingTable oswaldFont">
+                  <tr>
+                    <th class="bookingHeader">Date:</th>
+                    <td class="bookingCell brownFont" th:text="${booking.date}"></td>
+                  </tr>
+                  <tr>
+                    <th class="bookingHeader">Time:</th>
+                    <td class="bookingCell brownFont" th:text="${booking.time}"></td>
+                   </tr>
                   <tr>
                     <th class="bookingHeader">Party Size:</th>
                     <td class="bookingCell">
@@ -76,14 +115,25 @@
                 <input type="hidden" th:field="*{date}">
                 <input type="hidden" th:field="*{time}">
 
-                <button type="submit" class = "button">Confirm</button>
+                <button type="submit" class="button confirm">Confirm</button>
               </form>
+            </div>
+            
+            <div class="buttonSpan">
+              <button class="button confirmDecoy">Confirm</button>
+            </div> 
+            <div class="buttonSpan">
+              <button class="button checkDecoy">Check</button>
+            </div>  
+            <div class="buttonSpan">
+               <button class="button change">Change</button>
+            </div>
             <form method="get" th:action="${'/tee-rific/home/' + username}">
-              <button type="submit" class = "button">Back</button>
+              <button type="submit" class="button">Back</button>
             </form>
           </div>  <!-- bookingContainerEnd -->
                     
-                    <div class="secondSectionContainer"> 
+                    <div class="sectionContainer"> 
                       <div class="apiWrapper darkBlueAsfaltBackdrop">
                         <h2 class="oswaldFont faintGrey">5-Day Weather Forecast</h2>
                         <h1 class="oswaldFont faintGrey"><span id="city" class="oswaldFont faintGrey" th:text="${city}"></span>, <span id="country" class="oswaldFont faintGrey" th:text="${country}"></span></h1>
@@ -214,6 +264,7 @@
             <i class="socialIcon fas fa-envelope"></i>
             <p>© Copyright 2021 Tee-rific</p>
           </div>
+          <script src="/js/screenAdjuster.js" type="text/javascript"></script>
           <script src="/js/bookingTimes.js" type="text/javascript"> </script>
      </footer>
   </div><!-- pageWrap -->

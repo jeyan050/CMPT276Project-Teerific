@@ -20,10 +20,69 @@ for(var i = 0; i < numberOfButtons; i++) {
 }
 
 
+// ******************
+// FUNCTIONS
+// ******************
 
-var partySizeForm = document.getElementById("partySizeForm");
-partySizeForm.style.display = "block";
+function determineTableToShow(){
+    if(document.querySelectorAll(".dateInput")[0].value.localeCompare("null") === 0 && document.querySelectorAll(".timeInput")[0].value.localeCompare("null") === 0){
+        document.querySelectorAll("#partySizeForm")[0].style.display = "none";      //hide the party size selector form
+        document.querySelectorAll(".checkDecoy")[0].style.display = "initial";      //reveal the check decoy button
+        document.querySelectorAll(".confirmDecoy")[0].style.display = "none";       //prevents access to confirming order   
+    }else{
+        document.querySelectorAll("#dateTimeForm")[0].style.display = "none";       //hide the dateTime selector form
+        document.querySelectorAll(".confirmDecoy")[0].style.display = "initial";    //reveal the confirm decoy button
+        document.querySelectorAll(".checkDecoy")[0].style.display = "none";         //hides the check button
+    }
+}//determineTableToShow()
 
-document.getElementById("dateTimeForm").addEventListener("click", function() {
-    partySizeForm.style.display = "none";
-})
+
+function hideFormButtons(){
+    document.querySelectorAll(".check")[0].style.display = "none";
+    document.querySelectorAll(".confirm")[0].style.display = "none";
+}
+
+
+ //clicking the change button hides the partySize table, reveals the date and time input table
+function changeButtonListener(){
+    document.querySelectorAll(".change")[0].addEventListener("click", function(){
+        document.querySelectorAll("#dateTimeForm")[0].style.display = "initial";      
+        document.querySelectorAll("#partySizeForm")[0].style.display = "none";
+        document.querySelectorAll(".change")[0].style.display = "none";
+        document.querySelectorAll(".confirmDecoy")[0].style.display = "none";
+        document.querySelectorAll(".checkDecoy")[0].style.display = "initial";
+        hideFormButtons();
+    })
+}//changeButtonListener();
+
+
+function checkButtonListener(){
+    document.querySelectorAll(".checkDecoy")[0].addEventListener("click", function(){
+        document.querySelectorAll(".check")[0].parentElement.submit();
+    })
+}//checkButtonListener()
+
+
+function confirmButtonListener(){
+    document.querySelectorAll(".confirmDecoy")[0].addEventListener("click", function(){
+        document.querySelectorAll(".confirm")[0].parentElement.submit();
+    })
+}//confirmButtonListener()
+
+
+// ***************
+// STARTUP
+// ***************
+
+determineTableToShow();
+changeButtonListener();
+hideFormButtons();
+checkButtonListener();
+confirmButtonListener();
+
+
+
+
+
+
+

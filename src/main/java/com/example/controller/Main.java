@@ -1258,6 +1258,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     path = "/tee-rific/booking/{username}"
   )
   public String displayCourses(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
+
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
     }

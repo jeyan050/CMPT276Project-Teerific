@@ -28,30 +28,39 @@
             <div class="woodBackdrop border content">
                 <div class="sandBackdrop">
                     <img th:src="@{/images/tee-rific.png}">
-                <div class="titleFont dynamicSize">Golf Course Rentals</div>
-                <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">
-                    <table class="bookingTable oswaldFont">
-                        <tr>
-                            <th class="bookingHeader">Balls</th>
-                            <td class="bookingCell">
-                                <input class="bookingField" type="number" th:field=*{numBalls}>
+                <div class="titleFont dynamicSize">Golf Course Rental</div>
+
+                    <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">    
+                        <table class="rentalTable oswaldFont">
+                            <tr>
+                                <th>
+                                    <div class="label">Balls</div>
+                                </th>
+                                <td>
+                                    <input class="rentalInput" type="number" th:field=*{numBalls}>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <div class="label">Carts</div>
+                                </th>
+                            <td>
+                                    <input class="rentalInput" type="number" th:field=*{numCarts}>
                             </td>
-                        </tr>
-                       <tr>
-                            <th class="bookingHeader">Carts</th>
-                            <td class="bookingCell">
-                                <input class="bookingField" type="number" th:field=*{numCarts}>
-                            </td>
-                       </tr>
-                       <tr>
-                            <th class="bookingHeader">Clubs</th>
-                            <td class="bookingCell">
-                                <input class="bookingField" type="number" th:field=*{numClubs}>
-                            </td>
-                        </tr>
-                    </table>
-                    <button type="submit" class="button">Checkout</button>
-                </form>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <div class="label">Clubs</div>
+                                </th>
+                                <td>
+                                    <input class="rentalInput" type="number" th:field=*{numClubs}>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <button type="submit" class="button">Checkout</button>
+                    </form>
+                
                 <form method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}">
                     <button type="submit" class = "button">Back</button>
                 </form>
@@ -67,7 +76,7 @@
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-              <script th:src="@{/js/rentEquipment.js}" type="text/javascript"> </script>
+              <!-- <script th:src="@{/js/rentEquipment.js}" type="text/javascript"> </script> -->
         </footer>
     </div>
     
