@@ -926,21 +926,16 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       String course = courseInfo.getString("courseName");
       // Convert DB data into ints for comparison
       String timeOpenStr = courseInfo.getString("timeOpen");
-      // timeOpenStr = timeOpenStr + ":00";
       String timeOpenSegments[] = timeOpenStr.split(":");
-      String timeOpenHrStr = timeOpenSegments[0];
-      String timeOpenMinStr = timeOpenSegments[1];
+      Integer timeOpenHr = Integer.parseInt(timeOpenSegments[0]);
+      Integer timeOpenMin = Integer.parseInt(timeOpenSegments[1]);
+      LocalTime timeOpen = LocalTime.of(timeOpenHr, timeOpenMin);
 
       String timeCloseStr = courseInfo.getString("timeClose");
-      // timeCloseStr = timeCloseStr + ":00";
       String timeCloseSegments[] = timeCloseStr.split(":");
-      String timeCloseHrStr = timeCloseSegments[0];
-      String timeCloseMinStr = timeCloseSegments[1];
-
-      Integer timeOpenHr = Integer.parseInt(timeOpenHrStr);
-      Integer timeOpenMin = Integer.parseInt(timeOpenMinStr);
-      Integer timeCloseHr = Integer.parseInt(timeCloseHrStr);
-      Integer timeCloseMin = Integer.parseInt(timeCloseMinStr);
+      Integer timeCloseHr = Integer.parseInt(timeCloseSegments[0]);
+      Integer timeCloseMin = Integer.parseInt(timeCloseSegments[1]);
+      LocalTime timeClose = LocalTime.of(timeCloseHr, timeCloseMin);
 
       Integer increments = Integer.parseInt(courseInfo.getString("bookingInterval"));
 
@@ -959,21 +954,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         dates = newDate.getDate();
       }
 
-      while (hour < 25){
-        if (hour >= timeOpenHr && hour < timeCloseHr) {   
-          
-          // starting value when close to timeOpen (ex: at 12:00 when TO is 12:45 w/ 5 min incrementals)
-          if (hour == timeOpenHr && min < timeOpenMin) {      //ex: 12:15 - Start at 12:30
-            while (min < timeOpenMin){
-              if (min >= (60-increments)){
-                min = 0;
-                hour++;
-                break;
-              }
-              min += increments;
-            }
-          }
-
+      while (hour < 24) {
+        LocalTime toCheck = LocalTime.of(hour, min);  
+        if (toCheck.isBefore(timeClose) && toCheck.isAfter(timeOpen)) {   
           String time = singleDigitToDoubleDigitString(hour) + ":" + singleDigitToDoubleDigitString(min);
           StatusTeeTime ts = new StatusTeeTime();
           ts.setTeeTime(time);
@@ -982,7 +965,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
           ts.setStatus("EMPTY");
           Statement checkOccupency = connection.createStatement();
-          ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE coursename='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
+          ResultSet checkTeeTime = checkOccupency.executeQuery("SELECT * FROM bookings WHERE courseName='"+course+"' AND teetime='"+teeTime+"' AND date='"+dates+"'");        
           
           int numPlayersTotal = 0;
           int countBookings = 0;
