@@ -41,8 +41,10 @@
                             <th>Name</th>
                             <th>Score</th>
                         </thead>
-                        <tr>
-                            <!-- for each participant in tournament_tournamentId_participants -->
+                        <tr th:each="participant: ${participants}">
+                          <td></td>
+                          <td th:text="${participant.username}"></td>
+                          <td th:text="${participant.score}"></td>
                         </tr>
                     </table>
                     <form method="get" th:action="${'/tee-rific/pastTournaments/' + username}">

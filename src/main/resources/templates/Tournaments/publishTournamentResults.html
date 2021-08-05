@@ -35,21 +35,21 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <!-- <div class="titleFont dynamicSize">Publish Results for <span th:text="${tournament.name}"></span>?</div> -->
-                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${participant}">
+                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${WrapperParticipants}">
                     <table>
                         <thead>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Score</th>
                         </thead>
-                        <tr th:each="participant : ${participants}">
+                        <tr th:each="participant, i : ${WrapperParticipants.participants}">
+                            <td th:text="${participant.id}"></td>
                             <td th:text="${participant.username}"></td>
-                            <td> <input type="number" class="inputBox" th:field="*{score}" placeholder="Score"></td> 
+                            <td> <input type="number" class="inputBox" th:field="*{participants[__${i.index}__].score}" placeholder="Score"></td> 
                         </tr>
                     </table>
                   <input type="submit" class = "button" value="Publish Results">
                   </form>
-
-
 
                 </div>
             </div>

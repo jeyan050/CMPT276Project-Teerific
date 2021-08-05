@@ -3082,21 +3082,29 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try(Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants");
-      ArrayList<TournamentParticipant> output = new ArrayList<TournamentParticipant>();
-      while (rs.next())
+      
+      ArrayList<TournamentParticipant> participants = new ArrayList<TournamentParticipant>();
+      ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS exact_count FROM tournament_"+tournamentId+"_participants");
+      rs.next();
+      Integer num_of_participants = rs.getInt("exact_count");
+      for (int i = 1; i <= num_of_participants; i++)
       {
+        rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants WHERE id=" + i);
+        rs.next();
         TournamentParticipant participant = new TournamentParticipant();
+        participant.setId(rs.getInt("id"));
         participant.setUsername(rs.getString("username"));
         participant.setFname(rs.getString("first_name"));
         participant.setLname(rs.getString("last_name"));
         participant.setScore(0);
-  
-        output.add(participant);
+
+        participants.add(participant);
       }
-      model.put("participants", output);
-      TournamentParticipant particpant = new TournamentParticipant();
-      model.put("participant", particpant);
+
+      WrapperTournamentParticipants wrapper_participants = new WrapperTournamentParticipants();
+      wrapper_participants.setParticipants(participants);
+
+      model.put("WrapperParticipants", wrapper_participants);
       model.put("username", user);
       model.put("tournamentId", tournamentId);
       return "Tournaments/publishTournamentResults";
@@ -3111,23 +3119,37 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}",
   consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
 )
-public String publishTournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Tournament tournament, PastTournaments past_tournament, TournamentParticipant participants, Map<String, Object> model)
+public String publishTournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, PastTournaments past_tournament, TournamentParticipant participant, WrapperTournamentParticipants wrapper_participants, Map<String, Object> model)
 {
   try(Connection connection = dataSource.getConnection())
   {
     Statement stmt = connection.createStatement();
-    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS past_tournaments (id serial, name varchar(100), date varchar(50), club_name varchar(100))");
-    stmt.executeUpdate("INSERT INTO past_tournaments (name, date, club_name) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
+    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS past_tournaments (id integer CONSTRAINT tournament"+tournamentId+" UNIQUE, name varchar(100), date varchar(50), club_name varchar(100))");
+    ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id="+tournamentId);
+    rs.next();
+    Tournament tournament = new Tournament();
+    tournament.setId(rs.getInt("id"));
+    tournament.setName(rs.getString("name"));
+    tournament.setDate(rs.getString("date"));
+    tournament.setClubName(rs.getString("club_name"));
 
-    //UPDATE tourament_tournamentId_participants SET score = 
-
+    System.out.println("break_1");
+    System.out.println(tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName());
+    stmt.executeUpdate("INSERT INTO past_tournaments (id, name, date, club_name) VALUES ('" + tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
+    System.out.println("break_2");
+    for (int i = 0; i < wrapper_participants.getParticipants().size(); i++)
+    {
+      System.out.println("break:" + i);
+      Integer score = wrapper_participants.getParticipants().get(i).getScore();
+      stmt.execute("UPDATE tournament_"+tournamentId+"_participants SET score="+ score +" WHERE id= " + i+1); 
+    }
+    //stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
     return "redirect:/tee-rific/pastTournaments/" + user;    
   } catch (Exception e)
   {
     model.put("message", e.getMessage());
     return "LandingPages/error";
   }
-
 }
 
 @GetMapping(
@@ -3171,7 +3193,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
       output.add(participant);
     }
 
-//sort output by score
+//TODO: sort output by score
 // https://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
 
     model.put("participants", output);
