@@ -3,18 +3,22 @@
 <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
-    <title>Account Created</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scores History</title>
 </head>
 <body>
     <div class="layer_6">
         <div class="layer_7">
             <div class="layer_8">
                 <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <!-- Welcome to TEE-RIFIC "username"! -->
-                <h2>Successful Delete</h2>
+                <h1>Scores History</h1>
+                <form method="get" action="/tee-rific/scorecard">
+                    <button type="submit" class = "button">Go Back</button>
+                </form>
 
-                <form method="get" action="/tee-rific/home/admin">
-                    <button type="submit" class = "button">Go to the Home Page</button>
+                <form method="get" action="/tee-rific/home">
+                    <button type="submit" class = "button">Home Page</button>
                 </form>
             </div>
         </div>

@@ -691,6 +691,7 @@ th {
 
 
 .socialIcon {
+    cursor: pointer;
     margin: 20px 10px;
 }
 

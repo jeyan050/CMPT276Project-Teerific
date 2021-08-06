@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -2434,7 +2435,6 @@ public String getGameInvite(@PathVariable("username")String user, @PathVariable(
     return "redirect:/tee-rific/scorecards/" + user + "/" + course + "/" + gameID;
 }
 
-
 @PostMapping(
   path = "/tee-rific/scorecards/{username}/{course}/{gameID}/invite"
 )
@@ -3662,6 +3662,26 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
     return "LandingPages/aboutUs";
   }
 
+@GetMapping("/redirect/Facebook")
+public RedirectView facebookRedirect() {
+  RedirectView redirectView = new RedirectView();
+  redirectView.setUrl("https://www.facebook.com/Tee-rific-Business-110593771320377");
+  return redirectView;
+}
+
+  @GetMapping("/redirect/Twitter")
+  public RedirectView twitterRedirect() {
+    RedirectView redirectView = new RedirectView();
+    redirectView.setUrl("https://twitter.com/TeerificBiz");
+    return redirectView;
+  }
+
+  @GetMapping("/redirect/Instagram")
+  public RedirectView instagramRedirect() {
+    RedirectView redirectView = new RedirectView();
+    redirectView.setUrl("https://www.instagram.com/teerificbusiness/");
+    return redirectView;
+  }
 
 //**********************
 // LOGOUT
