@@ -14,6 +14,7 @@ function checkInput(event) {
     var checkFname = document.getElementById("firstN").value;
     var checkLname = document.getElementById("lastN").value;
     var checkEmail = document.getElementById("email").value;
+    var emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (checkCourseName == ""){
         document.getElementById("errorCN").innerHTML = "Course Name is empty: Please enter a Course Name ";
@@ -66,6 +67,9 @@ function checkInput(event) {
     else if (checkEmail == ""){
         document.getElementById("errorE").innerHTML = "Email is empty: Please enter a Email";
         return false;
+    }
+    else if(!(checkEmail.match(emailFormat))){
+        document.getElementById("errorE").innerHTML = "Invalid Email Adress: Please enter a valid Email";
     }
     else{
         submit = true;
