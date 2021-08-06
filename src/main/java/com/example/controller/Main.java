@@ -39,6 +39,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.lang.Integer;
 
@@ -2925,13 +2927,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       user.setLname(rs.getString("lname"));
 
       Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + tournamentId + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "') ON CONFLICT (username) DO NOTHING");
-      if (num_row_updated == 0) //user has already signed up for the tournament
+      if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
       {
         return "Tournaments/tournamentSignupError";
       }
       rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id=" + tournamentId);
       rs.next();
-      if (rs.getInt("num_signed_up") == rs.getInt("participant_slots")) //tournament has reached capacity
+      if (rs.getInt("num_signed_up") == rs.getInt("participant_slots")) //TODO: tournament has reached capacity
       {
         return "Tournaments/tournamentSignupError";
       }
@@ -3053,17 +3055,13 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
     tournament.setDate(rs.getString("date"));
     tournament.setClubName(rs.getString("club_name"));
 
-    // System.out.println(tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName());
     stmt.executeUpdate("INSERT INTO past_tournaments (id, name, date, club_name) VALUES ('" + tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
     for (int i = 0; i < wrapper_participants.getParticipants().size(); i++)
     {
-      // System.out.println("break:" + i);
-      Integer score = wrapper_participants.getParticipants().get(i).getScore(); //this gets the right values
-      // System.out.print(score);
-      // System.out.println(i+1);
+      Integer score = wrapper_participants.getParticipants().get(i).getScore();
       stmt.execute("UPDATE tournament_"+tournamentId+"_participants SET score="+ score +" WHERE id= " + (i+1)); 
     }
-    //stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
+    stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
     return "redirect:/tee-rific/pastTournaments/" + user;    
   } catch (Exception e)
   {
@@ -3115,7 +3113,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
 
 //TODO: sort output by score
 // https://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
-
+    
     model.put("participants", output);
     model.put("username", user);
     model.put("tournamentId", tournamentId);
