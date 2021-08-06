@@ -189,7 +189,7 @@ public class Main {
 
 
   @PostMapping(
-          path = "/tee-rific/signup"
+          path = "/tee-rific/signup" //TODO: check for valid email https://www.w3resource.com/javascript/form/email-validation.php
   )
   public String handleBrowserNewUserSubmit(Map<String, Object> model, User user) throws Exception {
     try (Connection connection = dataSource.getConnection()) {
