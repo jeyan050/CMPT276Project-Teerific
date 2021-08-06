@@ -3140,7 +3140,6 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
   )
   public String listUsers(Map<String, Object> model, HttpServletRequest request)
   {
-
     if(request.getSession().getAttribute("username") == (null)) {
       return "redirect:/";
     }
@@ -3324,7 +3323,6 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
   )
   public String listOwners(Map<String, Object> model, HttpServletRequest request)
   {
-
     if(request.getSession().getAttribute("username") == (null)) {
       return "redirect:/";
     }
@@ -3456,7 +3454,6 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
   )
   public String listBookings(Map<String, Object> model, HttpServletRequest request)
   {
-
     if(request.getSession().getAttribute("username") == (null)) {
       return "redirect:/";
     }

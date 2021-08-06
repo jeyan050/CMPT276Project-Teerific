@@ -8,13 +8,13 @@
     <title>List of Owners</title>
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/listStyle.css}" type="text/css" rel="stylesheet">
     
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -26,57 +26,56 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    <div class="titleFont dynamicSize">List of Owners</div>            
-                    <table class="owners tableSizing">  
+                      </div>
+                    <div class="titleFont dynamicSize">List of Owners</div> 
+                    <div class="pageDivider woodBackdrop"></div>           
+                    <table class="adminOwnerTable oswaldFont">  
                         <tr>
-                            <th>Course Name</th>
-                            <th>Username</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>Country</th>
-
-                            <th>Phone Number</th>
-                            <th>Time Open</th>
-                            <th>Time Close</th>
-                            <th>Booking Interval</th>
-                            <th>Ratings</th>
+                            <th class="adminOwnerTableCell">Course Name</th>
+                            <th class="adminOwnerTableCell">Username</th>
+                            <th class="adminOwnerTableCell">Address</th>
+                            <th class="adminOwnerTableCell">City</th>
+                            <th class="adminOwnerTableCell">Country</th>
+                            <th class="adminOwnerTableCell">Phone Number</th>
+                            <th class="adminOwnerTableCell">Time Open</th>
+                            <th class="adminOwnerTableCell">Time Close</th>
+                            <th class="adminOwnerTableCell">Booking Interval</th>
+                            <th class="adminOwnerTableCell">Ratings</th>
                         </tr>
                         <tr th:each="owner : ${ownerList}">
-                            <td>
-                                <a th:href="${'/tee-rific/admin/owners/golfCourse/'+owner.courseName}" th:text="${owner.courseName}">...</a>
+                            <td class="adminOwnerTableCell">
+                                <a class="overflowWrapFont" th:href="${'/tee-rific/admin/owners/golfCourse/'+owner.courseName}" th:text="${owner.courseName}"></a>
                             </td>
-                            <td th:text="${owner.username}"></td>
-
-                            <td th:text="${owner.address}"></td>
-                            <td th:text="${owner.city}"></td>
-                            <td th:text="${owner.country}"></td>
-                            <td th:text="${owner.phoneNumber == 'null' ? '' : owner.phoneNumber}"></td>
-                            <td th:text="${owner.timeOpen}"></td>
-                            <td th:text="${owner.timeClose}"></td>
-                            <td th:text="${owner.bookingInterval + ' minutes'}"></td>
-                            <td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.username}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.address}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.city}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.country}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.phoneNumber == 'null' ? '' : owner.phoneNumber}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.timeOpen}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.timeClose}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText" th:text="${owner.bookingInterval + ' minutes'}"></td>
+                            <td class="adminOwnerTableCell overflowWrapFont brownText">
                                 <span style="font-weight: bold;" th:text="${owner.rating}"></span>
                                 <br>
                                 <span th:text="${'#Ratings:' + owner.numberRatings}"></span>
                             </td>
-                            <form action="#" method="post" th:action="${'/tee-rific/admin/owner/'+owner.username}">
-                                <td>
-                                    <input class="button deleteButton ownerDB" type="submit" value="Delete">
-                                </td>
-                            </form>
+                            <td >                                
+                               <form action="#" method="post" th:action="${'/tee-rific/admin/owner/'+owner.username}">
+                                    <button class="button overflowHideFont" type="submit">Delete</button>
+                                </form>
+                            </td>            
                         </tr>
-                    </table><br>
-
+                    </table>
+                    <div class="pageDivider woodBackdrop"></div>    
                     <form method="post" th:action="@{/tee-rific/admin/owners/clear}">
-                        <button type="submit" class="button">Clear Database</button>
+                        <button type="submit" class="button">Clear Owners</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
-                        <button type="submit" class="button">Back to Home</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
              </div>

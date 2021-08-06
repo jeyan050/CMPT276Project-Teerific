@@ -15,6 +15,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -31,8 +32,9 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">List of Bookings</div>            
-                    <table class="tableSizing">  
+                    <div class="titleFont dynamicSize">List of Bookings</div>   
+                    <div class="pageDivider woodBackdrop"></div>         
+                    <table class="tableSizing oswaldFont">  
                         <tr>
                             <th style="width: 80px;">Game ID</th>
                             <th>Course Name</th>
@@ -44,12 +46,12 @@
                             <th style="width: 90px;" ></th>
                         </tr>
                         <tr th:each="booking : ${bookingList}">
-                            <td th:text="${booking.gameID}"></td>
-                            <td th:text="${booking.courseName}"></td>
-                            <td th:text="${booking.username}"></td>
-                            <td th:text="${booking.date}"></td>                            
-                            <td th:text="${booking.time}"></td>
-                            <td th:text="${booking.numPlayers}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${booking.gameID}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${booking.courseName}"></td>
+                            <td class="brownText overflowWrapFont"th:text="${booking.username}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${booking.date}"></td>                            
+                            <td class="brownText overflowWrapFont" th:text="${booking.time}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${booking.numPlayers}"></td>
                             <td>
                                 <a th:href="${'/tee-rific/admin/bookings/rental/'+booking.rentalID}" th:text="${booking.rentalID}">...</a>
                             </td>
@@ -60,13 +62,14 @@
                                 </td>
                             </form>
                         </tr>
-                    </table><br>
+                    </table>
 
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="post" th:action="@{/tee-rific/admin/bookings/clear}">
-                        <button type="submit" class="button">Clear Database</button>
+                        <button type="submit" class="button">Clear Bookings</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
-                        <button type="submit" class="button">Back to Home</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
              </div>

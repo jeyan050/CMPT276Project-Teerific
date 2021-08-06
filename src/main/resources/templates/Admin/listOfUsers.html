@@ -8,13 +8,13 @@
     <title>List of Users</title>
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/listStyle.css}" type="text/css" rel="stylesheet">
     
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -26,42 +26,42 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
+                      </div>
                     <div class="titleFont dynamicSize">List of Users</div>            
-                    <table class="tableSizing">
+                    <div class="pageDivider woodBackdrop"></div>
+                    <table class="adminUserTable oswaldFont">
                         <tr>
-                            <th>Priority</th>
-                            <th>Username</th>
-                            <th class="password">Password</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Gender</th>
+                            <th class="adminUserTableCell">Priority</th>
+                            <th class="adminUserTableCell">Username</th>
+                            <th class="adminUserTableCell">First Name</th>
+                            <th class="adminUserTableCell">Last Name</th>
+                            <th class="adminUserTableCell">Email</th>
+                            <th class="adminUserTableCell">Gender</th>
                         </tr>
                         <tr th:each="user : ${userList}">
-                            <td th:text="${user.priority}"></td>
-                            <td th:text="${user.username}"></td>
-                            <td th:text="${user.password}"></td>
-                            <td th:text="${user.fname}"></td>
-                            <td th:text="${user.lname}"></td>
-                            <td th:text="${user.email}"></td>
-                            <td th:text="${user.gender}"></td>
-                            <form action="#" method="post" th:action="${'/tee-rific/admin/users/'+user.username}">
-                                <td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.priority}"></td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.username}"></td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.fname}"></td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.lname}"></td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.email}"></td>
+                            <td class="adminUserTableCell overflowWrapFont brownText" th:text="${user.gender}"></td>
+                            <td class="adminUserTableCell">
+                                <form action="#" method="post" th:action="${'/tee-rific/admin/users/'+user.username}">
                                     <input class="button deleteButton" type="submit" value="Delete">
-                                </td>
-                            </form>
+                                </form>
+                            </td>
                         </tr>
                     </table><br>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="post" th:action="@{/tee-rific/admin/users/clear}">
-                        <button type="submit" class="button">Clear Database</button>
+                        <button type="submit" class="button">Clear Users</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
-                        <button type="submit" class="button">Back to Home</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
              </div>

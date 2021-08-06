@@ -435,12 +435,30 @@ th {
     margin-bottom: 25px;
 }
 
-.rentalInventoryTable, .ownerEditAccountTable {
+.rentalInventoryTable, .ownerEditAccountTable, .adminUserTable, .adminCourseDetails {
     width: 80%;
     margin-top: 35px;
     margin-bottom: 35px;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* 100% / 7 Columns = 14.28% */
+.adminUserTableCell {
+    width: 14.28%;
+}
+
+.adminOwnerTable {
+    width: 100%;
+    padding: 0%;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.adminOwnerTableCell {
+    width: 8.5%;
 }
 
 .rentalInventoryTableCell {
