@@ -808,7 +808,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       } else {
         // Update user part of account
         if (column.equals("username") || column.equals("password") || column.equals("fname") || column.equals("lname") || column.equals("email") || column.equals("gender")){
-          
           if (column.equals("fname")){         // This if and else if are for first name and last name, since its different label on owner db
             String updateUserInfo = "UPDATE owners SET firstname='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);
@@ -828,13 +827,14 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
         }
       }
 
-      // Update scorecards
-      Statement updateScoreCards = connection.createStatement();
-      String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
-      updateScoreCards.executeUpdate(changeScorecard);  
-
       if(column.equals("username")){
         changedUsername = true;
+
+        userCreateScorecardsTable(connection);
+        // Update scorecards
+        Statement updateScoreCards = connection.createStatement();
+        String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
+        updateScoreCards.executeUpdate(changeScorecard);  
       }
 
       return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully/"+user+"";
@@ -1443,7 +1443,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       LocalDate bookingDate = LocalDate.of(bookingYear, bookingMonth, bookingDay);
       LocalTime bookingTime = LocalTime.of(bookingHr, bookingMin, bookingSec);
 
-      if (bookingDate.isBefore(currentDate) || bookingTime.isBefore(currentTime)) {
+      if (bookingDate.isBefore(currentDate) || (bookingDate.equals(currentDate) && bookingTime.isBefore(currentTime))) {
         return "redirect:/tee-rific/booking/" + courseNameSC + "/" + user;
       }
 
@@ -1555,9 +1555,10 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   @GetMapping(
           path = "/tee-rific/rentEquipment/{courseName}/{gameID}/{username}"
   )
-  public String rentEquipment(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request) {
+  public String rentEquipment(@PathVariable Map<String, String> pathVars, Map<String, Object> model, HttpServletRequest request)  throws Exception {
     String user = pathVars.get("username");
     String courseNameSC = pathVars.get("courseName");
+    String courseName = convertFromSnakeCase(courseNameSC);
     String gameIDStr = pathVars.get("gameID");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
@@ -1568,13 +1569,33 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       return "redirect:/";
     }
 
-    EquipmentCart cart = new EquipmentCart();
+    try (Connection connection = dataSource.getConnection()) {
+      EquipmentCart cart = new EquipmentCart();
 
-    model.put("gameID", gameIDStr);
-    model.put("courseName", courseNameSC);
-    model.put("username", user);
-    model.put("cart", cart);
-    return "Rentals/rentEquipment";
+      // Initialize another cart that contains the inventory stock (to be used for checking)
+      EquipmentCart inventoryValues = new EquipmentCart();
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("DROP TABLE IF EXISTS cart_"+user+"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM inventory WHERE courseName = '"+courseName+"'");
+
+      rs.next();
+      inventoryValues.setNumBalls(rs.getInt("stock"));
+      rs.next();
+      inventoryValues.setNumCarts(rs.getInt("stock"));
+      rs.next();
+      inventoryValues.setNumClubs(rs.getInt("stock"));
+      
+      model.put("gameID", gameIDStr);
+      model.put("courseName", courseNameSC);
+      model.put("username", user);
+      model.put("stock", inventoryValues);
+      model.put("cart", cart);
+
+      return "Rentals/rentEquipment";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
   } // rentEquipment()
 
 

@@ -81,7 +81,9 @@ public class Scorecard {
     public ArrayList<String> getGroupMembers() {
         return this.groupMembers;
     }
-    public void setUsername(ArrayList<String> f) { this.groupMembers = f; }
+    public void setGroupMembers(ArrayList<String> f) { 
+        this.groupMembers = f; 
+    }
 
     public String getGameID(){
         return this.gameID;
