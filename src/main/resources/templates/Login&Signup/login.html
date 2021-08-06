@@ -34,6 +34,7 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Welcome!</div>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form  action="#" method="post" th:action="@{/tee-rific/login/check}" th:object="${loginUser}">
                         <div>
                             <input class="inputBox" type="text"  name="username" th:field="*{username}" placeholder="Username">
@@ -44,6 +45,7 @@
                         <div th:each="errorText : ${failedLogin}">
                             <p id="errorU" th:text="${errorText}"></p>
                         </div>
+                        <br>
                         <button type="submit" class="button">Login</button>
                     </form>
                     <form  method= "get" action="/tee-rific/signup">
