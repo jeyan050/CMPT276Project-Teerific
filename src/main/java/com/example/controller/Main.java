@@ -513,6 +513,7 @@ public class Main {
           path = "/tee-rific/account/{username}"
   )
   public String getAccountPage(@PathVariable("username") String user, Map<String, Object> model, HttpServletRequest request) {
+    
     if (!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/account/" + request.getSession().getAttribute("username");
     }
@@ -1733,6 +1734,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           path="/tee-rific/golfCourseDetails/inventory/{username}"
   )
   public String viewInventory(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
@@ -1963,6 +1965,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     // int updatedClubStock = clubStock + cart.getNumClubs();
 
     // Update inventory table
+
     stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumBalls()+"' WHERE itemName = 'balls' AND courseName = '"+courseName+"'");
     stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumCarts()+"' WHERE itemName = 'carts' AND courseName = '"+courseName+"'");
     stmt.executeUpdate("UPDATE inventory SET stock ='"+cart.getNumClubs()+"' WHERE itemName = 'clubs' AND courseName = '"+courseName+"'");

@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/listStyle.css}" type="text/css" rel="stylesheet">
 
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -22,40 +22,64 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-
-
     <title>Course Feedback</title>
-
 </head>
 <body class="grassBackdrop">
 <div class="pageWrap">
     <div class="content">
-        <div class="woodBackdrop border content">
+        <div class="woodBackdrop expandedBorder border content">
             <div class="sandBackdrop">
-                <div>
+                <div class="logoContainer">
                     <img th:src="@{/images/tee-rific.png}">
-                </div>
-                <div class="titleFont dynamicSize">Feedback</div>
-                <table class="owners tableSizing">
+                  </div>
+                <div class="titleFont dynamicSize">Customer Feedback</div>
+                <table class="feedbackTable oswaldFont">
                     <tr>
-                        <th>Username</th>
-                        <th>Feedback</th>
+                        <th class="feedbackTableCell">Username</th>
+                        <th class="feedbackTableCell">Feedback</th>
                     </tr>
 
                     <tr th:each="golfer: ${feedback}">
-                        <td th:text="${golfer.username}"></td>
-                        <td th:text="${golfer.feedback}"></td>
+                        <td class="feedbackTableCell brownText" th:text="${golfer.username}"></td>
+                        <td class="feedbackTableCell brownText" th:text="${golfer.feedback}"></td>
                     </tr>
                 </table>
-
+                <div class="pageDivider woodBackdrop"></div>
                 <form method= "get" th:action="${'/tee-rific/home/' + username}">
-                    <button type="submit" class="button">Home Page</button>
+                    <button type="submit" class="button">Home</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
+<!-- carousel code -->
+<section class="bannerBackdrop">
+    <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+      <div class="carousel-inner">
+        <div class="carousel-item active container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+        <div class="carousel-item container-fluid">
+          <h2 class="testimonial-text bannerText"></h2>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </a>
+      <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </a>
+    </div>
+  </section>
 <footer>
     <div class= "woodBackdrop footer">
         <i class="socialIcon fab fa-facebook-f"></i>

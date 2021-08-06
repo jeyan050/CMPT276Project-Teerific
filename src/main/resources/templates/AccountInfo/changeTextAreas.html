@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -30,7 +30,11 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">New Value For: <br><span th:text="${columnN}"></span></div>      
+                    <div class="titleFont dynamicSize">New value</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div>
+                        <h1 class="poppinsFont darkGreyFont" th:text="${columnN}"></h1>
+                    </div>     
                     <form onsubmit="return checkNewValue()" action="#" method="post" th:action="@{'/tee-rific/editAccount/changing/'+__${columnValue}__+'/'+__${userValue}__}" th:object="${value}">
                         <textarea class="inputBox" id="value" th:field="*{__${columnValue}__}" placeholder="Type Here"></textarea><p id="error"> </p>
                         <div th:each="error : ${errorMessage}">

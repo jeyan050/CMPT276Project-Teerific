@@ -1,25 +1,3 @@
-<!-- <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<link th:href="@{/styles.css}" type="text/css" rel="stylesheet">
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Sign Up</title>
-</head>
-<body>
-    <div class="layer_6">
-        <div class="layer_7">
-            <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <h1>Admin Sign Up</h1>
-            </div>
-        </div>
-     </div>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -36,6 +14,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -52,50 +31,52 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">New Owner User</div>
-                    <!-- <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/owner}" th:object="${newOwner}"></form> -->
+                    <div class="titleFont dynamicSize">New Owner</div>
                     <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup/Owner}" th:object="${newOwner}">
-                    
-                        <h3>Course Details</h3>
-                        <input type="text" id="courseName" class="inputBox" th:field="*{courseName}" placeholder="Course Name"><p id="errorCN"></p>
-                            <div th:each="errorText1 : ${courseNameError}">
-                                <p th:text="${errorText1}"></p>
-                            </div>
-                        <input type="text" id="address" class="inputBox" th:field="*{address}" placeholder="Address"><p id="errorA"></p>
-                        <input type="text" id="city" class="inputBox" th:field="*{city}" placeholder="City"><p id="errorCi"></p>
-                        <input type="text" id="country" class="inputBox" th:field="*{country}" placeholder="Country"><p id="errorCo"></p>
-                        <br>
-                        <p>Business Hours</p>
-                        <label for="timeOpen">Open</label>
-                        <input type="time" id="timeOpen" class="inputBox" th:field="*{timeOpen}"> <p id="errorTO"></p>
-                        <label for="timeClose">Close</label>
-                        <input type="time" id="timeClose" class="inputBox" th:field="*{timeClose}"> <p id="errorTC"></p>
-                        <label for="bookingInterval">Booking Intervals</label>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <h3 class="poppinsFont darkGreyFont">Course Details</h3>
+                        <input type="text" id="courseName" class="inputBox" th:field="*{courseName}" placeholder="Course Name"><p id="errorCN" class="errorText"></p>
+                            <span th:each="errorText1 : ${courseNameError}">
+                                <p class="errorText" th:text="${errorText1}"></p>
+                            </span>
+                        <input type="text" id="address" class="inputBox" th:field="*{address}" placeholder="Address"><p id="errorA" class="errorText"></p>
+                        <input type="text" id="city" class="inputBox" th:field="*{city}" placeholder="City"><p id="errorCi" class="errorText"></p>
+                        <input type="text" id="country" class="inputBox" th:field="*{country}" placeholder="Country"><p id="errorCo" class="errorText"></p>
+                        <span>
+                            <h6 class="oswaldFont brownText instruction">Other Course Characteristics Can Be Modified Upon Login</h6>
+                        </span>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <h3 class="poppinsFont darkGreyFont">Times</h3>
+                        <label for="timeOpen" class="oswaldFont brownText">Open</label>
+                        <input type="time" id="timeOpen" class="inputBox" th:field="*{timeOpen}"> <p id="errorTO" class="errorText"></p>
+                        <label for="timeClose" class="oswaldFont brownText">Close</label>
+                        <input type="time" id="timeClose" class="inputBox" th:field="*{timeClose}"> <p id="errorTC" class="errorText"></p>
+                        <label for="bookingInterval" class="oswaldFont brownText">Schedule</label>
                         <select class ="inputBox" th:field="*{bookingInterval}">
-                            <option value="5">5 minute intervals</option>
-                            <option value="10">10 minute intervals</option>
-                            <option value="10">15 minute intervals</option>
-                            <option value="20">20 minute intervals</option>
-                            <option value="30">30 minute intervals</option>
+                            <option value="5">5 Minute Tee-Time Intervals</option>
+                            <option value="10">10 Minute Tee-Time Intervals</option>
+                            <option value="10">15 Minute Tee-Time Intervals</option>
+                            <option value="20">20 Minute Tee-Time Intervals</option>
+                            <option value="30">30 Minute Tee-Time Intervals</option>
                         </select>
-                         
-                        <h3>Account Details</h3>
-                        <input type="text" id="username" class="inputBox" th:field="*{username}" placeholder="Username"><p id="errorU">
-                            <div th:each="errorText2 : ${usernameError}">
-                                <p th:text="${errorText2}"></p>
-                            </div>
-                        <input type="password" id="passw1" class="inputBox" th:field="*{password}" placeholder="Password"><p id="errorP1"></p>
-                        <input type="password" id="passw2" class="inputBox" placeholder="Confirm Password"><p id="errorP2"></p>
-                        <input type="text" id="firstN" class="inputBox" th:field="*{fname}" placeholder="First Name"><p id="errorF"></p>
-                        <input type="text" id="lastN" class="inputBox" th:field="*{lname}" placeholder="Last Name"><p id="errorL"></p>
-                        <input type="text" id="email" class="inputBox" th:field="*{email}" placeholder="Email"><p id="errorE"></p>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <h3 class="poppinsFont darkGreyFont">Account Details</h3>
+                        <input type="text" id="username" class="inputBox" th:field="*{username}" placeholder="Username"><p id="errorU" class="errorText">
+                            <span th:each="errorText2 : ${usernameError}">
+                                <p th:text="${errorText2}" class="errorText"></p>
+                            </span>
+                        <input type="password" id="passw1" class="inputBox" th:field="*{password}" placeholder="Password"><p id="errorP1" class="errorText"></p>
+                        <input type="password" id="passw2" class="inputBox" placeholder="Confirm Password"><p id="errorP2" class="errorText"></p>
+                        <input type="text" id="firstN" class="inputBox" th:field="*{fname}" placeholder="First Name"><p id="errorF" class="errorText"></p>
+                        <input type="text" id="lastN" class="inputBox" th:field="*{lname}" placeholder="Last Name"><p id="errorL" class="errorText"></p>
+                        <input type="text" id="email" class="inputBox" th:field="*{email}" placeholder="Email"><p id="errorE" class="errorText"></p>
                         <select class ="inputBox" th:field="*{gender}">
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                             <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
                         </select>
-
+                        <div class="pageDivider woodBackdrop"></div>
                         <button type="submit" id="submitOwner" class="button">Create New Owner</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/login}">

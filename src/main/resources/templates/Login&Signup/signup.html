@@ -14,6 +14,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -32,21 +33,24 @@
                     </div>
                     <div class="titleFont dynamicSize">New User</div>
                     <form onsubmit="return checkInput()" action="#" method="post" th:action="@{/tee-rific/signup}" th:object="${newUser}">
-                        <input type="text" class="inputBox" id="username" th:field="*{username}" placeholder="Username"><p id="errorU"> </p>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <h3 class="poppinsFont darkGreyFont">Account Details</h3>
+                        <input type="text" class="inputBox" id="username" th:field="*{username}" placeholder="Username"><p id="errorU" class="errorText"> </p>
                             <div th:each="errorText : ${usernameError}">
-                                <p th:text="${errorText}"> </p>
+                                <p th:text="${errorText}" class="errorText"> </p>
                             </div>
-                        <input type="password" class="inputBox" id="passw1" th:field="*{password}" placeholder="Password"><p id="errorP1"> </p>
-                        <input type="password" class="inputBox" id="passw2" placeholder="Confirm Password"><p id="errorP2"></p>
-                        <input type="text" class="inputBox" id="firstN" th:field="*{fname}" placeholder="First Name"><p id="errorF"> </p>
-                        <input type="text" class="inputBox" id="lastN" th:field="*{lname}" placeholder="Last Name"><p id="errorL"> </p>
-                        <input type="text" class="inputBox" id="email" th:field="*{email}" placeholder="Email"><p id="errorE"> </p>
+                        <input type="password" class="inputBox" id="passw1" th:field="*{password}" placeholder="Password"><p id="errorP1" class="errorText"> </p>
+                        <input type="password" class="inputBox" id="passw2" placeholder="Confirm Password"><p id="errorP2" class="errorText"></p>
+                        <input type="text" class="inputBox" id="firstN" th:field="*{fname}" placeholder="First Name"><p id="errorF" class="errorText"> </p>
+                        <input type="text" class="inputBox" id="lastN" th:field="*{lname}" placeholder="Last Name"><p id="errorL" class="errorText"> </p>
+                        <input type="text" class="inputBox" id="email" th:field="*{email}" placeholder="Email"><p id="errorE" class="errorText"> </p>
                         <select class ="inputBox" th:field="*{gender}">
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
                             <option value="Prefer not to Disclose">Prefer Not To Disclose</option>
                         </select>
+                        <div class="pageDivider woodBackdrop"></div>
                         <button type="submit" id="submitUser" class="button">Create New Account</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/signup/Owner}">

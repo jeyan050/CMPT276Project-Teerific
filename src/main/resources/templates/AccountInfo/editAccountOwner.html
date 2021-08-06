@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -20,199 +20,215 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- bookstrap scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <title>Account Information</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop" th:each="owner : ${ownerInfo}">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    <div class="titleFont dynamicSize">Account Infomation</div>   
+                      </div>
+                      <div class="pageDivider woodBackdrop"></div>
+                      <div><h3 class="overflowHideFont largerFont poppinsFont darkGreyFont">Account Details</h3></div>
+                      <div class="oswaldFont brownFont">Click On The Field You Wish To Change</div>   
 
-                     <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
-                     <div style="font-size:40px" class="titleFont dynamicSize">Account Details</div>   
-                     <table>
+                      <table class="editAccountTable oswaldFont">
                         <tr>
-                            <td class="title">Username</td>
-                            <td class="value" th:text="${owner.username}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/username/'+ owner.username}">
+                            <th class="editAccountTableCell">Username</th>
+                            <td class="editAccountTableCell">
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/username/'+ owner.username}" th:text="${owner.username}"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="editAccountTableCell">Password</th>
+                            <td class="editAccountTableCell">
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/passwordSecurity/' + username}">*************</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="editAccountTableCell">First Name</th>
+                            <td class="editAccountTableCell" >
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/fname/'+ owner.username}" th:text="${owner.fname}"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="editAccountTableCell">Last Name</th>
+                            <td class="editAccountTableCell">
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/lname/'+ owner.username}" th:text="${owner.lname}"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="editAccountTableCell">Email</th>
+                            <td class="editAccountTableCell">
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/email/'+ owner.username}" th:text="${owner.email}"></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="editAccountTableCell">Gender</th>
+                            <td class="editAccountTableCell">
+                                <a class="overflowHideFont brownText editAccountLink" th:href="${'/tee-rific/editAccount/gender/'+ owner.username}" th:text="${owner.gender}"></a>
+                            </td>
+                        </tr>
+                    </table>   
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div><h3 class="overflowHideFont largerFont poppinsFont darkGreyFont">Course Information</h3></div>
+                    <div class="oswaldFont brownFont">Click On Edit Button For The Field You Wish To Change</div>      
+                     <table class="editAccountTable oswaldFont">
+                        <tr>
+                            <th class="editCourseCharacteristicCell">Address</th>
+                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.address}"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form  method= "get" th:action="${'/tee-rific/editAccount/address/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Password</td>
-                            <td class="value">**************************</td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/password/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">City</th>
+                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.city}"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/city/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">First Name</td>
-                            <td class="value" th:text="${owner.fname}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/fname/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Country</th>
+                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.country}"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/country/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Last Name</td>
-                            <td class="value" th:text="${owner.lname}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/lname/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Phone Number</th>
+                            <td class="editCourseCharacteristicCell brownText" id="pn" th:text="${owner.phoneNumber != 'null'} ? ${owner.phoneNumber} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/phoneNumber/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Email</td>
-                            <td class="value" th:text="${owner.email}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/email/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Website</th>
+                            <td class="editCourseCharacteristicCell brownText" id="web" th:text="${owner.website != 'null'} ? ${owner.website} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/website/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Gender</td>
-                            <td class="value" th:text="${owner.gender}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/gender/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div style="font-size:40px" class="titleFont dynamicSize">Golf Course Details: <span th:text="${owner.courseName}"></span></div>   
-                     <table>
-                        <tr>
-                            <td class="title">Address</td>
-                            <td class="value" th:text="${owner.address}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/address/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Time Open</th>
+                            <td class="editCourseCharacteristicCell brownText" id="to" th:text="${owner.timeOpen}"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/timeOpen/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">City</td>
-                            <td class="value" th:text="${owner.city}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/city/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Time Closed</th>
+                            <td class="editCourseCharacteristicCell brownText" id="tc" th:text="${owner.timeClose}"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/timeClose/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Country</td>
-                            <td class="value" th:text="${owner.country}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/country/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Weekday Rates</th>
+                            <td class="editCourseCharacteristicCell brownText" id="wdr" th:text="${owner.weekdayRates != 'null'} ? ${owner.weekdayRates} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/weekdayRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Phone Number</td>
-                            <td class="value" id="pn" th:text="${owner.phoneNumber != 'null'} ? ${owner.phoneNumber} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/phoneNumber/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Weekend Rates</th>
+                            <td class="editCourseCharacteristicCell brownText" id="wer" th:text="${owner.weekendRates != 'null'} ? ${owner.weekendRates} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/weekendRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Website</td>
-                            <td class="value" id="web" th:text="${owner.website != 'null'} ? ${owner.website} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/website/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Directions to Course</th>
+                            <td class="editCourseCharacteristicCell brownText" id="dtc" th:text="${owner.directionsToCourse != 'null'} ? ${owner.directionsToCourse} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/directionsToCourse/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Time Open</td>
-                            <td class="value" id="to" th:text="${owner.timeOpen}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeOpen/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Time Closed</td>
-                            <td class="value" id="tc" th:text="${owner.timeClose}"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/timeClose/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Weekday Rates</td>
-                            <td class="value" id="wdr" th:text="${owner.weekdayRates != 'null'} ? ${owner.weekdayRates} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekdayRates/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Weekend Rates</td>
-                            <td class="value" id="wer" th:text="${owner.weekendRates != 'null'} ? ${owner.weekendRates} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/weekendRates/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Directions to Course</td>
-                            <td class="value" id="dtc" th:text="${owner.directionsToCourse != 'null'} ? ${owner.directionsToCourse} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/directionsToCourse/'+ owner.username}">
-                                    <button type="submit" class="button editButton">Edit</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="title">Description</td>          
-                            <td class="value" id="des" th:text="${owner.description != 'null'} ? ${owner.description} : ''"></td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/description/'+ owner.username}">
+                            <th class="editCourseCharacteristicCell">Description</th>          
+                            <td class="editCourseCharacteristicCell brownText" id="des" th:text="${owner.description != 'null'} ? ${owner.description} : ''"></td>
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/description/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                     <!-- use a text area for editing -->
                                 </form>
                             </td>
                         </tr>
                         <tr>
-                            <td class="title">Course Logo</td>          
-                            <td class="value imageCell">
+                            <th class="editCourseCharacteristicCell">Course Logo</th>          
+                            <td class="editCourseCharacteristicCell imageCell">
                                 <img th:src="${owner.courseLogo != 'null'} ? ${owner.courseLogo} : ''" id="image">
                             </td>
-                            <td>
-                                <form class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/courseLogo/'+ owner.username}">
+                            <td class="editCourseCharacteristicCell">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/courseLogo/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                     <!-- use a text area for editing -->
                                 </form>
                             </td>
                         </tr>
                     </table>
-
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method= "get" th:action="${'/tee-rific/account/' + owner.username}">
-                        <button type="submit" class="button">Go Back</button>
+                        <button type="submit" class="button">Back</button>
                     </form>
                 </div>
              </div>
         </div>
+        <!-- carousel code -->
+        <section class="bannerBackdrop">
+            <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+              <div class="carousel-inner">
+                <div class="carousel-item active container-fluid">
+                  <h2 class="testimonial-text bannerText"></h2>
+                </div>
+                <div class="carousel-item container-fluid">
+                  <h2 class="testimonial-text bannerText"></h2>
+                </div>
+                <div class="carousel-item container-fluid">
+                  <h2 class="testimonial-text bannerText"></h2>
+                </div>
+                <div class="carousel-item container-fluid">
+                  <h2 class="testimonial-text bannerText"></h2>
+                </div>
+                <div class="carousel-item container-fluid">
+                  <h2 class="testimonial-text bannerText"></h2>
+                </div>
+              </div>
+              <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </a>
+            </div>
+          </section>
         <footer>
             <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f"></i>
@@ -222,6 +238,7 @@
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+              <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
         </footer>
     </div>
 </body>

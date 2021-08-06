@@ -233,6 +233,19 @@ th {
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.ownerLegendTable {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.ownerLegendTableCell{
+    padding: 5px;
+}
+
+
 .bookingTable {
     margin-top: 30px;
     margin-bottom: 30px;
@@ -268,7 +281,7 @@ th {
 }
 
 .link:hover {
-    background-color: #338507;
+    color: #338507;
     background-image: none;
 }
 
@@ -280,6 +293,12 @@ th {
 .linkText:hover{
     color: #338507;
 }
+
+.editAccountLink:hover {
+    color: #338507;
+}
+
+
 
 .courseDetailsContainer {
     width: 80%;
@@ -308,15 +327,69 @@ th {
     font-weight: bold;
 }
 
+.errorText {
+    font-weight: bold;
+    color: red;
+}
+
 .biggerFont {
     font-size: 2.5rem;
 }
 
-.ownerTable, .editAccountTable {
+.ownerTable, .editAccountTable, .ownerScheduleTable, .timeSlotTable, .feedbackTable {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 50px;
+}
+
+.imageTable {
+    height: 30vh;
+    width: 30vh;
+    margin: auto;
+}
+
+.imageTableCell {
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.timeSlotTableCell{
+    width: 20%;
+}
+
+.ownerScheduleTable {
+    border: 2.5px solid black;
+}
+
+.ownerScheduleTableCellFull {
+    background-color: red;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCellAvailable {
+    background-color: #D3CA16;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCellEmpty{
+    background-color: green;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCell {
+    border: 2.5px solid black;
+}
+
+.ownerScheduleTableLink {
+    color: #ECEBEA;
 }
 
 .editAccountTableNarrowScreen, .wrapRow {
@@ -332,7 +405,7 @@ th {
 }
 
 
-.editAccountTableCell {
+.editAccountTableCell, .feedbackTableCell {
     width: 50%;
     padding: 3%;
 }
@@ -353,13 +426,37 @@ th {
 .ownerTableInputCell, .scorecardTableInputCell {
     width: 90%;
     display: none;
-    border-radius: 10%;
+    border-radius: 1%;
 }
 
 .scorecardTable, .gameListTable {
     width: 100%;
     margin-top: 15px;
     margin-bottom: 25px;
+}
+
+.rentalInventoryTable, .ownerEditAccountTable {
+    width: 80%;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rentalInventoryTableCell {
+    width: 50%;
+}
+
+.ownerEditAccountTableCellOuter {
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ownerEditAccountTableCellInner {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .rentalTable {
@@ -381,9 +478,10 @@ th {
     white-space: nowrap;
 }
 
-.friendScorecardTableCell {
+.friendScorecardTableCell, .editCourseCharacteristicCell {
     width: 33.3%;
 }
+
 
 .scorecardTableCell {
     width: 16.67%;
@@ -634,6 +732,10 @@ th {
     background-repeat: repeat;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.brownText {
+    color: #573713;
 }
 
 .logo {

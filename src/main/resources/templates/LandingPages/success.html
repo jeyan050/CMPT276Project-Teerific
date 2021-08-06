@@ -13,6 +13,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -35,8 +36,11 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Welcome to TEE-RIFIC '<em th:text="${username}"></em>'</div>
-                    <div class="titleFont dynamicSize">Your Account has been Created</div>
+                    <div class="titleFont dynamicSize">Welcome</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <h1 class="overflowHideFont poppinsFont darkGreyFont" th:text="${username}"></h1>
+                    <div class="oswaldFont brownText">Account Has Been Created</div>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="get" th:action="@{/tee-rific/login}">
                         <button type="submit" class = "button">Login</button>
                     </form>
