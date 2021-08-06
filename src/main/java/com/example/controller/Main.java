@@ -2752,7 +2752,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
 
-  @GetMapping(
+  @GetMapping( // TODO: make sure the user cannot leave feilds blank
           path = "/tee-rific/createTournament/{username}"
   )
   public String createTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
@@ -2989,7 +2989,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
   @GetMapping( //TODO: make it so it displays an error message if no one is signed up
-    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}"
+    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}" // TODO: make sure the user cannot leave feilds blank
   )
   public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
 
