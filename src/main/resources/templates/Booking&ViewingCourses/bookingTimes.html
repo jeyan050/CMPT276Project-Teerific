@@ -97,11 +97,11 @@
                 <table class="bookingTable oswaldFont">
                   <tr>
                     <th class="bookingHeader">Date:</th>
-                    <td class="bookingCell brownFont" th:text="${booking.date}"></td>
+                    <td class="bookingCell brownFont" th:text="${selectedDate}" th:field="*{date}"></td>
                   </tr>
                   <tr>
                     <th class="bookingHeader">Time:</th>
-                    <td class="bookingCell brownFont" th:text="${booking.time}"></td>
+                    <td class="bookingCell brownFont" th:text="${selectedTime.time}" th:field="*{time}"></td>
                    </tr>
                   <tr>
                     <th class="bookingHeader">Party Size:</th>

@@ -2826,7 +2826,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
 //TODO: make it so tournaments date and times cannot be set to the past
-  @GetMapping( // TODO: make sure the user cannot leave feilds blank
+  @GetMapping( // TODO: make sure the user cannot leave fields blank
           path = "/tee-rific/createTournament/{username}"
   )
   public String createTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
@@ -3109,7 +3109,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
   @GetMapping( //TODO: make it so it displays an error message if no one is signed up
-    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}" // TODO: make sure the user cannot leave feilds blank
+    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}" // TODO: make sure the user cannot leave fields blank
   )
   public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
 
