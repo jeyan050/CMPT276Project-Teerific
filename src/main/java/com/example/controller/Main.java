@@ -47,6 +47,7 @@ import java.lang.Integer;
 
 import java.sql.Time;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.LocalDate;
 
 @Controller
@@ -1427,7 +1428,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       booking.setTime(teetime);
 
       // Check if user made a booking in the past before going through with setting the booking 
-      LocalDate currentDate = LocalDate.now();
+      LocalDate currentDate = LocalDate.now(ZoneId.of("America/Los_Angeles"));
       LocalTime currentTime = LocalTime.now();
 
       String bookingDateSegments[] = booking.getDate().split("-");
