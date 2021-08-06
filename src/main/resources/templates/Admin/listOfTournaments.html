@@ -15,6 +15,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -31,8 +32,9 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">List of Tournaments</div>            
-                    <table class="tableSizing">
+                    <div class="titleFont dynamicSize">List of Tournaments</div>    
+                    <div class="pageDivider woodBackdrop"></div>        
+                    <table class="tableSizing oswaldFont">
                         <tr>
                             <th>Name</th>
                             <th>Date</th>
@@ -47,43 +49,56 @@
                             <th>Participant Slots </th>
                         </tr>
                         <tr th:each="tournament : ${tournamentList}">
-                            <td th:text="${tournament.name}"></td>
-                            <td th:text="${tournament.date}"></td>
-                            <td th:text="${tournament.time}"></td>
-                            <td th:text="${tournament.clubName}"></td>
-                            <td th:text="${tournament.gameMode}"></td>
-                            <td th:text="${tournament.buyIn}"></td>
-                            <td th:text="${tournament.firstPrize}"></td>
-                            <td th:text="${tournament.secondPrize}"></td>
-                            <td th:text="${tournament.thirdPrize}"></td>
-                            <td th:text="${tournament.ageRequirement}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.name}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.date}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.time}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.clubName}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.gameMode}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.buyIn}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.firstPrize}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.secondPrize}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.thirdPrize}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.ageRequirement}"></td>
                             <!-- replace the "-0" with - participants.size()-->
-                            <td th:text="${tournament.participantSlots}"></td>
+                            <td class="brownText overflowWrapFont" th:text="${tournament.participantSlots}"></td>
                             <form action="#" method="post" th:action="${'/tee-rific/admin/tournaments/'+tournament.id}">
                                 <td>
                                     <input class="button deleteButton" type="submit" value="Delete">
                                 </td>
                             </form>
                         </tr>
-                    </table><br>
+                    </table>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="post" th:action="@{/tee-rific/admin/tournaments/clear}">
-                        <button type="submit" class="button">Clear Database</button>
+                        <button type="submit" class="button">Clear Tournaments</button>
                     </form>
                     <form method= "get" th:action="@{/tee-rific/home/admin}">
-                        <button type="submit" class="button">Back to Home</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
              </div>
         </div>
         <footer>
             <div class= "woodBackdrop footer">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
+
+                <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
+                <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
+                <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
+                <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
+                <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+            <script src="/js/socials.js" type="text/javascript"> </script>
         </footer>
     </div>
 </body>

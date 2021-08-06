@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -52,7 +52,7 @@
             </div>
             <div class="profile">
                 <div class="developerPictureBorder aluminumBackdrop border-top border-end border-bottom border-start">
-                    <img id="Kyle" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Mike.jpg" alt="Kyle">
+                    <img id="Kyle" class="developerPicture border-top border-end border-bottom border-start" src="/images/Developers/Kyle.jpg" alt="Kyle">
                 </div>
                 <h6 class="developerNameText">Kyle</h6>
                 <h2 class="developerNameText faintGrey">Brandon</h2>
@@ -74,24 +74,26 @@
         </div>
         <div class="pageSpacer"></div>
         <div class="processContainer">
+            <h2 class="processTitle">What is Tee-rific?</h2>
+            <p class="developerProcessParagraph faintGrey">
+                Tee-rific is a golf management software designed to simplify and enhance both managing and visiting a golf course. Implementing an online,
+                comprehensive golfing application creates a convenient way for golfers to prepare for their round. Golfers possess the ability to view available
+                tee times and rentals, engage with interactive scorecards, track their golfing history, and participate in tournaments. Since Tee-rific is heavily
+                dependent on mobile accessibility, we prioritized a mobile-friendly experience for golfers. On the course owner’s side, we tailored the software
+                to be practical while still retaining the customizability of pen and paper. Golf course owners can relish in the simplicity and oversight of online
+                booking, utilizing an interactive real-time tee sheet. Tee-rific also offers private, customer-provided feedback of their course, automatic tracking
+                of rental stock, and an extensive course biography to attract customers.
+            </p>
             <h2 class="processTitle">Our Process</h2>
             <p class="developerProcessParagraph faintGrey">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ornare quam vel pretium. 
-                Nam nunc nibh, malesuada in diam nec, pellentesque accumsan diam. Pellentesque porta urna vitae erat 
-                consectetur, sed dapibus tellus hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et 
-                ultrices posuere cubilia curae; Vestibulum eu sollicitudin massa. Cras luctus risus quis nunc pharetra, 
-                et gravida risus pretium. Sed luctus enim arcu, in luctus nibh venenatis nec. Vestibulum non sem eget 
-                ligula mattis imperdiet non et odio. Nulla fringilla eu nibh eu scelerisque. Suspendisse lobortis 
-                porttitor nibh, et imperdiet sapien commodo nec. Nulla a odio metus. In ac felis ac urna luctus 
-                pellentesque eget et odio. Vivamus fermentum molestie risus, in sodales purus mattis id. Nunc vitae 
-                quam et diam ultricies imperdiet at semper turpis. Sed fringilla velit orci, id porta mauris imperdiet et. 
-                Aenean dignissim ligula et mi volutpat, id imperdiet ex interdum. Cras at imperdiet orci. Integer posuere, 
-                tortor vel porta convallis, turpis ipsum vehicula dui, non sodales tortor nisl ac lorem. Cras sit amet ultricies augue, 
-                vel pulvinar elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
-                Duis in faucibus felis. Nunc tristique arcu massa, ac sodales felis mattis in. Suspendisse nec blandit ex. 
-                Praesent tristique efficitur nulla, ut feugiat erat pellentesque lacinia. Nullam at est lorem. Vestibulum in 
-                iaculis quam, id accumsan magna. Pellentesque luctus eleifend sapien. Pellentesque ac justo libero. 
-                Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam metus lectus, vestibulum vitae tristique id.
+                We developed Tee-rific over six weeks, broken into three two-week iterations. To effectively gather requirements for Tee-rific, we visualized our
+                software assisting throughout the entire golfing process. From assisting in course selection to tracking their score as they play to providing feedback
+                after their round. Our team employed an agile environment, allowing more flexibility for taking on and completing work. As a result of Simon Fraser
+                University campus closures due to ongoing COVID-19 restrictions, our development process was fully remote. To maintain communication and teamwork, we
+                scheduled weekly Scrums every Tuesday and Thursday at 6:00 pm. We liaised about our recent progress, formulated plans to complete by the next meeting,
+                and coordinated our efforts on time-consuming problems. Our testing process was in-depth and consisted of heavy cooperation between multiple team members.
+                Upon completing a new feature, at least one fellow team member would test this feature for bugs. This technique minimized bugs and allowed for more than
+                just the developer to understand how the code functions.
             </p>
             <h4 class="developerProcessParagraph faintGrey">Thank You For Your Continued Support!</h4>
             <img class="aboutUsLogo" th:src="@{/images/tee-rific.png}">
@@ -104,14 +106,25 @@
         </div>
         <footer>
             <div class= "darkMeshBackdrop aboutUsFooter">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
+                <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
+                <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
+                <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
+                <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
+                <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
                 <p>© Copyright 2021 Tee-rific</p>
             </div>
             <script src="/js/buttonEffect.js" type="text/javascript"> </script>
             <script src="/js/aboutUs.js" type="text/javascript"></script>
+            <script src="/js/socials.js" type="text/javascript"> </script>
         </footer>
     </div>
 </body>

@@ -8,13 +8,13 @@
     <title>Golf Course Details</title>
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/detailStyle.css}" type="text/css" rel="stylesheet">
     
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -31,37 +31,49 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Golf Course Details</div>            
-                    <table>  
+                    <div class="titleFont dynamicSize">Course Details</div>  
+                    <div class="pageDivider woodBackdrop"></div>            
+                    <table class="adminCourseDetails oswaldFont">  
                         <tr>
-                            <th>Hole Number</th>
-                            <th>Yardage</th>
-                            <th>Par</th>
-                            <th>Handicap</th>
+                            <th class="ownerTableCell">Number</th>
+                            <th class="ownerTableCell">Yardage</th>
+                            <th class="ownerTableCell">Par</th>
+                            <th class="ownerTableCell">Handicap</th>
                         </tr>
                         <tr th:each="course : ${details}">
-                            <td th:text="${course.holeNumber}"></td>
-                            <td th:text="${course.yardage}"></td>
-                            <td th:text="${course.par}"></td>
-                            <td th:text="${course.handicap}"></td>                            
+                            <td class="ownerTableCell brownText overflowWrapFont" th:text="${course.holeNumber}"></td>
+                            <td class="ownerTableCell brownText overflowWrapFont" th:text="${course.yardage}"></td>
+                            <td class="ownerTableCell brownText overflowWrapFont" th:text="${course.par}"></td>
+                            <td class="ownerTableCell brownText overflowWrapFont" th:text="${course.handicap}"></td>                            
                         </tr>
-                    </table><br>
-
+                    </table>
+                    <div class="pageDivider woodBackdrop"></div>  
                     <form method= "get" th:action="@{/tee-rific/admin/owners}">
-                        <button type="submit" class="button">Back to Owners</button>
+                        <button type="submit" class="button">Owners</button>
                     </form>
                 </div>
              </div>
         </div>
         <footer>
             <div class= "woodBackdrop footer">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
+                <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
+                <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
+                <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
+                <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
+                <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+            <script src="/js/socials.js" type="text/javascript"> </script>
         </footer>
     </div>
 </body>

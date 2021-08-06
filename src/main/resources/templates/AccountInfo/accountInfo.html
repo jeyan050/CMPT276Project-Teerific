@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/css/accountEdit.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Edit Account Information</title>
+</head>
+<body class="grassBackdrop">
+    <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop" th:each="user : ${userInfo}">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">Edit Account Infomation</div>   
+
+                    <!-- Display all the account information, allow for editing, have a button to submit the form for updating information -->
+                    <table>
+                        <tr>
+                            <td class="title">Username</td>
+                            <td class="value" th:text="${user.username}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/username/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Password</td>
+                            <td class="value" th:text="${user.password}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/password/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">First Name</td>
+                            <td class="value" th:text="${user.fname}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/fname/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Last Name</td>
+                            <td class="value" th:text="${user.lname}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/lname/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Email</td>
+                            <td class="value" th:text="${user.email}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/email/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title">Gender</td>
+                            <td class="value" th:text="${user.gender}"></td>
+                            <td class="editSpace" method= "get" th:action="${'/tee-rific/editAccount/gender/'+ user.username}">
+                                <button type="submit" class="button editButton">Edit</button>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <form method= "get" th:action="${'/tee-rific/account/' + user.username}">
+                        <button type="submit" class="button">Go Back</button>
+                    </form>
+                </div>
+             </div>
+        </div>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
+                <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
+                <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
+                <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
+                <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+        </footer>
+    </div>
+</body>
+<script src="/js/signup.js" type="text/javascript"> </script>
+<script src="/js/socials.js" type="text/javascript"> </script>
+</html>

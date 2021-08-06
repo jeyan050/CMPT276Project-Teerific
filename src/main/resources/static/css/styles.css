@@ -233,6 +233,27 @@ th {
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.fa-facebook-f:hover {
+    color: #4267B2;
+    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
+}
+
+.fa-twitter:hover {
+    color: #1DA1F2;
+    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
+}
+
+.fa-instagram:hover {
+    color: #C13584;
+    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
+}
+
+.fa-envelope:hover {
+    color: #DB4437;
+    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
+}
+
+
 .ownerLegendTable {
     width: 40%;
     margin-left: auto;
@@ -435,12 +456,30 @@ th {
     margin-bottom: 25px;
 }
 
-.rentalInventoryTable, .ownerEditAccountTable {
+.rentalInventoryTable, .ownerEditAccountTable, .adminUserTable, .adminCourseDetails {
     width: 80%;
     margin-top: 35px;
     margin-bottom: 35px;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* 100% / 7 Columns = 14.28% */
+.adminUserTableCell {
+    width: 14.28%;
+}
+
+.adminOwnerTable {
+    width: 100%;
+    padding: 0%;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.adminOwnerTableCell {
+    width: 8.5%;
 }
 
 .rentalInventoryTableCell {
@@ -673,6 +712,7 @@ th {
 
 
 .socialIcon {
+    cursor: pointer;
     margin: 20px 10px;
 }
 
