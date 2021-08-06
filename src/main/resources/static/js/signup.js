@@ -38,7 +38,7 @@ function checkInput(event) {
         return false;
     }
     else if(!(checkEmail.match(emailFormat))){
-        document.getElementById("errorE").innerHTML = "Invalid Email Adress: Please enter a valid Email";
+        document.getElementById("errorE").innerHTML = "Invalid Email Address: Please enter a valid Email";
     }
     else{
         submit = true;
