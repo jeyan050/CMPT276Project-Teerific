@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -35,19 +36,20 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Past Tournaments</div>
-                    <table>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <table class="tournamentsTable oswaldFont">
                         <thead>
                             <th>Name</th>
                             <th>Date</th>
                             <th>Club</th>
                         </thead>
                         <tr th:each="tournament : ${past_tournaments}">
-                            <!-- link to the tournament by clicking on name-->
                             <td> <a th:text="${tournament.name}" th:href="${'/tee-rific/tournamentResults/' + tournament.id + '/' + username}"> </a></td>
-                            <td th:text="${tournament.date}"></td>
-                            <td th:text="${tournament.clubName}"></td>               
+                            <td class="brownText" th:text="${tournament.date}"></td>
+                            <td class="brownText" th:text="${tournament.clubName}"></td>               
                         </tr>
                     </table>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="get" th:action="${'/tee-rific/tournament/' + username}">
                         <button type="submit" class = "button">Tournament Page</button>
                     </form>

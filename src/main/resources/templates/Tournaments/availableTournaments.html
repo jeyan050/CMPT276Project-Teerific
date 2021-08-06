@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -24,31 +25,32 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
+                      </div>
                     <div class="titleFont dynamicSize">Available Tournaments</div>
-                <table>
-                    <thead>
-                        <th>Name</th>
-                        <th>Date</th>
-                        <th>Club</th>
-                        <th>Game Mode</th>
-                        <th>Buy In</th>
-                    </thead>
+                <table class="tournamentsTable oswaldFont">
+                    <tr>
+                        <th class="availableTournamentsCell">Name</th>
+                        <th class="availableTournamentsCell">Date</th>
+                        <th class="availableTournamentsCell">Club</th>
+                        <th class="availableTournamentsCell">Game Mode</th>
+                        <th class="availableTournamentsCell">Buy In</th>
+                    </tr>
                     <tr th:each="tournament : ${tournaments}">
                         <!-- link to the tournament by clicking on name-->
-                        <td> <a th:text="${tournament.name}" th:href="${'/tee-rific/viewTournament/' + tournament.id + '/' + username}"> </a></td>
-                        <td th:text="${tournament.date}"></td>
-                        <td th:text="${tournament.clubName}"></td>
-                        <td th:text="${tournament.gameMode}"></td>
-                        <td th:text="${'$' + tournament.buyIn}"></td>                        
+                        <td class="availableTournamentsCell"> <a class="overflowHideText" th:text="${tournament.name}" th:href="${'/tee-rific/viewTournament/' + tournament.id + '/' + username}"> </a></td>
+                        <td class="availableTournamentsCell overflowWrapText brownText" th:text="${tournament.date}"></td>
+                        <td class="availableTournamentsCell overflowWrapText brownText" th:text="${tournament.clubName}"></td>
+                        <td class="availableTournamentsCell overflowWrapText brownText" th:text="${tournament.gameMode}"></td>
+                        <td class="availableTournamentsCell overflowWrapText brownText" th:text="${'$' + tournament.buyIn}"></td>                        
                     </tr>
                 </table>
+                <div class="pageDivider woodBackdrop"></div>
                 <form method="get" th:action="${'/tee-rific/tournament/' + username}">
-                    <button type="submit" class = "button">Tournament Page</button>
+                    <button type="submit" class = "button">Back</button>
                 </form>
                 </div>
             </div>

@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -24,7 +25,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <title>Publish TournamentResults</title>
+    <title>Publish Tournament Results</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,27 +35,51 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <!-- <div class="titleFont dynamicSize">Publish Results for <span th:text="${tournament.name}"></span>?</div> -->
-                    <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${WrapperParticipants}">
-                    <table>
-                        <thead>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Score</th>
-                        </thead>
-                        <tr th:each="participant, i : ${WrapperParticipants.participants}">
-                            <td th:text="${participant.id}"></td>
-                            <td th:text="${participant.username}"></td>
-                            <td th:text="${participant.first_name}"></td>
-                            <td th:text="${participant.last_name}"></td>
+                    <div class="titleFont dynamicSize">Publish Results</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div>
+                      <h3 class="overflowHideFont poppinsFont darkGreyFont" th:text="${tournamentName}"></h3>
+                    </div>
 
-                            <td> <input type="number" class="inputBox" th:field="*{participants[__${i.index}__].score}" placeholder="Score"></td> 
-                        </tr>
-                    </table>
-                  <input type="submit" class = "button" value="Publish Results">
-                  </form>
+                    <div>
+                      <form action="#" method="post" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' +  username}" th:object="${WrapperParticipants}">
+                        <table class="tournamentsTable oswaldFont">
+                            <thead>
+                                <th class="publishResultsCell">ID</th>
+                                <th class="publishResultsCell">Username</th>
+                                <th class="publishResultsCell">First Name</th>
+                                <th class="publishResultsCell">Last Name</th>
+                                <th class="publishResultsCell">Score</th>
+                            </thead>
+                            <tr th:each="participant, i : ${WrapperParticipants.participants}">
+                                <td class="publishResultsCell">
+                                  <div class="brownText overflowWrapText" th:text="${participant.id}"></div>
+                                  <input type="hidden" th:field="*{participants[__${i.index}__].id}">
+                                </td>
+                                <td class="publishResultsCell">
+                                  <div class="brownText overflowWrapText" th:text="${participant.username}"></div>
+                                  <input type="hidden" th:field="*{participants[__${i.index}__].username}">
+                                </td>
+                                <td class="publishResultsCell">
+                                  <div class="brownText overflowWrapText" th:text="${participant.fname}"></div>
+                                  <input type="hidden" th:field="*{participants[__${i.index}__].fname}">
+                                </td>
+                                <td class="publishResultsCell">
+                                  <div class="brownText overflowWrapText" th:text="${participant.lname}"></div>
+                                  <input type="hidden" th:field="*{participants[__${i.index}__].lname}">
+                                </td>
+                                <td class="publishResultsCell"> 
+                                  <div>
+                                    <input class="resultScore" type="number" th:field="*{participants[__${i.index}__].score}" placeholder="Score">
+                                  </div>
+                                </td> 
+                            </tr>
+                        </table>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <input type="submit" class = "button" value="Publish Results">
+                      </form>
+                    </div>
+                    
 
                 </div>
             </div>

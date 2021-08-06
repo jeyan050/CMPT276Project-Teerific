@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -34,8 +35,10 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Sucessfully signed up for the tournament! </div>
-                    <p>See you there!</p>
+                    <div class="titleFont dynamicSize">Signed Up</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div class="oswaldFont brownText">You Have Been Successfully Registered, See You there!</div>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="get" th:action="${'/tee-rific/tournament/' + username}">
                         <button type="submit" class = "button">Back to Tournaments</button>
                     </form>

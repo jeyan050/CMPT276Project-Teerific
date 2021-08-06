@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -27,74 +28,96 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
-                    <div>
+                    <div class="logoContainer">
                         <img th:src="@{/images/tee-rific.png}">
-                    </div>
-                    <div class="titleFont dynamicSize">Sign up for Tournament: '<span th:text="${tournament.name}"></span>' ?</div>
-                    <table>
+                      </div>
+                    <div class="titleFont dynamicSize">Details</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    
+                    <table class="tournamentsTable oswaldFont">
                         <tr>
-                            <th>Name</th>
-                            <td th:text="${tournament.name}"></td>
+                            <th class="tournamentDetailsCell">Name</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.name}"></td>
                         </tr>
                         <tr>
-                            <th>Date</th>
-                            <td th:text="${tournament.date}"></td>
+                            <th class="tournamentDetailsCell">Date</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.date}"></td>
                         </tr>
                         <tr>
-                            <th>Time</th>
-                            <td th:text="${tournament.time}"></td>
+                            <th class="tournamentDetailsCell">Time</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.time}"></td>
                         </tr>
                         <tr>
-                            <th>Club</th>
-                            <td th:text="${tournament.clubName}"></td>
+                            <th class="tournamentDetailsCell">Club</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.clubName}"></td>
                         </tr>
                         <tr>
-                            <th>Game Mode</th>
-                            <td th:text="${tournament.gameMode}"></td>
+                            <th class="tournamentDetailsCell">Game Mode</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.gameMode}"></td>
                         </tr>
                         <tr>
-                            <th>Buy In</th>
-                            <td th:text="${'$' + tournament.buyIn}"></td>
+                            <th class="tournamentDetailsCell">Buy In</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${'$' + tournament.buyIn}"></td>
                         </tr>
                         <tr>
-                            <th>First Prize</th>
-                            <td th:text="${tournament.firstPrize}"></td>
+                            <th class="tournamentDetailsCell">First Prize</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${'$' + tournament.firstPrize}"></td>
                         </tr>
                         <tr>
-                            <th>Second Prize</th>
-                            <td th:text="${tournament.secondPrize}"></td>
+                            <th class="tournamentDetailsCell">Second Prize</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${'$' + tournament.secondPrize}"></td>
                         </tr>
                         <tr>
-                            <th>Third Prize</th>
-                            <td th:text="${tournament.thirdPrize}"></td>
+                            <th class="tournamentDetailsCell">Third Prize</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${'$' + tournament.thirdPrize}"></td>
                         </tr>
                         <tr>
-                            <th>Age Requirement</th>
-                            <td th:text="${tournament.ageRequirement}"></td>
+                            <th class="tournamentDetailsCell">Age Requirement</th>
+                            <td class="tournamentDetailsCell brownText overflowWrapText" th:text="${tournament.ageRequirement}"></td>
                         </tr>
                         <tr>
-                            <th>Slots Remaining</th>
+                            <th class="tournamentDetailsCell overflowWrapText">Slots Remaining</th>
                             <!-- TODO: replace the "-0" with - participants.size()-->
                             <th:block th:with="remainingSlots=${tournament.participantSlots - tournament.numSignedUp}">
-                                <td th:text= "${remainingSlots}"></td>
+                                <td class="tournamentDetailsCell brownText overflowWrapText slots" th:text= "${remainingSlots}"></td>
                             </th:block>
                         </tr>
                     </table>
-                    <form method="get" th:action="${'/tee-rific/tournamentSignUp/' + tournamentId + '/' + username}">
+                    <div class="pageDivider woodBackdrop"></div>                    
+                    <table class="tournamentsTable oswaldFont">
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                        </tr>
+                        <tr th:each="participant : ${participants}">
+                            <td class="brownText overflowHideText accountName" th:text="${participant.username}"></td>
+                            <td class="brownText overflowHideText" th:text="${participant.fname}"></td>
+                            <td class="brownText overflowHideText" th:text="${participant.lname}"></td>
+                        </tr>
+                    </table>
+
+                    <div class="pageDivider woodBackdrop"></div>
+                    <form class="signup" method="get" th:action="${'/tee-rific/tournamentSignUp/' + tournamentId + '/' + username}">
                         <input type="submit" class = "button" value="Sign Up">
                     </form>
-                    <!-- if owner AND created the tournament -->
-                    <form method="get" th:action="${'/tee-rific/tournamentDelete/' + tournamentId + '/' + username}">
-                        <input type="submit" class = "button" value= "Delete Tournament">
+
+                    <!-- these values are all hidden and just used for variables in the JS file -->
+                    <span class="currentUser" th:text="${username}"></span>
+                    <span class="playerCount" th:text=${tournament.numSignedUp}></span>
+                    <span class="priority" th:text="${priority}"></span>
+
+
+                    <form class="delete" method="post" th:action="${'/tee-rific/tournamentDelete/' + tournamentId + '/' + username}">
+                        <input type="submit" class="button" value= "Delete">
                     </form>
-                    REMOVE AFTER TESTING, should only be on the creator page
-                    <form method="get" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' + username}">
-                        <input type="submit" class = "button" value= "Publish Results">
+                    <form class="publishResults" method="get" th:action="${'/tee-rific/publishTournamentResults/' + tournamentId + '/' + username}">
+                        <input type="submit" class="button" value= "Publish Results">
                     </form>
                     <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
-                        <button type="submit" class = "button">Tournaments Page</button>
+                        <button type="submit" class="button">Tournaments Page</button>
                     </form>
                 </div>
             </div>
@@ -118,7 +141,8 @@
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-            <script src="/js/socials.js" type="text/javascript"> </script>
+              <script src="/js/socials.js" type="text/javascript"> </script>
+              <script src="/js/tournamentDetails.js" type="text/javascript"></script>
         </footer>
     </div>
 

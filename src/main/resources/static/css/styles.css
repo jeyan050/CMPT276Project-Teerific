@@ -235,22 +235,18 @@ th {
 
 .fa-facebook-f:hover {
     color: #4267B2;
-    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
 }
 
 .fa-twitter:hover {
     color: #1DA1F2;
-    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
 }
 
 .fa-instagram:hover {
     color: #C13584;
-    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
 }
 
 .fa-envelope:hover {
     color: #DB4437;
-    cursor: url("https://img.icons8.com/ultraviolet/40/000000/circled.png") 20 20, auto;
 }
 
 
@@ -357,6 +353,14 @@ th {
     font-size: 2.5rem;
 }
 
+.tournamentsTable {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .ownerTable, .editAccountTable, .ownerScheduleTable, .timeSlotTable, .feedbackTable {
     width: 80%;
     margin-left: auto;
@@ -376,8 +380,12 @@ th {
     height: 100%;
 }
 
-.timeSlotTableCell{
+.timeSlotTableCell, .availableTournamentsCell, .publishResultsCell {
     width: 20%;
+}
+
+.resultScore {
+    width: 60px;
 }
 
 .ownerScheduleTable {
@@ -482,7 +490,7 @@ th {
     width: 8.5%;
 }
 
-.rentalInventoryTableCell {
+.rentalInventoryTableCell, .tournamentDetailsCell {
     width: 50%;
 }
 
@@ -517,7 +525,7 @@ th {
     white-space: nowrap;
 }
 
-.friendScorecardTableCell, .editCourseCharacteristicCell {
+.friendScorecardTableCell, .editCourseCharacteristicCell, .resultsTableCell {
     width: 33.3%;
 }
 
@@ -757,7 +765,7 @@ th {
     font-family: 'Poppins', sans-serif;
 }
 
-.overflowWrapFont {
+.overflowWrapFont, .overflowWrapText {
     overflow-wrap: anywhere;
 }
 

@@ -2710,7 +2710,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
           path = "/tee-rific/tournament/{username}"
   )
   public String tournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
-
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/tournament/" + request.getSession().getAttribute("username");
     }
@@ -2719,8 +2718,28 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       return "redirect:/";
     }
 
-    model.put("username", user);
-    return "Tournaments/tournament";
+    try(Connection connection = dataSource.getConnection())
+    {
+      //avoids breaking on available tournaments
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100), creator varchar(100), num_signed_up integer)");
+
+
+      //get the user priority
+      String getPrioritySQL = "SELECT priority FROM users WHERE username='" + user + "'";
+      ResultSet getPriority = stmt.executeQuery(getPrioritySQL);
+      String priority = "";
+      while(getPriority.next()){
+        priority = getPriority.getString("priority");
+      }
+
+      model.put("priority", priority);
+      model.put("username", user);
+      return "Tournaments/tournament";
+    } catch (Exception e){
+      model.put("message", e.getMessage());
+      return "LandingPages/error";
+    }
   }
 
   @GetMapping(
@@ -2739,26 +2758,60 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try(Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments");
-      ArrayList<Tournament> output = new ArrayList<Tournament>();
-      while (rs.next())
-      {
-        Tournament tournament = new Tournament();
-        tournament.setId(rs.getInt("id"));
-        tournament.setName(rs.getString("name"));
-        tournament.setDate(rs.getString("date"));
-        tournament.setTime(rs.getString("time"));
-        tournament.setParticipantSlots(rs.getInt("participant_slots"));
-        tournament.setBuyIn(rs.getInt("buy_in"));
-        tournament.setFirstPrize(rs.getString("first_prize"));
-        tournament.setSecondPrize(rs.getString("second_prize"));
-        tournament.setThirdPrize(rs.getString("third_prize"));
-        tournament.setAgeRequirement(rs.getString("age_requirement"));
-        tournament.setGameMode(rs.getString("game_mode"));
-        tournament.setClubName(rs.getString("club_name"));
-
-        output.add(tournament);
+      
+      //get the user priority
+      String getPrioritySQL = "SELECT priority FROM users WHERE username='" + user + "'";
+      ResultSet getPriority = stmt.executeQuery(getPrioritySQL);
+      String priority = "";
+      while(getPriority.next()){
+        priority = getPriority.getString("priority");
       }
+
+
+      ArrayList<Tournament> output = new ArrayList<Tournament>();
+      if(priority.equals("GOLFER")){
+        ResultSet rs = stmt.executeQuery("SELECT * FROM tournaments");
+
+        while (rs.next()){
+          Tournament tournament = new Tournament();
+          tournament.setId(rs.getInt("id"));
+          tournament.setName(rs.getString("name"));
+          tournament.setDate(rs.getString("date"));
+          tournament.setTime(rs.getString("time"));
+          tournament.setParticipantSlots(rs.getInt("participant_slots"));
+          tournament.setBuyIn(rs.getInt("buy_in"));
+          tournament.setFirstPrize(rs.getString("first_prize"));
+          tournament.setSecondPrize(rs.getString("second_prize"));
+          tournament.setThirdPrize(rs.getString("third_prize"));
+          tournament.setAgeRequirement(rs.getString("age_requirement"));
+          tournament.setGameMode(rs.getString("game_mode"));
+          tournament.setClubName(rs.getString("club_name"));
+
+          output.add(tournament);
+        }
+      }else if(priority.equals("OWNER")){
+        String getOwnerTournaments = "SELECT * FROM tournaments WHERE creator='" + user + "'";
+        ResultSet rs = stmt.executeQuery(getOwnerTournaments);
+
+        while (rs.next()){
+          Tournament tournament = new Tournament();
+          tournament.setId(rs.getInt("id"));
+          tournament.setName(rs.getString("name"));
+          tournament.setDate(rs.getString("date"));
+          tournament.setTime(rs.getString("time"));
+          tournament.setParticipantSlots(rs.getInt("participant_slots"));
+          tournament.setBuyIn(rs.getInt("buy_in"));
+          tournament.setFirstPrize(rs.getString("first_prize"));
+          tournament.setSecondPrize(rs.getString("second_prize"));
+          tournament.setThirdPrize(rs.getString("third_prize"));
+          tournament.setAgeRequirement(rs.getString("age_requirement"));
+          tournament.setGameMode(rs.getString("game_mode"));
+          tournament.setClubName(rs.getString("club_name"));
+
+          output.add(tournament);
+        }
+      }
+
 
       model.put("tournaments", output);
       Tournament tournament = new Tournament();
@@ -2778,7 +2831,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String createTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
   {
-
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
       return "redirect:/tee-rific/createTournament/" + request.getSession().getAttribute("username");
     }
@@ -2787,12 +2839,31 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       return "redirect:/";
     }
 
-    Tournament tournament = new Tournament();
+    try(Connection connection = dataSource.getConnection()){
+      Statement stmt = connection.createStatement();
+      
+      //get the course name
+      String getCourseNameSQL = "SELECT coursename FROM owners WHERE username='" + user + "'";
+      ResultSet getCourseName = stmt.executeQuery(getCourseNameSQL);
+      String courseName = "";
+      while(getCourseName.next()){
+        courseName = getCourseName.getString("coursename");
+      }
 
-    model.put("newTournament", tournament);
-    model.put("username", user);
-    return "Tournaments/createTournament";
+      System.out.println(courseName);
+
+      Tournament tournament = new Tournament();
+      tournament.setClubName(courseName);
+
+      // model.put("course", courseName);
+      model.put("newTournament", tournament);
+      model.put("username", user);
+      return "Tournaments/createTournament";
+  }catch (Exception e){
+    model.put("message", e.getMessage());
+    return "LandingPages/error";
   }
+}
 
 //TODO: make it so duplicate tournament names cannot be created
   @PostMapping(
@@ -2868,7 +2939,31 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         tournament.setNumSignedUp(rs.getInt("num_signed_up"));
       }
 
-  
+      int tournamentID = tournament.getId();
+      //TODO: @ZACH there must be a better way to do it then your implementation with all the additional tables in the DB? -- Mike
+      String getParticipantsSQL = "SELECT * FROM tournament_" + tournamentID + "_participants";
+      ResultSet getParticipants = stmt.executeQuery(getParticipantsSQL);
+
+      ArrayList<TournamentParticipant> participants = new ArrayList<TournamentParticipant>();
+
+      while(getParticipants.next()){
+        TournamentParticipant p = new TournamentParticipant();
+        p.setFname(getParticipants.getString("first_name"));
+        p.setLname(getParticipants.getString("last_name"));
+        p.setUsername(getParticipants.getString("username"));
+
+        participants.add(p);
+      }
+
+      String getPriority = "SELECT priority FROM users WHERE username='" + user + "'";
+      ResultSet priorityOfUser = stmt.executeQuery(getPriority);
+      String priority = "";
+      while(priorityOfUser.next()){
+        priority = priorityOfUser.getString("priority");
+      }
+
+      model.put("participants", participants);
+      model.put("priority", priority);
       model.put("tournament", tournament);
       model.put("username", user);
       model.put("tournamentId", tournamentId);
@@ -2911,8 +3006,11 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try (Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
+      
       stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
-      return "redirect:/tee-rific/availableTournaments/" + user;
+      model.put("username", user);
+
+      return "redirect://tee-rific/tournamentDelete/" + tournamentId + "/" + user;
     } catch (Exception e)
     {
       model.put("message", e.getMessage());
@@ -2974,13 +3072,14 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String pastTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/pastTournament/" + request.getSession().getAttribute("username");
-    }
+    //TODO: uncomment
+    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+    //   return "redirect:/tee-rific/pastTournament/" + request.getSession().getAttribute("username");
+    // }
 
-    if(null == (request.getSession().getAttribute("username"))) {
-      return "redirect:/";
-    }
+    // if(null == (request.getSession().getAttribute("username"))) {
+    //   return "redirect:/";
+    // }
 
     try(Connection connection = dataSource.getConnection())
     {
@@ -3044,9 +3143,17 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         participants.add(participant);
       }
 
+      String getTournamentNameSQL = "SELECT name FROM tournaments WHERE id='" + tournamentId + "'";
+      ResultSet getTournamentName = stmt.executeQuery(getTournamentNameSQL);
+      String name = "";
+      while(getTournamentName.next()){
+        name = getTournamentName.getString("name");
+      }
+
       WrapperTournamentParticipants wrapper_participants = new WrapperTournamentParticipants();
       wrapper_participants.setParticipants(participants);
 
+      model.put("tournamentName", name);
       model.put("WrapperParticipants", wrapper_participants);
       model.put("username", user);
       model.put("tournamentId", tournamentId);
@@ -3131,7 +3238,17 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
 
       output.add(participant);
     }
-    Collections.sort(output);    
+    Collections.sort(output);   
+    
+    //get the name for the results page
+    String getTournamentNameSQL = "SELECT name FROM past_tournaments WHERE id='" + tournamentId + "'";
+    ResultSet getTournamentName = stmt.executeQuery(getTournamentNameSQL);
+    String name = "";
+    while(getTournamentName.next()){
+      name = getTournamentName.getString("name");
+    }
+    
+    model.put("tournamentName", name);
     model.put("participants", output);
     model.put("username", user);
     model.put("tournamentId", tournamentId);

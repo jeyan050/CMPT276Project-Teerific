@@ -45,11 +45,15 @@
                   <a class="nav-link" th:href="${'/tee-rific/golfCourseDetails/' + username}">Course Details</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account Details</a>
+                  <a class="nav-link" th:href="${'/tee-rific/tournament/' + username}">Tournaments</a>
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link" th:href="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">View Feedback</a>
+                  <a class="nav-link" th:href="${'/tee-rific/account/' + username}">Account</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" th:href="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">Feedback</a>
                 </li>
 
                   <li class="nav-item">
@@ -71,13 +75,17 @@
                     <button id="editCourseButton" class="homePageButton" type="submit">Course Details</button>
                 </form>
 
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/tournament/' + username}">
+                  <button id="tournamentsButton" class="homePageButton" type="submit">Tournaments</button>
+                </form> 
+
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/account/' + username}">
                     <button id="editOwnerButton" class="homePageButton" type="submit">Account Details</button>
                 </form>
 
-            <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">
-                <button id="feedbackOwnerButton" class="homePageButton" type="submit">View Feedback</button>
-            </form>
+                <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/owner/feedback/' + username + '/' + courseName}">
+                  <button id="feedbackOwnerButton" class="homePageButton" type="submit">View Feedback</button>
+                </form>
 
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                   <button id="aboutUsButton" class="homePageButton" type="submit">About Us</button>

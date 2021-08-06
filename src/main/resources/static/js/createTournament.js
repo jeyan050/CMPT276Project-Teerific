@@ -1,0 +1,1 @@
+document.querySelectorAll("#hideByDefault")[0].style.display = "none";

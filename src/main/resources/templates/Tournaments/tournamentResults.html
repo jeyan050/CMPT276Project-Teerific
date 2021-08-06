@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -34,19 +35,25 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Results <!-- from <span th:text="${tournament.name}"></span> --> </div>
-                    <table id="ranking">
+                    <div class="titleFont dynamicSize">Results</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div>
+                      <h3 class="overflowHideFont poppinsFont darkGreyFont" th:text="${tournamentName}"></h3>
+                    </div>
+
+                    <table id="ranking" class="tournamentsTable oswaldFont">
                         <thead>
-                            <th>Placement</th>
-                            <th>Name</th>
-                            <th>Score</th>
+                            <th class="resultsTableCell">Placement</th>
+                            <th class="resultsTableCell">Name</th>
+                            <th class="resultsTableCell">Score</th>
                         </thead>
                         <tr th:each="participant, i: ${participants}">
-                          <td th:text="${i.count}"></td>
-                          <td th:text="${participant.username}"></td>
-                          <td th:text="${participant.score}"></td>
+                          <td class="brownText" th:text="${i.count}"></td>
+                          <td class="brownText overflowHideText" th:text="${participant.username}"></td>
+                          <td class="brownText" th:text="${participant.score}"></td>
                         </tr>
                     </table>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="get" th:action="${'/tee-rific/pastTournaments/' + username}">
                         <button type="submit" class = "button">Past Tournaments</button>
                     </form>
@@ -92,6 +99,7 @@
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
               <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
+              <script src="/js/tournamentResults.js" type="text/javascript"></script>
         </footer>
     </div>
     
