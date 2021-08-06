@@ -808,7 +808,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       } else {
         // Update user part of account
         if (column.equals("username") || column.equals("password") || column.equals("fname") || column.equals("lname") || column.equals("email") || column.equals("gender")){
-          
+          System.out.println("test");
           if (column.equals("fname")){         // This if and else if are for first name and last name, since its different label on owner db
             String updateUserInfo = "UPDATE owners SET firstname='" + value + "' WHERE username='" + user + "'";
             stmtOwner.executeUpdate(updateUserInfo);
@@ -831,12 +831,11 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       if(column.equals("username")){
         changedUsername = true;
 
+        userCreateScorecardsTable(connection);
         // Update scorecards
         Statement updateScoreCards = connection.createStatement();
         String changeScorecard = "UPDATE scorecards SET username='" + value + "' WHERE username='" + user + "'";
         updateScoreCards.executeUpdate(changeScorecard);  
-
-        userCreateScorecardsTable(connection);
       }
 
       return "redirect:/tee-rific/editAccount/accountUpdatedSuccessfully/"+user+"";
