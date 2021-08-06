@@ -30,38 +30,45 @@
                     <img th:src="@{/images/tee-rific.png}">
                 <div class="titleFont dynamicSize">Golf Course Rental</div>
 
-                    <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">    
+                    <form onsubmit="return submitForm();" action="#" method="post" th:action="${'/tee-rific/rentEquipment/' + courseName +'/'+ gameID +'/'+ username}" th:object="${cart}">    
                         <table class="rentalTable oswaldFont">
                             <tr>
                                 <th>
                                     <div class="label">Balls</div>
+                                    <div><h6 class="stocks">Quantity Remaining: <h6 class="stockValues" th:text="${stock.numBalls}"></h6></h6></div>
                                 </th>
                                 <td>
-                                    <input class="rentalInput" type="number" th:field=*{numBalls}>
+                                    <input class="rentalInput" type="number" th:field=*{numBalls} value="0">
+                                    <p class="error"></p>
                                 </td>
                             </tr>
                             <tr>
                                 <th>
                                     <div class="label">Carts</div>
+                                    <div><h6 class="stocks">Quantity Remaining: <h6 class="stockValues" th:text="${stock.numCarts}"></h6></h6></div>
                                 </th>
                             <td>
-                                    <input class="rentalInput" type="number" th:field=*{numCarts}>
+                                    <input class="rentalInput" type="number" th:field=*{numCarts} value="0">
+                                    <p class="error"></p>
                             </td>
                             </tr>
                             <tr>
                                 <th>
                                     <div class="label">Clubs</div>
+                                    <div><h6 class="stocks">Quantity Remaining: <h6 class="stockValues" th:text="${stock.numClubs}"></h6></h6></div>
+                                    
                                 </th>
                                 <td>
-                                    <input class="rentalInput" type="number" th:field=*{numClubs}>
+                                    <input class="rentalInput" type="number" th:field=*{numClubs} value=0>
+                                    <p class="error"></p>
                                 </td>
                             </tr>
                         </table>
 
-                        <button type="submit" class="button">Checkout</button>
+                        <button id="formSub" type="submit" class="button">Checkout</button>
                     </form>
                 
-                <form method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username}">
+                <form method="get" th:action="${'/tee-rific/booking/' + courseName +'/'+ gameID +'/'+ username + '/success'}">
                     <button type="submit" class = "button">Back</button>
                 </form>
                 </div>
@@ -88,10 +95,10 @@
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
 
               <script th:src="@{/js/rentEquipment.js}" type="text/javascript"> </script>
-            <script src="/js/socials.js" type="text/javascript"> </script>
+              <script src="/js/socials.js" type="text/javascript"> </script>
+              <script src="/js/rentEquipment.js" type="text/javascript"> </script>
         </footer>
     </div>
-    
 </body>
 
 </html>
