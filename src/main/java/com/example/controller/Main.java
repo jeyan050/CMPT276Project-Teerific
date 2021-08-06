@@ -2751,7 +2751,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
-
+//TODO: make it so tournaments date and times cannot be set to the past
   @GetMapping( // TODO: make sure the user cannot leave feilds blank
           path = "/tee-rific/createTournament/{username}"
   )
