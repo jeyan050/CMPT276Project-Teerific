@@ -3387,7 +3387,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
     }
     try (Connection connection = dataSource.getConnection()){
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(50), participant_slots integer, buy_in integer, first_prize varchar(30), second_prize varchar(30), third_prize varchar(30), age_requirement integer, game_mode varchar(30), club_name varchar(50))");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100), creator varchar(100), num_signed_up integer)");
       ResultSet listT = stmt.executeQuery("SELECT * FROM tournaments IF ");
       ArrayList<Tournament> output = new ArrayList<Tournament>();
       while (listT.next()) {
