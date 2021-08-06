@@ -98,14 +98,25 @@
   </section>
         <footer>
             <div class= "woodBackdrop footer">
-                <i class="socialIcon fab fa-facebook-f"></i>
-                <i class="socialIcon fab fa-twitter"></i>
-                <i class="socialIcon fab fa-instagram"></i>
-                <i class="socialIcon fas fa-envelope"></i>
+                <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
+                <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
+                <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
+                <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
+                    <button type="submit"></button>
+                </form>
+                <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
+                <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
                 <p>© Copyright 2021 Tee-rific</p>
               </div>
               <script src="/js/buttonEffect.js" type="text/javascript"> </script>
               <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
+            <script src="/js/socials.js" type="text/javascript"> </script>
         </footer>
     </div>
 </body>
