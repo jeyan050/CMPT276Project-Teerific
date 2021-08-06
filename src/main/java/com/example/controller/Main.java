@@ -3120,10 +3120,10 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
     model.put("past_tournament", past_tournament);
 
     rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants");
-    ArrayList<TournamentParticipant> output = new ArrayList<TournamentParticipant>();
+    ArrayList<ComparableParticipant> output = new ArrayList<ComparableParticipant>();
     while (rs.next())
     {
-      TournamentParticipant participant = new TournamentParticipant();
+      ComparableParticipant participant = new ComparableParticipant();
       participant.setUsername(rs.getString("username"));
       participant.setFname(rs.getString("first_name"));
       participant.setLname(rs.getString("last_name"));
@@ -3131,10 +3131,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
 
       output.add(participant);
     }
-
-//TODO: sort output by score
-// https://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
-    
+    Collections.sort(output);    
     model.put("participants", output);
     model.put("username", user);
     model.put("tournamentId", tournamentId);

@@ -35,14 +35,14 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Results <!-- from <span th:text="${tournament.name}"></span> --> </div>
-                    <table>
+                    <table id="ranking">
                         <thead>
                             <th>Placement</th>
                             <th>Name</th>
                             <th>Score</th>
                         </thead>
-                        <tr th:each="participant: ${participants}">
-                          <td></td>
+                        <tr th:each="participant, i: ${participants}">
+                          <td th:text="${i.count}"></td>
                           <td th:text="${participant.username}"></td>
                           <td th:text="${participant.score}"></td>
                         </tr>
