@@ -3053,15 +3053,15 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
     tournament.setDate(rs.getString("date"));
     tournament.setClubName(rs.getString("club_name"));
 
-    System.out.println("break_1");
-    System.out.println(tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName());
+    // System.out.println(tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName());
     stmt.executeUpdate("INSERT INTO past_tournaments (id, name, date, club_name) VALUES ('" + tournament.getId() + "','" + tournament.getName() + "','" + tournament.getDate() + "','" +  tournament.getClubName() + "')");
-    System.out.println("break_2");
-    for (int i = 0; i < wrapper_participants.getParticipants().size(); i++) //TODO: curently only grabs index 0 for some reason
+    for (int i = 0; i < wrapper_participants.getParticipants().size(); i++)
     {
-      System.out.println("break:" + i);
-      Integer score = wrapper_participants.getParticipants().get(i).getScore();
-      stmt.execute("UPDATE tournament_"+tournamentId+"_participants SET score="+ score +" WHERE id= " + i+1); 
+      // System.out.println("break:" + i);
+      Integer score = wrapper_participants.getParticipants().get(i).getScore(); //this gets the right values
+      // System.out.print(score);
+      // System.out.println(i+1);
+      stmt.execute("UPDATE tournament_"+tournamentId+"_participants SET score="+ score +" WHERE id= " + (i+1)); 
     }
     //stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
     return "redirect:/tee-rific/pastTournaments/" + user;    
