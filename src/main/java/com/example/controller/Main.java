@@ -3092,7 +3092,7 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
 }
 
 @GetMapping(
-  path = "/tee-rific/tournamentResults/{tournamentId}/{username}"
+  path = "/tee-rific/tournamentResults/{tournamentId}/{username}" //TODO: make the 1st, 2nd, and 3rd, rows colored gold, silver and bronze
 )
 public String tournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request)
 {
