@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <title>Tournament Sign up</title>
+    <title>Sign Up Error</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -34,37 +34,26 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Sucessfully signed up for the tournament! </div>
-                    <p>See you there!</p>
-                    <form method="get" th:action="${'/tee-rific/tournament/' + username}">
-                        <button type="submit" class = "button">Back to Tournaments</button>
+                    <div class="titleFont dynamicSize">Error in signing up </div>
+                    <p>This tournament is already full. Sorry!</p>
+                    <form method="get" th:action="${'/tee-rific/availableTournaments/' + username}">
+                        <button type="submit" class = "button">Back to Available Tournaments</button>
                     </form>
                 </div>
             </div>
         </div>
-    <footer>
-        <div class= "woodBackdrop footer">
-
-            <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
-            <form method= "get" th:action="@{/redirect/Facebook}" name = "facebookButton" id="facebookButton">
-                <button type="submit"></button>
-            </form>
-            <i class="socialIcon fab fa-twitter" onclick="getTwitter()"></i>
-            <form method= "get" th:action="@{/redirect/Twitter}" name = "twitterButton" id="twitterButton">
-                <button type="submit"></button>
-            </form>
-            <i class="socialIcon fab fa-instagram" onclick="getInstagram()"></i>
-            <form method= "get" th:action="@{/redirect/Instagram}" name = "instagramButton" id="instagramButton">
-                <button type="submit"></button>
-            </form>
-            <i class="socialIcon fas fa-envelope" onclick="getEmail()"></i>
-            <a id = "emailAnchor" th:href="@{mailto:teerificbusiness@gmail.com}"></a>
-            <p>© Copyright 2021 Tee-rific</p>
-          </div>
-          <script src="/js/buttonEffect.js" type="text/javascript"> </script>
-        <script src="/js/socials.js" type="text/javascript"> </script>
-        <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
-    </footer>
+        <footer>
+            <div class= "woodBackdrop footer">
+                <i class="socialIcon fab fa-facebook-f"></i>
+                <i class="socialIcon fab fa-twitter"></i>
+                <i class="socialIcon fab fa-instagram"></i>
+                <i class="socialIcon fas fa-envelope"></i>
+                <p>© Copyright 2021 Tee-rific</p>
+              </div>
+              <script src="/js/buttonEffect.js" type="text/javascript"> </script>
+              <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
+        </footer>
     </div>
+    
 </body>
 </html>

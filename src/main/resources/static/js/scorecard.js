@@ -40,10 +40,14 @@ function submitForm(event){
             document.querySelector(".errorMessage").style.display = "initial";
             document.querySelector(".errorMessage").innerHTML = "Invalid Entry, Please Try Again";
         }else{
-            event.target.parentElement.submit();
+            document.querySelectorAll(".update")[0].parentElement.submit();
         }
     } else {
-        event.target.parentElement.submit();
+        if(event.target.id == "setActivity"){       //if its the complete button
+            document.querySelectorAll(".update")[0].parentElement.submit();
+        }else{
+            event.target.parentElement.submit();
+        }
     }
 }//submitForm()
 
@@ -126,12 +130,15 @@ function updateScorecard(event){
 //initial startup procedures to set the status and hide buttons
 function startUp(){
     var status = (document.querySelectorAll("#scorecardStatus")[0].value);
+    document.querySelectorAll(".update")[0].style.display = "none";     //hide the update button in the form
+
     if(status == "false"){
         //hide update, complete, and cancel buttons
         document.querySelectorAll(".update")[0].style.display = "none";
         document.querySelectorAll(".complete")[0].style.display = "none";
         document.querySelectorAll(".cancel")[0].style.display = "none";
         document.querySelectorAll(".inviteButton")[0].style.display = "none";
+        document.querySelectorAll(".decoyUpdate")[0].style.display = "none";
 
         //have a status message for the game
         document.querySelectorAll("#completeGame")[0].style.display = "initial";
@@ -174,6 +181,20 @@ function setActivity(){
         updateScorecard(event);
     })
 }//setActivity()
+
+
+function setUpDecoyButtons(){
+    //decoy button for updating the scorecard (real button hidden in form)
+    document.querySelectorAll(".decoyUpdate")[0].addEventListener("click", function(event){
+        updateScorecard(event);
+    })
+    
+    //decoy button for completing the scorecard (real button hidden in form)
+    document.querySelectorAll(".complete")[0].addEventListener("click", function(event){
+        document.querySelectorAll("#scorecardStatus")[0].value = false;
+        updateScorecard(event);
+    })
+}//setUpDecoyButtons()
 
 
 //set holes and score columns in friends tables
@@ -300,9 +321,8 @@ toggleInviteButton();
 sendInviteButton();
 showFriends();
 hideFriends();
+setUpDecoyButtons();
 initial();
-
-
 
 
 //hide the friends on click of collapse button

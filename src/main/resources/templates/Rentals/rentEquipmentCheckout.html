@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -29,10 +30,19 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <table>
-                        <tr><td>Quantity Balls:</td><td th:text="${userCart.numBalls}"></td></tr>
-                        <tr><td>Quantity Carts:</td><td th:text="${userCart.numCarts}"></td></tr>
-                        <tr><td>Quantity Clubs:</td><td th:text="${userCart.numClubs}"></td></tr>
+                    <table class="rentalTable oswaldFont">
+                        <tr>
+                            <th>Quantity Balls:</th>
+                            <td class="brownFont spacer" th:text="${userCart.numBalls}"></td>
+
+                        <tr>
+                            <th>Quantity Carts:</th>
+                            <td class="brownFont spacer" th:text="${userCart.numCarts}"></td>
+                        </tr>
+                        <tr>
+                            <th>Quantity Clubs:</th>
+                            <td class="brownFont spacer" th:text="${userCart.numClubs}"></td>
+                        </tr>
                     </table>
                     <form action="#" method="post" th:action="${'/tee-rific/rentEquipment/checkout/' + courseName +'/'+ gameID +'/'+ username}">
                         <button type="submit" class="button">Confirm Selection</button>

@@ -13,6 +13,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -20,63 +21,67 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-      <!-- bookstrap scripts -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- bookstrap scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <title>Account</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
+                  <div class="logoContainer">
                     <img th:src="@{/images/tee-rific.png}">
-                    <div class="titleFont dynamicSize"><span th:text="${username}"></span>'s Account</div>
+                  </div>
+                    <div class="titleFont dynamicSize" th:text="${username}"></div>
+                    <span>
+                      <h2 class="poppinsFont darkGreyFont biggerFont">Account</h2>
+                    </span>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form action="#" method="get" th:action="${'/tee-rific/editAccount/' + username}">
-                        <button type="submit" class="button" value="Edit Account">Edit Account</button>
+                        <button type="submit" class="button" value="Edit Account">Edit</button>
                     </form>         
                     <form onsubmit="return checkDelete()" action="#" method="post" th:action="${'/tee-rific/delete/' + username}">
-                        <button type="submit" id="deleteAccount" class="button" value="Delete Account">Delete Account</button>
-                        <!-- display a pop up asking the user if they are sure -->
-                        <!-- Can probably use JS for this feature -->
+                        <button type="submit" id="deleteAccount" class="button" value="Delete Account">Delete</button>
                     </form>
                     <form method="get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class="button">Go Back</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
             </div>
         </div>
 
          <!-- carousel code -->
-  <section class="bannerBackdrop">
-    <div id="testimonial-carousel" class="carousel slide" data-ride="false">
-      <div class="carousel-inner">
-        <div class="carousel-item active container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </a>
-      <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </a>
-    </div>
-  </section>
+        <section class="bannerBackdrop">
+          <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+            <div class="carousel-inner">
+              <div class="carousel-item active container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </a>
+          </div>
+        </section>
 
         <footer>
             <div class= "woodBackdrop footer">

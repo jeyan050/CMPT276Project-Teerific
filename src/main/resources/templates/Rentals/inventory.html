@@ -13,6 +13,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -20,27 +21,12 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Owner View Inventory</title>
+    <!-- bookstrap scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <style>
-        /* WHY THIS NO WORK */
-        table {
-            border: solid 4pt black;
-            border-collapse: collapse;
-            margin: 3%;
-            font-family: 'Akaya Kanadaka', cursive;
-        }
-
-        td {
-            border: solid 2pt black;
-            padding: 2%;
-        }
-
-        th {
-            font-size: 15pt;
-            font-weight: bold;
-        }
-    </style>
+    <title>View Inventory</title>
 </head>
 <body class="grassBackdrop">
     <div class="woodBackdrop border">
@@ -48,29 +34,60 @@
             <div>
                 <img th:src="@{/images/tee-rific.png}">
             </div>
-
-            <h1>Rental Inventory</h1>
-            <table>
+            <div class="titleFont dynamicSize">Rental Inventory</div>
+            <div class="pageDivider woodBackdrop"></div>
+            <table class="rentalInventoryTable oswaldFont">
                 <tr>
-                    <td>Item Name</td><td>Stock</td>
+                    <th class="rentalInventoryTableCell">Item</th>
+                    <th class="rentalInventoryTableCell">Count</th>
                 </tr>
                 <tr th:each="item: ${eqsArray}">
-                    <td th:text="${item.itemName}"></td>
-                    <td th:text="${item.stock}"></td>
+                    <td class="rentalInventoryTableCell brownText" th:text="${item.itemName}"></td>
+                    <td class="rentalInventoryTableCell brownText" th:text="${item.stock}"></td>
                 </tr>
             </table>
 
+            <div class="pageDivider woodBackdrop"></div>
+
             <form method="get" th:action="${'/tee-rific/golfCourseDetails/inventory/update/' + username}">
-                <button type="submit" class = "button">Update Stock</button>
+                <button type="submit" class = "button">Update</button>
             </form>
             <form method="get" th:action="${'/tee-rific/golfCourseDetails/' + username}">
                 <button type="submit" class = "button">Back</button>
             </form>
             <form method="get" th:action="${'/tee-rific/home/' + username}">
-                <button type="submit" class = "button">Go to the Home Page</button>
+                <button type="submit" class = "button">Home</button>
             </form>
         </div>
     </div>
+    <!-- carousel code -->
+    <section class="bannerBackdrop">
+        <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+          <div class="carousel-inner">
+            <div class="carousel-item active container-fluid">
+              <h2 class="testimonial-text bannerText"></h2>
+            </div>
+            <div class="carousel-item container-fluid">
+              <h2 class="testimonial-text bannerText"></h2>
+            </div>
+            <div class="carousel-item container-fluid">
+              <h2 class="testimonial-text bannerText"></h2>
+            </div>
+            <div class="carousel-item container-fluid">
+              <h2 class="testimonial-text bannerText"></h2>
+            </div>
+            <div class="carousel-item container-fluid">
+              <h2 class="testimonial-text bannerText"></h2>
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </a>
+          <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </a>
+        </div>
+      </section>
       <footer>
         <div class= "woodBackdrop footer">
 
@@ -92,6 +109,7 @@
           </div>
           <script src="/js/buttonEffect.js" type="text/javascript"> </script>
           <script src="/js/socials.js" type="text/javascript"> </script>
+          <script src="/js/bannerGolfPuns.js" type="text/javascript"></script>
     </footer>
 </body>
 </html>

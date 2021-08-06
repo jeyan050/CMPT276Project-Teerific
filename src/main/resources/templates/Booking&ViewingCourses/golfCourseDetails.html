@@ -12,6 +12,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -29,22 +30,25 @@
 <body class="grassBackdrop">
     <div class="pageWrap">
         <div class="content">
-            <div class="woodBackdrop border content">
+            <div class="woodBackdrop expandedBorder border content">
                 <div class="sandBackdrop">
-                    <div>
-                        <img th:src="@{/images/tee-rific.png}">
-                    </div>
+                  <div class="logoContainer">
+                    <img th:src="@{/images/tee-rific.png}">
+                </div>
                     <div class="titleFont dynamicSize">Course Details</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <div><h2 class="oswaldFont brownText">Click On The Cell To Change Value</h2></div>
+                  
                     <form action="#" method="post" th:action="${'/tee-rific/golfCourseDetails/' + username}" th:object="${WrapperHoles}">
-                        <table class="ownerTable">
+                        <table class="ownerTable oswaldFont">
                             <tr>
                                 <th class="ownerTableCell">Number</th>
                                 <th class="ownerTableCell">Yardage</th>
                                 <th class="ownerTableCell">Par</th>
                                 <th class="ownerTableCell">Handicap</th>
                             </tr>
-                            <tr th:each="hole, i: ${WrapperHoles.holes}">
-                                <td class="ownerTableCell">
+                            <tr class="brownText" th:each="hole, i: ${WrapperHoles.holes}">
+                                <td class="ownerTableCell ">
                                     <div th:text="${hole.holeNumber}" class="ownerTableDisplayCell"></div>
                                     <input type="hidden" th:field="*{holes[__${i.index}__].holeNumber}" >
                                 </td>
@@ -59,7 +63,7 @@
                                     
                                 </td>
                                 <td class="ownerTableCell editHandicap">
-                                    <div th:text="${hole.handicap}"></div>
+                                    <div th:text="${hole.handicap}" class="ownerTableDisplayCell"></div>
                                     <input type="text" class="ownerTableInputCell" th:field="*{holes[__${i.index}__].handicap}">
                                 </td>
                             </tr>
@@ -77,39 +81,39 @@
                         <button  type="submit" class="button">View Rental Inventory</button>
                     </form>
                     <form  method= "get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class="button">Home Page</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
             </div>
         </div>
         <!-- carousel code -->
-  <section class="bannerBackdrop">
-    <div id="testimonial-carousel" class="carousel slide" data-ride="false">
-      <div class="carousel-inner">
-        <div class="carousel-item active container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-        <div class="carousel-item container-fluid">
-          <h2 class="testimonial-text bannerText"></h2>
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </a>
-      <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </a>
-    </div>
-  </section>
+        <section class="bannerBackdrop">
+          <div id="testimonial-carousel" class="carousel slide" data-ride="false">
+            <div class="carousel-inner">
+              <div class="carousel-item active container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+              <div class="carousel-item container-fluid">
+                <h2 class="testimonial-text bannerText"></h2>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#testimonial-carousel" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a class="carousel-control-next" href="#testimonial-carousel" role="button" data-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </a>
+          </div>
+        </section>
         <footer>
             <div class= "woodBackdrop footer">
                 <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>

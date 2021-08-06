@@ -15,6 +15,10 @@
     background-color: #338507;
 }
 
+.deepGreenFont {
+    color: #338507;
+}
+
 .shrek {
     background-color: #A3A847;
 }
@@ -58,9 +62,10 @@ div {
 }
 
 
-table, th, td {
+table, th, td, .wrapRow {
     border: 2.5px solid #5e3e07;
 }
+
 
 
 th {
@@ -68,17 +73,6 @@ th {
     background-image: url("https://www.transparenttextures.com/patterns/black-felt.png");
     font-weight: bold;
 }
-
-.bookingHeader {
-    width: 30%;
-    padding: 2%;
-}
-
-.bookingCell {
-    width: 70%;
-    padding: 2%;
-}
-
 
 
 .pageDivider {
@@ -239,21 +233,36 @@ th {
 /* CLASSES (MULTIPLE USE) */
 /**************************/
 
+.ownerLegendTable {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.ownerLegendTableCell{
+    padding: 5px;
+}
+
+
 .bookingTable {
     margin-top: 30px;
     margin-bottom: 30px;
     width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.bookingCell {
+    width: 70%;
+    padding: 2%;
 }
 
 .bookingHeader {
     min-width: 60px;
+    width: 30%;
     padding: 2%;
-}
-
-.bookingCell {
-
 }
 
 .bookingField {
@@ -261,14 +270,35 @@ th {
     margin: 0px;
 }
 
+.bookingDateInput {
+    max-width: 50%;
+    margin: 0px;
+    overflow: hidden;
+}
+
 .link {
     text-decoration: underline;
 }
 
 .link:hover {
-    background-color: #338507;
+    color: #338507;
     background-image: none;
 }
+
+.linkText{
+    color: black;
+}
+
+
+.linkText:hover{
+    color: #338507;
+}
+
+.editAccountLink:hover {
+    color: #338507;
+}
+
+
 
 .courseDetailsContainer {
     width: 80%;
@@ -297,15 +327,95 @@ th {
     font-weight: bold;
 }
 
+.errorText {
+    font-weight: bold;
+    color: red;
+}
+
 .biggerFont {
     font-size: 2.5rem;
 }
 
-.ownerTable {
+.ownerTable, .editAccountTable, .ownerScheduleTable, .timeSlotTable, .feedbackTable {
     width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
 }
 
-.ownerTableCell{
+.imageTable {
+    height: 30vh;
+    width: 30vh;
+    margin: auto;
+}
+
+.imageTableCell {
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.timeSlotTableCell{
+    width: 20%;
+}
+
+.ownerScheduleTable {
+    border: 2.5px solid black;
+}
+
+.ownerScheduleTableCellFull {
+    background-color: red;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCellAvailable {
+    background-color: #D3CA16;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCellEmpty{
+    background-color: green;
+    background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+    font-weight: bold;
+    color: #ECEBEA;
+}
+
+.ownerScheduleTableCell {
+    border: 2.5px solid black;
+}
+
+.ownerScheduleTableLink {
+    color: #ECEBEA;
+}
+
+.editAccountTableNarrowScreen, .wrapRow {
+    width: 80%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapRow {
+    margin-bottom: 20px;
+}
+
+
+.editAccountTableCell, .feedbackTableCell {
+    width: 50%;
+    padding: 3%;
+}
+
+.textBox {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.ownerTableCell, .gameListCell {
     width: 25%;
 }
 
@@ -316,17 +426,49 @@ th {
 .ownerTableInputCell, .scorecardTableInputCell {
     width: 90%;
     display: none;
-    border-radius: 10%;
+    border-radius: 1%;
 }
 
-.scorecardTable {
-    width: 90%;
+.scorecardTable, .gameListTable {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.rentalInventoryTable, .ownerEditAccountTable {
+    width: 80%;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rentalInventoryTableCell {
+    width: 50%;
+}
+
+.ownerEditAccountTableCellOuter {
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ownerEditAccountTableCellInner {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rentalTable {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
     margin-top: 15px;
     margin-bottom: 25px;
 }
 
 .friendScorecardTable {
-    width: 45%;
+    width: 100%;
 }
 
 .friendsNameCell {
@@ -336,8 +478,13 @@ th {
     white-space: nowrap;
 }
 
-.scorecardTableCell, .friendScorecardTableCell {
-    width: 15%;
+.friendScorecardTableCell, .editCourseCharacteristicCell {
+    width: 33.3%;
+}
+
+
+.scorecardTableCell {
+    width: 16.67%;
 }
 
 .friendScorecard {
@@ -372,14 +519,38 @@ th {
     border-top: 1px solid #EAE2B6;
 }
 
+.aboutUsFooter {
+    bottom: 0px;
+    width: 100%;
+    min-width: 250px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    color: #AFABAB;
+    text-align: center;
+    font-family: "Ubuntu";
+    font-weight: bold;
+    border-top: 1px solid #AFABAB;
+}
+
 .inputBox {
     border-radius: 7px;
     margin-bottom: 15px;
     width: clamp(110px, 50%, 50%);
 }
 
+.rentalInput {
+    border-radius: 7px;
+    width: 40px;
+}
+
 .spacer {
     margin: 50px;
+}
+
+.selectorSpacer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 1.2rem;
 }
 
 .titleFont {
@@ -406,6 +577,8 @@ th {
     padding: 4px;
     margin: 5px;
     width: clamp(110px, 50%, 20vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* creates the mouse hover effect */
@@ -562,6 +735,10 @@ th {
     -webkit-text-fill-color: transparent;
 }
 
+.brownText {
+    color: #573713;
+}
+
 .logo {
     height: auto;
     width: auto;
@@ -646,12 +823,24 @@ th {
 }
 
 .courseScorecardLogo {
-    width: 25vh;
-    height: 25vh;
+    width: 15vh;
+    height: 15vh;
+
+    /* for narrow screens
+    max-width: 20vw;
+    max-height: 20vw; */
+
     border-radius: 100%;
     border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+@media (max-width: 1000px) {
+    .courseScorecardLogo{
+        width: 20vh;
+        height: 20vh;
+    }
 }
 
 .coursesLogo {
@@ -661,6 +850,12 @@ th {
     border: 4px outset #5e3e07;
     background-size: cover;
     margin: 25px;
+}
+
+.buttonSpan {
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
 }
 
 .fillScreen {
@@ -705,6 +900,7 @@ th {
 
 #aboutUsHomeButton {
     width: 20%;
+    color: #AFABAB;
 }
 
 .processTitle {
@@ -769,7 +965,6 @@ th {
 }
 
 
-
 .listOfCoursesLogo {
     background-size: cover;
     max-height: 80%;
@@ -785,6 +980,10 @@ th {
 
   .weather-container  {
     text-align: center;
+  }
+
+  .dateInputCell {
+      max-width: 70%;
   }
 
   .chooseDate, .chooseTime {
@@ -826,7 +1025,7 @@ th {
 
   
   @media (min-width: 1000px){
-    .firstSectionContainer, .secondSectionContainer{
+    .firstSectionContainer, .secondSectionContainer, .sectionContainer {
         vertical-align: top;
         display: inline-block;
         width: 40%;

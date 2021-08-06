@@ -34,7 +34,7 @@
                     <div class="pageDivider woodBackdrop"></div>
 
                     <div>
-                        <h5 class="poppinsFont greyFont">Thank You For Booking With Tee-rific! Here Is Your Game Info.</h5>
+                        <h5 class="poppinsFont greyFont">Your Game Information:</h5>
                     </div>
                     
                     <table class="bookingTable oswaldFont">
@@ -55,6 +55,9 @@
                             <td class="bookingCell overflowHideFont brownFont" th:text="*{toDisplay.time}"></td>
                         </tr>
                     </table>
+                    <div>
+                        <h3 class="oswaldFont brownFont">You Can Invite Friends From Your Scorecards</h3>
+                    </div>
 
                     <form method="get" th:action="${'/tee-rific/rentEquipment/' + courseNameSC +'/'+ gameID +'/'+ username}">
                         <button type="submit" class = "button">Rent Equipment</button>

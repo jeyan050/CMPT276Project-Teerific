@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/css/accountEdit.css}" type="text/css" rel="stylesheet">
 
     <!-- badge icon for image in tab window -->
     <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -20,7 +20,7 @@
     <!-- bootstrap stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Edit Account Information</title>
+    <title>Account Updated</title>
 </head>
 <body class="grassBackdrop">
     <div class="pageWrap">
@@ -30,10 +30,10 @@
                     <div>
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
-                    <div class="titleFont dynamicSize">Succesfully Updated Account</div>                       
-
+                    <div class="titleFont dynamicSize">Successfully Updated Account</div>                       
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method= "get" th:action="${'/tee-rific/editAccount/' + __${user}__}">
-                        <button type="submit" class="button">Back to Details</button>
+                        <button type="submit" class="button">Account Details</button>
                     </form>
                 </div>
              </div>

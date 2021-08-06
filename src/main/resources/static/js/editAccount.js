@@ -38,7 +38,7 @@ function checkNewValue(event) {
 }
 
 function displayImage(event) {
-    var image = document.getElementById("image");
+    var image = document.getElementById("imageCourseLogo");
     image.src = document.getElementById("value").value;
 }
 
@@ -71,5 +71,3 @@ for(var i = 0; i < numberOfButtons; i++) {
         setTimeout(submitForm, timeoutLength, event.target);
     });
 }
-
-function checkPasswordSecurity
