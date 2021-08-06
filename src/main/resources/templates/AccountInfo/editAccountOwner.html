@@ -83,16 +83,16 @@
                      <table class="editAccountTable oswaldFont">
                         <tr>
                             <th class="editCourseCharacteristicCell">Address</th>
-                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.address}"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" th:text="${owner.address}"></td>
                             <td class="editCourseCharacteristicCell">
-                                <form  method= "get" th:action="${'/tee-rific/editAccount/address/'+ owner.username}">
+                                <form method= "get" th:action="${'/tee-rific/editAccount/address/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
                                 </form>
                             </td>
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">City</th>
-                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.city}"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" th:text="${owner.city}"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/city/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -101,7 +101,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Country</th>
-                            <td class="editCourseCharacteristicCell brownText" th:text="${owner.country}"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" th:text="${owner.country}"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/country/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -110,7 +110,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Phone Number</th>
-                            <td class="editCourseCharacteristicCell brownText" id="pn" th:text="${owner.phoneNumber != 'null'} ? ${owner.phoneNumber} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="pn" th:text="${owner.phoneNumber != 'null'} ? ${owner.phoneNumber} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/phoneNumber/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -119,7 +119,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Website</th>
-                            <td class="editCourseCharacteristicCell brownText" id="web" th:text="${owner.website != 'null'} ? ${owner.website} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="web" th:text="${owner.website != 'null'} ? ${owner.website} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/website/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -128,7 +128,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Time Open</th>
-                            <td class="editCourseCharacteristicCell brownText" id="to" th:text="${owner.timeOpen}"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="to" th:text="${owner.timeOpen}"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/timeOpen/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -137,7 +137,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Time Closed</th>
-                            <td class="editCourseCharacteristicCell brownText" id="tc" th:text="${owner.timeClose}"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="tc" th:text="${owner.timeClose}"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/timeClose/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -146,7 +146,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Weekday Rates</th>
-                            <td class="editCourseCharacteristicCell brownText" id="wdr" th:text="${owner.weekdayRates != 'null'} ? ${owner.weekdayRates} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="wdr" th:text="${owner.weekdayRates != 'null'} ? ${owner.weekdayRates} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/weekdayRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -155,7 +155,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Weekend Rates</th>
-                            <td class="editCourseCharacteristicCell brownText" id="wer" th:text="${owner.weekendRates != 'null'} ? ${owner.weekendRates} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="wer" th:text="${owner.weekendRates != 'null'} ? ${owner.weekendRates} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/weekendRates/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -164,7 +164,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Directions to Course</th>
-                            <td class="editCourseCharacteristicCell brownText" id="dtc" th:text="${owner.directionsToCourse != 'null'} ? ${owner.directionsToCourse} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="dtc" th:text="${owner.directionsToCourse != 'null'} ? ${owner.directionsToCourse} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/directionsToCourse/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
@@ -173,7 +173,7 @@
                         </tr>
                         <tr>
                             <th class="editCourseCharacteristicCell">Description</th>          
-                            <td class="editCourseCharacteristicCell brownText" id="des" th:text="${owner.description != 'null'} ? ${owner.description} : ''"></td>
+                            <td class="editCourseCharacteristicCell brownText overflowWrapFont" id="des" th:text="${owner.description != 'null'} ? ${owner.description} : ''"></td>
                             <td class="editCourseCharacteristicCell">
                                 <form method= "get" th:action="${'/tee-rific/editAccount/description/'+ owner.username}">
                                     <button type="submit" class="button editButton">Edit</button>
