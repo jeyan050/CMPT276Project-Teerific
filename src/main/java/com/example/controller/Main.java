@@ -2892,7 +2892,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       ResultSet rs = stmt.executeQuery("INSERT INTO tournaments (name, date, time, participant_slots, buy_in, first_prize, second_prize, third_prize, age_requirement, game_mode, club_name, creator, num_signed_up) VALUES ('" + tournament.getName() + "','" + tournament.getDate() + "','" + tournament.getTime() + "','" + tournament.getParticipantSlots() + "','" + buyIn + "','" + tournament.getFirstPrize() + "','" + tournament.getSecondPrize() + "','" + tournament.getThirdPrize() + "','" + ageReq + "','" + tournament.getGameMode() + "','" + tournament.getClubName() + "','" + user + "','" + numSignedUp + "') RETURNING id");
       rs.next();
       Integer new_tournament_id = rs.getInt(1);
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournament_" + new_tournament_id + "_participants (id serial, username varchar(100) CONSTRAINT tournament_"+new_tournament_id+"_unique_username UNIQUE, first_name varchar(50), last_name varchar(50), score integer)");
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS tournament_" + convertToSnakeCase(tournament.getName()) + "_participants (id serial, username varchar(100), first_name varchar(50), last_name varchar(50), score integer)");
 
       return "redirect:/tee-rific/availableTournaments/" + user;
     } catch (Exception e)
@@ -2942,7 +2942,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
 
       int tournamentID = tournament.getId();
       //TODO: @ZACH there must be a better way to do it then your implementation with all the additional tables in the DB? -- Mike
-      String getParticipantsSQL = "SELECT * FROM tournament_" + tournamentID + "_participants";
+      String getParticipantsSQL = "SELECT * FROM tournament_" + convertToSnakeCase(tournament.getName()) + "_participants";
       ResultSet getParticipants = stmt.executeQuery(getParticipantsSQL);
 
       ArrayList<TournamentParticipant> participants = new ArrayList<TournamentParticipant>();
@@ -3046,7 +3046,17 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       user.setFname(rs.getString("fname"));
       user.setLname(rs.getString("lname"));
 
-      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + tournamentId + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "') ON CONFLICT (username) DO NOTHING");
+
+      //get tournament name
+      String getTournamentNameSQL = "SELECT name FROM tournaments WHERE id='" + tournamentId + "'";
+      ResultSet getTournamentName = stmt.executeQuery(getTournamentNameSQL);
+      String tournamentName = "";
+      while(getTournamentName.next()){
+        tournamentName = getTournamentName.getString("name");
+      }
+
+
+      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + convertToSnakeCase(tournamentName)  + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "') ON CONFLICT (username) DO NOTHING");
       if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
       {
         return "Tournaments/tournamentSignupError";
@@ -3073,14 +3083,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   )
   public String pastTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request){
 
-    //TODO: uncomment
-    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-    //   return "redirect:/tee-rific/pastTournament/" + request.getSession().getAttribute("username");
-    // }
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/pastTournament/" + request.getSession().getAttribute("username");
+    }
 
-    // if(null == (request.getSession().getAttribute("username"))) {
-    //   return "redirect:/";
-    // }
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
 
     try(Connection connection = dataSource.getConnection())
     {
@@ -3125,14 +3134,23 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     try(Connection connection = dataSource.getConnection())
     {
       Statement stmt = connection.createStatement();
+
+      //get tournament name
+      String getTournamentNameSQL = "SELECT name FROM tournaments WHERE id='" + tournamentId + "'";
+      ResultSet getTournamentName = stmt.executeQuery(getTournamentNameSQL);
+      String tournamentName = "";
+      while(getTournamentName.next()){
+        tournamentName = getTournamentName.getString("name");
+      }
+
       
       ArrayList<TournamentParticipant> participants = new ArrayList<TournamentParticipant>();
-      ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS exact_count FROM tournament_"+tournamentId+"_participants");
+      ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS exact_count FROM tournament_"+ convertToSnakeCase(tournamentName)  +"_participants");
       rs.next();
       Integer num_of_participants = rs.getInt("exact_count");
       for (int i = 1; i <= num_of_participants; i++)
       {
-        rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants WHERE id=" + i);
+        rs = stmt.executeQuery("SELECT * FROM tournament_" + convertToSnakeCase(tournamentName) + "_participants WHERE id=" + i);
         rs.next();
         TournamentParticipant participant = new TournamentParticipant();
         participant.setId(rs.getInt("id"));
@@ -3144,17 +3162,10 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
         participants.add(participant);
       }
 
-      String getTournamentNameSQL = "SELECT name FROM tournaments WHERE id='" + tournamentId + "'";
-      ResultSet getTournamentName = stmt.executeQuery(getTournamentNameSQL);
-      String name = "";
-      while(getTournamentName.next()){
-        name = getTournamentName.getString("name");
-      }
-
       WrapperTournamentParticipants wrapper_participants = new WrapperTournamentParticipants();
       wrapper_participants.setParticipants(participants);
 
-      model.put("tournamentName", name);
+      model.put("tournamentName", tournamentName);
       model.put("WrapperParticipants", wrapper_participants);
       model.put("username", user);
       model.put("tournamentId", tournamentId);
@@ -3188,7 +3199,7 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
     for (int i = 0; i < wrapper_participants.getParticipants().size(); i++)
     {
       Integer score = wrapper_participants.getParticipants().get(i).getScore();
-      stmt.execute("UPDATE tournament_"+tournamentId+"_participants SET score="+ score +" WHERE id= " + (i+1)); 
+      stmt.execute("UPDATE tournament_"+ convertToSnakeCase(tournament.getName()) +"_participants SET score="+ score +" WHERE id= " + (i+1)); 
     }
     stmt.execute("DELETE FROM tournaments WHERE id = " + tournamentId);
     return "redirect:/tee-rific/pastTournaments/" + user;    
@@ -3227,7 +3238,7 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
 
     model.put("past_tournament", past_tournament);
 
-    rs = stmt.executeQuery("SELECT * FROM tournament_" + tournamentId + "_participants");
+    rs = stmt.executeQuery("SELECT * FROM tournament_" + convertToSnakeCase(past_tournament.getName()) + "_participants");
     ArrayList<ComparableParticipant> output = new ArrayList<ComparableParticipant>();
     while (rs.next())
     {
@@ -3442,8 +3453,10 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
   public String deleteTournament(Map<String, Object> model, @PathVariable("id") long id){
     try (Connection connection = dataSource.getConnection()){
       Statement stmt = connection.createStatement();
-      String sql = "DELETE FROM tournaments WHERE id="+id;
-      stmt.executeUpdate(sql);
+      String deleteTournament = "DELETE FROM tournaments WHERE id="+id;
+      stmt.executeUpdate(deleteTournament);
+
+      String deleteParticipants = "";
 
       return "LandingPages/deleteSuccess";
     } catch (Exception e) {
@@ -3884,6 +3897,33 @@ public RedirectView facebookRedirect() {
         courses.add(convertToSnakeCase(courseDetails.getString("courseName")));
       }
 
+
+      ArrayList<String> tournamentNames = new ArrayList<String>();
+      //get the current tournament names from tournaments
+      String createTournamentsIfNotExists = "CREATE TABLE IF NOT EXISTS tournaments (id serial, name varchar(100), date varchar(10), time varchar(50), participant_slots integer, buy_in integer, first_prize varchar(100), second_prize varchar(100), third_prize varchar(100), age_requirement varchar(20), game_mode varchar(100), club_name varchar(100), creator varchar(100), num_signed_up integer)";
+      stmt.executeUpdate(createTournamentsIfNotExists);
+      String getTournamentCountSQL = "SELECT * FROM tournaments";
+      ResultSet getTournamentCount = stmt.executeQuery(getTournamentCountSQL);
+      while(getTournamentCount.next()){
+        tournamentNames.add(convertToSnakeCase(getTournamentCount.getString("name")));    //adds the name of the tournament, so that participant table can be delete
+      }
+
+      //get the past tournaments names 
+      String createPastTournamentsIfNotExists = "CREATE TABLE IF NOT EXISTS past_tournaments (id serial, name varchar(100), date varchar(50), club_name varchar(100))";
+      stmt.executeUpdate(createPastTournamentsIfNotExists);
+      getTournamentCountSQL = "SELECT * FROM past_tournaments";
+      ResultSet getPastTournamentCount = stmt.executeQuery(getTournamentCountSQL);
+      while(getPastTournamentCount.next()){
+        tournamentNames.add(convertToSnakeCase(getPastTournamentCount.getString("name")));
+      }
+
+      //remove the tournament participants tables based on count acquired above
+      for(int i = 0; i < tournamentNames.size(); i++){
+        String removeParticipantsTable = "DROP TABLE IF EXISTS tournament_" + convertToSnakeCase(tournamentNames.get(i)) + "_participants";
+        stmt.executeUpdate(removeParticipantsTable);
+      }
+
+
       for(int i = 0; i < courses.size(); i++){
         String removeCourseTable = "DROP TABLE IF EXISTS " + courses.get(i);
         String removeCourseTableFeedback = "DROP TABLE IF EXISTS " + courses.get(i) + "Feedback";
@@ -3892,13 +3932,14 @@ public RedirectView facebookRedirect() {
         System.out.println("Removed Course Table: " + courses.get(i));
       }
 
-      stmt.executeUpdate("DROP TABLE IF EXISTS owners");       //delete owners
-      stmt.executeUpdate("DROP TABLE IF EXISTS bookings");     //delete bookings
-      stmt.executeUpdate("DROP TABLE IF EXISTS scorecards");   //delete scorecards
-      stmt.executeUpdate("DROP TABLE IF EXISTS inventory");    //delete inventory
-      stmt.executeUpdate("DROP TABLE IF EXISTS rentals");      //delete rentals
-      stmt.executeUpdate("DROP TABLE IF EXISTS tournaments");  //delete tournaments
-      stmt.executeUpdate("DROP TABLE IF EXISTS users");        //delete users
+      stmt.executeUpdate("DROP TABLE IF EXISTS owners");              //delete owners
+      stmt.executeUpdate("DROP TABLE IF EXISTS bookings");            //delete bookings
+      stmt.executeUpdate("DROP TABLE IF EXISTS scorecards");          //delete scorecards
+      stmt.executeUpdate("DROP TABLE IF EXISTS inventory");           //delete inventory
+      stmt.executeUpdate("DROP TABLE IF EXISTS rentals");             //delete rentals
+      stmt.executeUpdate("DROP TABLE IF EXISTS tournaments");         //delete tournaments
+      stmt.executeUpdate("DROP TABLE IF EXISTS past_tournaments");    //delete past_tournaments
+      stmt.executeUpdate("DROP TABLE IF EXISTS users");               //delete users
     
       System.out.println("System Is In Process Of Deletion");
       return "redirect:/tee-rific/nuke/" + user;
