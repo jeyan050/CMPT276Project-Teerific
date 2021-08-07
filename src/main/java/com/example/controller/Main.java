@@ -1450,6 +1450,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       // Insert into bookings table if time and date are valid 
       String gameID = insertBookingsTable(connection, booking, courseName, user);
+      // Create rentals table here
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals (id integer, courseName varchar(100), username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
@@ -2828,7 +2831,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
 //TODO: make it so tournaments date and times cannot be set to the past
-  @GetMapping( // TODO: make sure the user cannot leave fields blank
+  @GetMapping(
           path = "/tee-rific/createTournament/{username}"
   )
   public String createTournament(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request)
@@ -3072,15 +3075,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       
       }
 
-      // TODO: check if user has signed up for tournament
-      
-      // if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
+      // if (num_row_updated == 0) 
       // {
       //   return "Tournaments/tournamentSignupError";
       // }
       rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id=" + tournamentId);
       rs.next();
-      if (rs.getInt("num_signed_up") == rs.getInt("participant_slots")) //TODO: tournament has reached capacity
+      if (rs.getInt("num_signed_up") == rs.getInt("participant_slots"))
       {
         return "Tournaments/tournamentSignupError";
       }
@@ -3136,7 +3137,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 
   @GetMapping( //TODO: make it so it displays an error message if no one is signed up
-    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}" // TODO: make sure the user cannot leave fields blank
+    path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}"
   )
   public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
 
@@ -3228,7 +3229,7 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
 }
 
 @GetMapping(
-  path = "/tee-rific/tournamentResults/{tournamentId}/{username}" //TODO: make the 1st, 2nd, and 3rd, rows colored gold, silver and bronze
+  path = "/tee-rific/tournamentResults/{tournamentId}/{username}"
 )
 public String tournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request)
 {
