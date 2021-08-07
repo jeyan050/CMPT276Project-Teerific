@@ -41,7 +41,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 import java.lang.Integer;
 
@@ -101,11 +100,11 @@ public class Main {
     User user = new User();
     model.put("loginUser", user);
 
-    if (failedLogin == true) {
+    if (failedLogin) {
       String error = "Error: Username/Password Doesn't match/exist";
       model.put("failedLogin", error);
       failedLogin = false;
-    } else if (changedUsername == true) {
+    } else if (changedUsername) {
       String redirectText = "Successfully changed Username!\nSince you changed username, Please relog in with new username.";
       model.put("failedLogin", redirectText);
       changedUsername = false;
@@ -141,17 +140,10 @@ public class Main {
 
       int checkIfUserExists = 0;
       String checkPassword = "";
-      String priority = "";
       while (rs.next()) {
         checkIfUserExists++;
         checkPassword = rs.getString("password");
-        priority = rs.getString("priority");
-
-        String encryptedPassword = BCrypt.hashpw(checkPassword, BCrypt.gensalt());
-
       }
-      System.out.println(checkPassword);
-      System.out.println(user.getPassword());
 
       if (checkIfUserExists > 0 && (BCrypt.checkpw(user.getPassword(), checkPassword))) {
 
@@ -253,11 +245,11 @@ public class Main {
     CourseOwner owner = new CourseOwner();
     model.put("newOwner", owner);
 
-    if (usernameError == true) {
+    if (usernameError) {
       String error = "Error: Username already Exists.";
       model.put("usernameError", error);
       usernameError = false;
-    } else if (courseNameError == true) {
+    } else if (courseNameError) {
       String error = "Error: Course Name already Exists.";
       model.put("courseNameError", error);
       courseNameError = false;
@@ -593,7 +585,7 @@ public class Main {
         output.setPhoneNumber(details.getString("phonenumber"));
         output.setWebsite(details.getString("website"));
         output.setCourseLogo(details.getString("courselogo"));
-        // output.setYardage(details.getString("yardage"));  
+        // output.setYardage(details.getString("yardage"));
 
         output.setTimeOpen(details.getString("timeopen"));
         output.setTimeClose(details.getString("timeclose"));
@@ -1089,9 +1081,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       }
 
       //negate cart values
-      balls = 0 - balls;
-      carts = 0 - carts;
-      clubs = 0 - clubs;
+      balls = -balls;
+      carts = -carts;
+      clubs = -clubs;
 
       updateInv.setNumBalls(balls);
       updateInv.setNumCarts(carts);
@@ -1858,9 +1850,9 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       }
 
       //negate cart values
-      balls = 0 - balls;
-      carts = 0 - carts;
-      clubs = 0 - clubs;
+      balls = -balls;
+      carts = -carts;
+      clubs = -clubs;
 
       updateInv.setNumBalls(balls);
       updateInv.setNumCarts(carts);
@@ -3693,9 +3685,9 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
         }
 
         //negate cart values
-        balls = 0 - balls;
-        carts = 0 - carts;
-        clubs = 0 - clubs;
+        balls = -balls;
+        carts = -carts;
+        clubs = -clubs;
 
         updateInv.setNumBalls(balls);
         updateInv.setNumCarts(carts);
@@ -3744,9 +3736,9 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
       }
 
       //negate cart values
-      balls = 0 - balls;
-      carts = 0 - carts;
-      clubs = 0 - clubs;
+      balls = -balls;
+      carts = -carts;
+      clubs = -clubs;
 
       updateInv.setNumBalls(balls);
       updateInv.setNumCarts(carts);
