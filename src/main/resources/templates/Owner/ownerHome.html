@@ -68,6 +68,9 @@
           </nav>
          
         <div class="homePageContainer">
+                <div class="screenToSmall">
+                  <p class="oswaldFont">Sorry But Your Screen Size Has Not Been Optimized For This Version Of Our Application. Please Access This Account On A Desktop Display</p>
+                </div>
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/courseSchedule/' + username}">
                   <button id="editSchedule" class="homePageButton" type="submit">Schedule</button>
                 </form> 
@@ -91,9 +94,7 @@
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="${'/tee-rific/aboutUs/' + username}">
                   <button id="aboutUsButton" class="homePageButton" type="submit">About Us</button>
                 </form>
-                <div>
-                  <p class="screenToSmall oswaldFont">Sorry But Your Screen Size Has Not Been Optimized For This Version Of Our Application. Please Access This Account On A Desktop Display</p>
-                </div>
+                
                 <form class="homePageButtonBorder woodBackdrop" method="get" th:action="@{/tee-rific/logout}">
                     <button id="logoutOwnerButton" class="homePageButton" type="submit">Log Out</button>
                 </form>
