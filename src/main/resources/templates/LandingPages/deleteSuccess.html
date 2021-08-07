@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
-    <title>Account Created</title>
-</head>
-<body>
-    <div class="layer_6">
-        <div class="layer_7">
-            <div class="layer_8">
-                <img th:src="@{/images/tee-rific.png}" width="150" height="100"/>
-                <!-- Welcome to TEE-RIFIC "username"! -->
-                <h2>Successful Delete</h2>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-                <form method="get" action="/tee-rific/home/admin">
-                    <button type="submit" class = "button">Go to the Home Page</button>
-                </form>
+    <link th:href="@{/css/styles.css}" type="text/css" rel="stylesheet">
+
+    <!-- badge icon for image in tab window -->
+    <link rel="shortcut icon" type="image/ico" th:href="@{/images/favicon.ico}"/>                 
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Deleted</title>
+</head>
+<body class="grassBackdrop">
+     <div class="pageWrap">
+        <div class="content">
+            <div class="woodBackdrop border content">
+                <div class="sandBackdrop">
+                    <div>
+                        <img th:src="@{/images/tee-rific.png}">
+                    </div>
+                    <div class="titleFont dynamicSize">Deleted</div>
+                    <div class="pageDivider woodBackdrop"></div>
+                    <form method="get" action="/tee-rific/home/admin">
+                        <button type="submit" class = "button">Home</button>
+                    </form>
+                </div>
             </div>
         </div>
-     </div>
      <footer>
         <div class= "woodBackdrop footer">
             <i class="socialIcon fab fa-facebook-f" onclick="getFacebook()"></i>
