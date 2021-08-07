@@ -42,7 +42,7 @@
                             <input type="text" id="tournaName" class="inputBox" th:field="*{name}" placeholder="Tournament Name"><p hidden id="errorTN" class="errorText"></p>
                         </div>
                         <div>
-                            <input type="date" id="date" class="inputBox" th:field="*{date}" placeholder="Date"><p hidden id="errorD" class="errorText"></p>
+                            <input type="date" id="date" class="inputBox" min= th:field="*{date}" placeholder="Date"><p hidden id="errorD" class="errorText"></p>
                         </div>
                         <div>
                             <input type="time" id="time" class="inputBox" th:field="*{time}" placeholder="Time"><p hidden id="errorT" class="errorText"></p>

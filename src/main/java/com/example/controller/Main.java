@@ -2826,7 +2826,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
-//TODO: make it so tournaments date and times cannot be set to the past
   @GetMapping(
           path = "/tee-rific/createTournament/{username}"
   )
@@ -2941,7 +2940,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
       int tournamentID = tournament.getId();
-      //TODO: @ZACH there must be a better way to do it then your implementation with all the additional tables in the DB? -- Mike
       String getParticipantsSQL = "SELECT * FROM tournament_" + convertToSnakeCase(tournament.getName()) + "_participants";
       ResultSet getParticipants = stmt.executeQuery(getParticipantsSQL);
 

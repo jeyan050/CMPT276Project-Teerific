@@ -4,11 +4,20 @@ var timeoutLength = 500; // in milliseconds (perfect timing for above mp3)
 
 var submit = false;
 
+
+
+window.addEventListener("load", function(){
+        var date = new Date();
+        var today = date.toLocaleDateString();
+        document.getElementById("date").min = today;
+});
+
 function checkEmptyFields(event) {
     var checkTournName = document.getElementById("tournaName").value;
     var checkDate = document.getElementById("date").value;
     var checkTime = document.getElementById("time").value;
     var checkPSlots = document.getElementById("particiSlots").value;
+
 
     if (checkTournName == ""){
         document.getElementById("errorTN").innerHTML = "Tournament Name is empty: Please enter a Tournament Name ";
