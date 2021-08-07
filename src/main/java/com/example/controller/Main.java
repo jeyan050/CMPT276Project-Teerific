@@ -1956,14 +1956,13 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   )
   public String viewAllCourses(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
     
-    // TODO: uncomment
-    // if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-    //   return "redirect:/tee-rific/courses/" + request.getSession().getAttribute("username");
-    // }
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/courses/" + request.getSession().getAttribute("username");
+    }
 
-    // if(null == (request.getSession().getAttribute("username"))) {
-    //   return "redirect:/";
-    // }
+    if(null == (request.getSession().getAttribute("username"))) {
+      return "redirect:/";
+    }
 
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
