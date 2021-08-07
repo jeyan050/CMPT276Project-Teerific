@@ -585,7 +585,6 @@ public class Main {
         output.setPhoneNumber(details.getString("phonenumber"));
         output.setWebsite(details.getString("website"));
         output.setCourseLogo(details.getString("courselogo"));
-        // output.setYardage(details.getString("yardage"));
 
         output.setTimeOpen(details.getString("timeopen"));
         output.setTimeClose(details.getString("timeclose"));
@@ -659,9 +658,14 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     path = "/tee-rific/editAccount/{editColumn}/{username}"
   )
   public String updateAccountInformation(@PathVariable("username")String user, @PathVariable("editColumn") String column, Map<String, Object> model, HttpServletRequest request){
-    
-    if(!user.equals(request.getSession().getAttribute("username"))) {
+
+
+    if (null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
+    }
+
+    if(!user.equals(request.getSession().getAttribute("username"))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
     
     CourseOwner newValue = new CourseOwner();
@@ -850,7 +854,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       return "redirect:/";
     }
 
-    if (changedUsername == true){
+    if (changedUsername){
       return "redirect:/tee-rific/login";
     }
     model.put("userName", user);
@@ -1015,7 +1019,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   public String viewBookingsForTime(@PathVariable("username")String user, @PathVariable("date")String date, @PathVariable("time")String teeTime, Map<String, Object> model, HttpServletRequest request) throws Exception {
     
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1113,7 +1117,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   public String getCourseDetails(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/golfCourseDetails/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1223,7 +1227,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   public String displayCourses(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1278,7 +1282,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String user = pathVars.get("username");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1479,7 +1483,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String courseName = convertFromSnakeCase(courseNameSC);
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/booking/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1558,7 +1562,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String gameIDStr = pathVars.get("gameID");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1630,7 +1634,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     String gameIDStr = pathVars.get("gameID");
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/rentEquipment/checkout/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1695,7 +1699,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   public String rentSuccessPage(@PathVariable("username")String user, HttpServletRequest request) {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/rentEquipment/checkout/success/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -1713,7 +1717,11 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
           path="/tee-rific/golfCourseDetails/inventory/{username}"
   )
   public String viewInventory(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) throws Exception {
-    
+
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
+
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
     }
@@ -1743,11 +1751,15 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     }
   }
 
-// TODO: ensure paths are correct
+
   @GetMapping(
           path="/tee-rific/golfCourseDetails/inventory/update/{username}"
   )
   public String invUpdate(@PathVariable("username")String user, Map<String, Object> model, HttpServletRequest request) {
+
+    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+    }
 
     if(null == (request.getSession().getAttribute("username"))) {
       return "redirect:/";
@@ -1761,7 +1773,6 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
   }
 
 
-  // TODO: ensure paths are correct
   @PostMapping(
           path="/tee-rific/golfCourseDetails/inventory/update/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -1793,7 +1804,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
 
       if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-        return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
+        return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
       }
   
       if(null == (request.getSession().getAttribute("username"))) {
@@ -2008,7 +2019,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     }
 
     if(!user.equals(request.getSession().getAttribute("username"))) {
-      return "redirect:/tee-rific/home" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     try (Connection connection = dataSource.getConnection()) {
@@ -2126,7 +2137,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
     }
 
     if(!user.equals(request.getSession().getAttribute("username"))) {
-      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/scorecards/bestScores/" + request.getSession().getAttribute("username");
     }
 
     try (Connection connection = dataSource.getConnection()) {
@@ -2822,7 +2833,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
-//TODO: make it so tournaments date and times cannot be set to the past
   @GetMapping(
           path = "/tee-rific/createTournament/{username}"
   )
@@ -2852,7 +2862,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       Tournament tournament = new Tournament();
       tournament.setClubName(courseName);
 
-      // model.put("course", courseName);
       model.put("newTournament", tournament);
       model.put("username", user);
       return "Tournaments/createTournament";
@@ -2862,7 +2871,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   }
 }
 
-//TODO: make it so duplicate tournament names cannot be created
   @PostMapping(
           path = "/tee-rific/createTournament/{username}",
           consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}
@@ -2937,7 +2945,6 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
       int tournamentID = tournament.getId();
-      //TODO: @ZACH there must be a better way to do it then your implementation with all the additional tables in the DB? -- Mike
       String getParticipantsSQL = "SELECT * FROM tournament_" + convertToSnakeCase(tournament.getName()) + "_participants";
       ResultSet getParticipants = stmt.executeQuery(getParticipantsSQL);
 
@@ -2981,7 +2988,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   {
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/tournamentDelete/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -3023,7 +3030,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
   {
 
     if(!username.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/tournamentSignUp/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -3128,13 +3135,13 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
     }
   }
 
-  @GetMapping( //TODO: make it so it displays an error message if no one is signed up
+  @GetMapping(
     path = "/tee-rific/publishTournamentResults/{tournamentId}/{username}"
   )
   public String publishTournamentResultsPage(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request){
 
     if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/publishTournamentResults/" + request.getSession().getAttribute("username");
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(null == (request.getSession().getAttribute("username"))) {
@@ -3226,7 +3233,7 @@ public String publishTournamentResults(@PathVariable("username")String user, @Pa
 public String tournamentResults(@PathVariable("username")String user, @PathVariable("tournamentId") String tournamentId, Map<String, Object> model, HttpServletRequest request)
 {
   if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-  return "redirect:/tee-rific/tournamentResults/" + request.getSession().getAttribute("username");
+  return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
   }
 
   if(null == (request.getSession().getAttribute("username"))) {
@@ -3357,8 +3364,8 @@ public String tournamentResults(@PathVariable("username")String user, @PathVaria
 
       ResultSet deleteOwners = stmtUser.executeQuery("SELECT * FROM users");          // Delete owner accounts as well
       while(deleteOwners.next()){
-        String checkPrioirty = deleteOwners.getString("priority");
-        if (checkPrioirty.equals(priorities[1])){
+        String checkPriority = deleteOwners.getString("priority");
+        if (checkPriority.equals(priorities[1])){
           String userName = deleteOwners.getString("username");
           stmtOwner.executeUpdate("DELETE FROM owners WHERE username='"+userName+"'");
         }
@@ -3873,8 +3880,8 @@ public RedirectView facebookRedirect() {
   )
   public String nukeCompleted(@PathVariable("user")String user, HttpServletRequest request){
 
-    if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
-      return "redirect:/tee-rific/aboutUs/" + request.getSession().getAttribute("username");
+    if(!"admin".equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
+      return "redirect:/tee-rific/home/" + request.getSession().getAttribute("username");
     }
 
     if(request.getSession().getAttribute("username") == (null)) {
