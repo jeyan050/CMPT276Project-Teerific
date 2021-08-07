@@ -3056,7 +3056,7 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
 
-      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + convertToSnakeCase(tournamentName)  + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "') ON CONFLICT (username) DO NOTHING");
+      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + convertToSnakeCase(tournamentName)  + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "'");
       if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
       {
         return "Tournaments/tournamentSignupError";
