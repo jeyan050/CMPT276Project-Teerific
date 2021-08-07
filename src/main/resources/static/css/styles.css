@@ -529,6 +529,12 @@ th {
     width: 33.3%;
 }
 
+.screenToSmall, .tournamentsDisabled {
+    width: 100%;
+    color: white;
+    display: flex;
+    text-align: center;
+}
 
 .scorecardTableCell {
     width: 16.67%;
