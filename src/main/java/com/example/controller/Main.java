@@ -1450,6 +1450,8 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
 
       // Insert into bookings table if time and date are valid 
       String gameID = insertBookingsTable(connection, booking, courseName, user);
+      // Create rentals table here
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rentals (id integer, courseName varchar(100), username varchar(100), dateCheckout timestamp DEFAULT now(), numBalls integer, numCarts integer, numClubs integer)");
 
       // Create a new scorecard
       Scorecard scorecard = new Scorecard();
