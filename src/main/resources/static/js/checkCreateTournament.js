@@ -37,8 +37,7 @@ function checkEmptyFields(event) {
 
 function submitForm(target){
     if(target.id == "submitTourna"){ //does check if its for submit button
-        checkEmptyFields();
-        if(submit){
+        if(checkEmptyFields()){
             target.parentElement.submit();
         }
     } else {
