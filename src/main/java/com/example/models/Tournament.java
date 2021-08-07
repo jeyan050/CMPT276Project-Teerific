@@ -15,7 +15,7 @@ public class Tournament {
     private String time;
     private String creator;
     private Integer numSignedUp;
-    //participants are stored in the chorisponding database
+    //participants are stored in the corresponding database
 
 //getters
 
