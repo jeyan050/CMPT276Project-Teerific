@@ -1796,6 +1796,7 @@ public String checkPasswordVerification(@PathVariable("username") String user, U
       String gameID = pathVars.get("gameID");
       String courseName = convertFromSnakeCase(courseNameSC);
 
+
       if(!user.equals(request.getSession().getAttribute("username")) && (request.getSession().getAttribute("username") != (null))) {
         return "redirect:/tee-rific/rentEquipment/" + request.getSession().getAttribute("username");
       }

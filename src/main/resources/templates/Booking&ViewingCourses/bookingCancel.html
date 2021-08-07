@@ -13,6 +13,7 @@
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
@@ -31,23 +32,28 @@
                         <img th:src="@{/images/tee-rific.png}">
                     </div>
                     <div class="titleFont dynamicSize">Are you sure?</div>
+                    <div class="pageDivider woodBackdrop"></div>
                     <form method="post" th:action="${'/tee-rific/scorecards/' + username +'/'+ courseNameSC + '/'+ gameID + '/cancel'}" th:object="${toCancel}">
-                        <label>Booking to cancel:</label>
-                        <table>
+                        <div><h2 class="oswaldFont brownText">Booking To Cancel:</h2></div>
+                        <table class="deleteBookingTable oswaldFont">
                             <tr>
-                                <td>Course Name</td><td th:text="${courseName}"></td>
+                                <th>Course Name</th>
+                                <td class="brownText" th:text="${courseName}"></td>
                             </tr>
                             <tr>
-                                <td>Date</td><td th:text="*{date}"></td>
+                                <th>Date</th>
+                                <td class="brownText" th:text="*{date}"></td>
                             </tr>
                             <tr>
-                                <td>Time</td><td th:text="*{time}"></td>
+                                <th>Time</th>
+                                <td class="brownText" th:text="*{time}"></td>
                             </tr>
                         </table>
-                        <button type="submit" class="button">Yes I'm sure</button>
+                        <div class="pageDivider woodBackdrop"></div>
+                        <button type="submit" class="button">Delete</button>
                     </form>
                     <form  method= "get" th:action="${'/tee-rific/home/' + username}">
-                        <button type="submit" class="button">Home Page</button>
+                        <button type="submit" class="button">Home</button>
                     </form>
                 </div>
             </div>
