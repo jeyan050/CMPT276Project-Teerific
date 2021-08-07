@@ -3056,11 +3056,27 @@ public void userInsertScorecard(Connection connection, String username, Scorecar
       }
 
 
-      Integer num_row_updated = stmt.executeUpdate("INSERT INTO tournament_" + convertToSnakeCase(tournamentName)  + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "'");
-      if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
-      {
-        return "Tournaments/tournamentSignupError";
+      Boolean isSignedUp = false;
+      String isSignedUpSQL = "SELECT username FROM tournament_" + convertToSnakeCase(tournamentName)  + "_participants";
+      ResultSet checkDB = stmt.executeQuery(isSignedUpSQL);
+      while(checkDB.next()){
+        String name = checkDB.getString("username");
+        if(username.equals(name)){
+          isSignedUp = true;
+        }
       }
+
+      if(!isSignedUp){
+        stmt.executeUpdate("INSERT INTO tournament_" + convertToSnakeCase(tournamentName)  + "_participants (username, first_name, last_name) VALUES ('" + username + "','" + user.getFname() + "','" + user.getLname() + "')");
+      
+      }
+
+      // TODO: check if user has signed up for tournament
+      
+      // if (num_row_updated == 0) //TODO: user has already signed up for the tournament 
+      // {
+      //   return "Tournaments/tournamentSignupError";
+      // }
       rs = stmt.executeQuery("SELECT * FROM tournaments WHERE id=" + tournamentId);
       rs.next();
       if (rs.getInt("num_signed_up") == rs.getInt("participant_slots")) //TODO: tournament has reached capacity
